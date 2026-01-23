@@ -3,10 +3,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 // ============ الإعدادات ============
-const CONFIG = {
-    // ✅ ID ملفك على Google Drive
-    FILE_ID: '1_FS3hsY-v9SiaM9u6sX5G8QRU1d1mFhC'
-};
+// ⚠️ غيّر اسم الملف لاسم ملفك بالضبط
+const PDF_FILE_NAME = 'HS Code 2026.pdf';
 
 // ============ المتغيرات ============
 let pdfDoc = null;
@@ -16,32 +14,26 @@ let pageNumPending = null;
 let scale = 1;
 let pdfText = [];
 
-// ============ العناصر ============
 const canvas = document.getElementById('pdfCanvas');
 const ctx = canvas.getContext('2d');
 
-// ============ بناء رابط التحميل ============
-function getPdfUrl() {
-    const driveUrl = `https://drive.google.com/uc?export=download&id=${CONFIG.FILE_ID}`;
-    // استخدام CORS proxy
-    return `https://api.allorigins.win/raw?url=${encodeURIComponent(driveUrl)}`;
-}
-
 // ============ تحديث شاشة التحميل ============
 function updateLoading(text, percent) {
-    document.getElementById('loadingText').textContent = text;
-    document.getElementById('loadingPercent').textContent = percent + '%';
-    document.getElementById('progressFill').style.width = percent + '%';
+    const loadingText = document.getElementById('loadingText');
+    const loadingPercent = document.getElementById('loadingPercent');
+    const progressFill = document.getElementById('progressFill');
+    
+    if (loadingText) loadingText.textContent = text;
+    if (loadingPercent) loadingPercent.textContent = percent + '%';
+    if (progressFill) progressFill.style.width = percent + '%';
 }
 
 // ============ تحميل PDF ============
 async function loadPDF() {
     try {
-        updateLoading('جاري الاتصال بـ Google Drive...', 10);
+        updateLoading('جاري تحميل الملف...', 10);
         
-        const url = getPdfUrl();
-        
-        const loadingTask = pdfjsLib.getDocument(url);
+        const loadingTask = pdfjsLib.getDocument(PDF_FILE_NAME);
         
         loadingTask.onProgress = function(progress) {
             if (progress.total > 0) {
@@ -58,34 +50,64 @@ async function loadPDF() {
             `صفحة ${pageNum} من ${pdfDoc.numPages}`;
         document.getElementById('goToPage').max = pdfDoc.numPages;
         
-        // فهرسة النص للبحث
         await extractAllText();
         
-        // إخفاء شاشة التحميل
         document.getElementById('loadingOverlay').classList.add('hidden');
-        
-        // عرض الصفحة الأولى
         renderPage(pageNum);
         
     } catch (error) {
         console.error('خطأ:', error);
-        updateLoading('❌ خطأ في التحميل! جاري المحاولة بطريقة أخرى...', 0);
-        
-        // محاولة بديلة
-        tryAlternativeLoad();
+        showError();
     }
 }
 
-// ============ محاولة تحميل بديلة ============
-async function tryAlternativeLoad() {
+function showError() {
+    document.getElementById('loadingOverlay').innerHTML = `
+        <div class="loading-content">
+            <h2 style="margin-bottom: 20px;">⚠️ تعذر تحميل الملف</h2>
+            <p style="margin-bottom: 15px;">تأكد من رفع ملف PDF باسم:</p>
+            <code style="background: rgba(255,255,255,0.2); padding: 10px 20px; 
+                         border-radius: 10px; display: block; margin-bottom: 20px;">
+                ${PDF_FILE_NAME}
+            </code>
+            
+            <p style="margin-bottom: 20px;">أو اختر ملف من جهازك:</p>
+            
+            <label style="padding: 15px 30px; background: #4CAF50; color: white; 
+                          border-radius: 25px; cursor: pointer; font-weight: bold;
+                          display: inline-block;">
+                📁 اختر ملف PDF
+                <input type="file" accept=".pdf" onchange="loadLocalPDF(event)" 
+                       style="display: none;">
+            </label>
+        </div>
+    `;
+}
+
+// ============ تحميل PDF محلي ============
+async function loadLocalPDF(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
     try {
-        const alternativeUrl = `https://corsproxy.io/?${encodeURIComponent(
-            `https://drive.google.com/uc?export=download&id=${CONFIG.FILE_ID}`
-        )}`;
+        document.getElementById('loadingOverlay').innerHTML = `
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loadingText">جاري تحميل الملف...</p>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="loadingPercent">0%</p>
+            </div>
+        `;
         
-        updateLoading('جاري المحاولة بطريقة بديلة...', 20);
+        updateLoading('جاري قراءة الملف...', 20);
         
-        pdfDoc = await pdfjsLib.getDocument(alternativeUrl).promise;
+        const arrayBuffer = await file.arrayBuffer();
+        
+        updateLoading('جاري معالجة الملف...', 40);
+        
+        pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         
         document.getElementById('pageInfo').textContent = 
             `صفحة ${pageNum} من ${pdfDoc.numPages}`;
@@ -97,9 +119,7 @@ async function tryAlternativeLoad() {
         renderPage(pageNum);
         
     } catch (error) {
-        document.getElementById('loadingText').textContent = 
-            '❌ فشل التحميل - تأكد من أن الملف مُشارك للجميع';
-        document.getElementById('loadingPercent').textContent = 'حاول تحديث الصفحة';
+        alert('خطأ في قراءة الملف: ' + error.message);
     }
 }
 
@@ -289,9 +309,7 @@ document.getElementById('goBtn').addEventListener('click', () => {
 });
 
 document.getElementById('goToPage').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        goToPage(e.target.value);
-    }
+    if (e.key === 'Enter') goToPage(e.target.value);
 });
 
 document.getElementById('zoomSelect').addEventListener('change', (e) => {
@@ -306,21 +324,14 @@ document.getElementById('searchBtn').addEventListener('click', () => {
 document.getElementById('clearBtn').addEventListener('click', clearSearch);
 
 document.getElementById('searchInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        search(e.target.value);
-    }
+    if (e.key === 'Enter') search(e.target.value);
 });
 
-// اختصارات لوحة المفاتيح
 document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-    
     if (e.key === 'ArrowLeft') nextPage();
     if (e.key === 'ArrowRight') prevPage();
-    if (e.key === 'Home') goToPage(1);
-    if (e.key === 'End' && pdfDoc) goToPage(pdfDoc.numPages);
 });
 
 // ============ البدء ============
-
 loadPDF();
