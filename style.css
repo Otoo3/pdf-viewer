@@ -1,0 +1,282 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+/* الهيدر */
+.header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+}
+
+/* شريط البحث */
+.search-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+#searchInput {
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+}
+
+#searchInput:focus {
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}
+
+/* الأزرار */
+.btn, button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-primary, #searchBtn {
+    background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+    color: white;
+}
+
+.btn-danger, #clearBtn {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+}
+
+.btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* نتائج البحث */
+.search-results {
+    display: none;
+    max-height: 300px;
+    overflow-y: auto;
+    background: white;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.search-results.active {
+    display: block;
+}
+
+.result-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.result-item:hover {
+    background: #f0f7ff;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.page-badge {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.result-context {
+    font-size: 14px;
+    color: #666;
+    margin-top: 8px;
+    line-height: 1.6;
+}
+
+.highlight {
+    background: #ffeb3b;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* إحصائيات البحث */
+.search-stats {
+    display: none;
+    text-align: center;
+    padding: 12px;
+    background: rgba(76, 175, 80, 0.3);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    color: white;
+    font-weight: bold;
+}
+
+.search-stats.active {
+    display: block;
+}
+
+/* أدوات التحكم */
+.controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+.page-info {
+    padding: 10px 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 15px;
+    color: white;
+    font-weight: bold;
+}
+
+#goToPage {
+    width: 80px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
+#zoomSelect {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* عارض PDF */
+.pdf-container {
+    display: flex;
+    justify-content: center;
+    background: #404040;
+    border-radius: 20px;
+    padding: 20px;
+    min-height: 500px;
+    overflow: auto;
+}
+
+#pdfCanvas {
+    box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+    max-width: 100%;
+}
+
+/* شاشة التحميل */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-overlay.hidden {
+    display: none;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.progress-bar {
+    width: 280px;
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    margin: 15px auto;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: white;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+#loadingPercent {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .header h1 { font-size: 1.4rem; }
+    #searchInput { min-width: 100%; }
+    .controls { gap: 8px; }
+    .controls button { padding: 10px 15px; font-size: 12px; }
+}

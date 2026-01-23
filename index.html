@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 عارض PDF مع البحث</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- الهيدر -->
+        <header class="header">
+            <h1>📚 عارض الكتاب الإلكتروني</h1>
+        </header>
+
+        <!-- شريط البحث -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 ابحث في الكتاب...">
+            <button id="searchBtn" class="btn-primary">بحث</button>
+            <button id="clearBtn" class="btn-danger">مسح</button>
+        </div>
+
+        <!-- نتائج البحث -->
+        <div id="searchResults" class="search-results"></div>
+        
+        <!-- إحصائيات البحث -->
+        <div id="searchStats" class="search-stats"></div>
+
+        <!-- أدوات التحكم -->
+        <div class="controls">
+            <button id="prevPage" class="btn">◀ السابق</button>
+            <span id="pageInfo" class="page-info">صفحة 1 من 1</span>
+            <button id="nextPage" class="btn">التالي ▶</button>
+            <input type="number" id="goToPage" min="1" placeholder="رقم">
+            <button id="goBtn" class="btn">اذهب</button>
+            <select id="zoomSelect">
+                <option value="0.5">50%</option>
+                <option value="0.75">75%</option>
+                <option value="1" selected>100%</option>
+                <option value="1.25">125%</option>
+                <option value="1.5">150%</option>
+                <option value="2">200%</option>
+            </select>
+        </div>
+
+        <!-- عارض PDF -->
+        <div class="pdf-container">
+            <canvas id="pdfCanvas"></canvas>
+        </div>
+
+        <!-- شريط التحميل -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loadingText">جاري تحميل الملف...</p>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="loadingPercent">0%</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
