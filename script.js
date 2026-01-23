@@ -1,13 +1,10 @@
 // ============ الإعدادات ============
 const CONFIG = {
-    // اسم ملف PDF على GitHub
     PDF_FILE_NAME: 'HS Code 2026.pdf',
-    
-    // رابط الملف على Google Drive (للعرض)
     GOOGLE_DRIVE_FILE_ID: '1sxY3ePFcEOrEaJFsQ6vI8vX9NS7MEA5V'
 };
 
-// ============ إعداد PDF.js للبحث ============
+// ============ إعداد PDF.js ============
 pdfjsLib.GlobalWorkerOptions.workerSrc = 
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -15,125 +12,84 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 let pdfText = [];
 let isIndexReady = false;
 
-// ============ تهيئة العارض ============
+// ============ تهيئة التطبيق ============
+function init() {
+    // تحميل عارض PDF
+    initViewer();
+    
+    // بدء الفهرسة
+    indexPDF();
+    
+    // ربط الأحداث
+    setupEvents();
+}
+
 function initViewer() {
     const iframe = document.getElementById('pdfFrame');
-    
-    // استخدام Google Docs Viewer للعرض المثالي
-    const googleViewerUrl = `https://drive.google.com/file/d/${CONFIG.GOOGLE_DRIVE_FILE_ID}/preview`;
-    
-    iframe.src = googleViewerUrl;
+    iframe.src = `https://drive.google.com/file/d/${CONFIG.GOOGLE_DRIVE_FILE_ID}/preview`;
 }
 
-// ============ التبويبات ============
-function showTab(tab) {
-    // إخفاء كل الأقسام
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+function setupEvents() {
+    // البحث
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        search(document.getElementById('searchInput').value);
+    });
     
-    // إظهار القسم المطلوب
-    if (tab === 'viewer') {
-        document.getElementById('viewerSection').classList.add('active');
-        document.querySelectorAll('.tab')[0].classList.add('active');
-    } else {
-        document.getElementById('searchSection').classList.add('active');
-        document.querySelectorAll('.tab')[1].classList.add('active');
-        
-        // بدء الفهرسة إذا لم تبدأ
-        if (!isIndexReady && pdfText.length === 0) {
-            indexPDF();
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            search(e.target.value);
         }
-    }
+    });
+    
+    // مسح البحث
+    document.getElementById('clearBtn').addEventListener('click', clearSearch);
+    
+    // تصغير/تكبير لوحة البحث
+    document.getElementById('togglePanel').addEventListener('click', togglePanel);
 }
 
-// ============ فهرسة PDF للبحث ============
+function togglePanel() {
+    document.getElementById('searchPanel').classList.toggle('collapsed');
+}
+
+// ============ فهرسة PDF ============
 async function indexPDF() {
     const statusDiv = document.getElementById('indexStatus');
     
     try {
-        statusDiv.innerHTML = `
-            <div class="spinner-small"></div>
-            <span>جاري تحميل الملف للفهرسة...</span>
-        `;
+        updateStatus('جاري تحميل الملف للفهرسة...', false);
         
-        // تحميل من GitHub
-        const pdfDoc = await pdfjsLib.getDocument({
-            url: CONFIG.PDF_FILE_NAME,
-            cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
-            cMapPacked: true,
-        }).promise;
-        
-        const total = pdfDoc.numPages;
-        pdfText = [];
-        
-        for (let i = 1; i <= total; i++) {
-            statusDiv.innerHTML = `
-                <div class="spinner-small"></div>
-                <span>جاري فهرسة الصفحة ${i} من ${total}...</span>
-            `;
+        // محاولة التحميل من GitHub أولاً
+        let pdfDoc;
+        try {
+            pdfDoc = await pdfjsLib.getDocument({
+                url: CONFIG.PDF_FILE_NAME,
+                cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+                cMapPacked: true,
+            }).promise;
+        } catch (e) {
+            // محاولة من Google Drive
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+                `https://drive.google.com/uc?export=download&id=${CONFIG.GOOGLE_DRIVE_FILE_ID}`
+            )}`;
             
-            try {
-                const page = await pdfDoc.getPage(i);
-                const textContent = await page.getTextContent();
-                
-                let text = textContent.items.map(item => item.str).join(' ');
-                
-                pdfText.push({
-                    pageNum: i,
-                    text: text
-                });
-            } catch (e) {
-                pdfText.push({ pageNum: i, text: '' });
-            }
+            pdfDoc = await pdfjsLib.getDocument({
+                url: proxyUrl,
+                cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+                cMapPacked: true,
+            }).promise;
         }
         
-        isIndexReady = true;
-        statusDiv.innerHTML = `<span>✅ جاهز للبحث! (${total} صفحة)</span>`;
-        statusDiv.classList.add('ready');
-        
-        // إخفاء بعد 3 ثواني
-        setTimeout(() => {
-            statusDiv.classList.add('hidden');
-        }, 3000);
-        
-    } catch (error) {
-        console.error('خطأ في الفهرسة:', error);
-        statusDiv.innerHTML = `
-            <span>⚠️ تعذرت الفهرسة من GitHub. جاري المحاولة من Google Drive...</span>
-        `;
-        
-        // محاولة من Google Drive
-        tryIndexFromDrive();
-    }
-}
-
-async function tryIndexFromDrive() {
-    const statusDiv = document.getElementById('indexStatus');
-    
-    try {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-            `https://drive.google.com/uc?export=download&id=${CONFIG.GOOGLE_DRIVE_FILE_ID}`
-        )}`;
-        
-        const pdfDoc = await pdfjsLib.getDocument({
-            url: proxyUrl,
-            cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
-            cMapPacked: true,
-        }).promise;
-        
         const total = pdfDoc.numPages;
         pdfText = [];
         
         for (let i = 1; i <= total; i++) {
-            statusDiv.innerHTML = `
-                <div class="spinner-small"></div>
-                <span>جاري فهرسة الصفحة ${i} من ${total}...</span>
-            `;
+            updateStatus(`فهرسة الصفحة ${i} من ${total}...`, false);
             
             try {
                 const page = await pdfDoc.getPage(i);
                 const textContent = await page.getTextContent();
-                let text = textContent.items.map(item => item.str).join(' ');
+                const text = textContent.items.map(item => item.str).join(' ');
                 pdfText.push({ pageNum: i, text: text });
             } catch (e) {
                 pdfText.push({ pageNum: i, text: '' });
@@ -141,36 +97,53 @@ async function tryIndexFromDrive() {
         }
         
         isIndexReady = true;
-        statusDiv.innerHTML = `<span>✅ جاهز للبحث! (${total} صفحة)</span>`;
-        statusDiv.classList.add('ready');
+        updateStatus(`✅ جاهز للبحث (${total} صفحة)`, true);
         
+        // إخفاء بعد 3 ثواني
         setTimeout(() => {
-            statusDiv.classList.add('hidden');
+            document.getElementById('indexStatus').classList.add('hidden');
         }, 3000);
         
     } catch (error) {
+        console.error('خطأ:', error);
+        showManualUpload();
+    }
+}
+
+function updateStatus(text, isReady) {
+    const statusDiv = document.getElementById('indexStatus');
+    statusDiv.classList.remove('hidden');
+    
+    if (isReady) {
+        statusDiv.classList.add('ready');
+        statusDiv.innerHTML = `<span>${text}</span>`;
+    } else {
+        statusDiv.classList.remove('ready');
         statusDiv.innerHTML = `
-            <span>❌ فشلت الفهرسة. يمكنك تحميل الملف يدوياً:</span>
-            <label style="margin-right: 10px; padding: 10px 20px; background: white; 
-                          color: #1e3c72; border-radius: 20px; cursor: pointer;">
-                📁 اختر الملف
-                <input type="file" accept=".pdf" onchange="indexLocalPDF(event)" style="display:none">
-            </label>
+            <div class="spinner-small"></div>
+            <span>${text}</span>
         `;
     }
+}
+
+function showManualUpload() {
+    const statusDiv = document.getElementById('indexStatus');
+    statusDiv.innerHTML = `
+        <span>⚠️ فشل التحميل</span>
+        <label style="padding: 5px 15px; background: white; color: #333; 
+                      border-radius: 15px; cursor: pointer; font-size: 13px;">
+            📁 اختر الملف
+            <input type="file" accept=".pdf" onchange="indexLocalPDF(event)" style="display:none">
+        </label>
+    `;
 }
 
 async function indexLocalPDF(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    const statusDiv = document.getElementById('indexStatus');
-    
     try {
-        statusDiv.innerHTML = `
-            <div class="spinner-small"></div>
-            <span>جاري قراءة الملف...</span>
-        `;
+        updateStatus('جاري قراءة الملف...', false);
         
         const arrayBuffer = await file.arrayBuffer();
         
@@ -184,23 +157,19 @@ async function indexLocalPDF(event) {
         pdfText = [];
         
         for (let i = 1; i <= total; i++) {
-            statusDiv.innerHTML = `
-                <div class="spinner-small"></div>
-                <span>جاري فهرسة الصفحة ${i} من ${total}...</span>
-            `;
+            updateStatus(`فهرسة ${i} من ${total}...`, false);
             
             const page = await pdfDoc.getPage(i);
             const textContent = await page.getTextContent();
-            let text = textContent.items.map(item => item.str).join(' ');
+            const text = textContent.items.map(item => item.str).join(' ');
             pdfText.push({ pageNum: i, text: text });
         }
         
         isIndexReady = true;
-        statusDiv.innerHTML = `<span>✅ جاهز للبحث! (${total} صفحة)</span>`;
-        statusDiv.classList.add('ready');
+        updateStatus(`✅ جاهز (${total} صفحة)`, true);
         
         setTimeout(() => {
-            statusDiv.classList.add('hidden');
+            document.getElementById('indexStatus').classList.add('hidden');
         }, 3000);
         
     } catch (error) {
@@ -214,10 +183,12 @@ function search(query) {
     const statsDiv = document.getElementById('searchStats');
     
     if (!query.trim()) {
-        resultsDiv.classList.remove('active');
-        statsDiv.classList.remove('active');
+        clearSearch();
         return;
     }
+    
+    // فتح لوحة البحث إذا كانت مغلقة
+    document.getElementById('searchPanel').classList.remove('collapsed');
     
     if (!isIndexReady) {
         resultsDiv.innerHTML = `
@@ -225,7 +196,6 @@ function search(query) {
                 ⏳ انتظر حتى تكتمل الفهرسة...
             </div>
         `;
-        resultsDiv.classList.add('active');
         return;
     }
     
@@ -246,8 +216,8 @@ function search(query) {
         
         if (count > 0) {
             const firstIndex = textLower.indexOf(queryLower);
-            const start = Math.max(0, firstIndex - 80);
-            const end = Math.min(page.text.length, firstIndex + query.length + 80);
+            const start = Math.max(0, firstIndex - 60);
+            const end = Math.min(page.text.length, firstIndex + query.length + 60);
             let context = page.text.substring(start, end);
             
             if (start > 0) context = '...' + context;
@@ -269,49 +239,75 @@ function displayResults(results, query) {
     const statsDiv = document.getElementById('searchStats');
     
     if (results.length === 0) {
+        statsDiv.classList.remove('active');
         resultsDiv.innerHTML = `
             <div class="no-results">
-                ❌ لم يتم العثور على نتائج لـ "<strong>${query}</strong>"
+                ❌ لا توجد نتائج لـ "<strong>${query}</strong>"
                 <br><br>
-                <small>💡 جرب البحث بكلمات مختلفة أو أرقام الكود</small>
+                💡 جرب كلمات مختلفة
             </div>
         `;
-        resultsDiv.classList.add('active');
-        statsDiv.classList.remove('active');
         return;
     }
     
     const totalMatches = results.reduce((sum, r) => sum + r.count, 0);
     
-    statsDiv.innerHTML = `
-        ✅ تم العثور على <strong>${totalMatches}</strong> نتيجة 
-        في <strong>${results.length}</strong> صفحة
-    `;
+    statsDiv.innerHTML = `✅ ${totalMatches} نتيجة في ${results.length} صفحة`;
     statsDiv.classList.add('active');
     
     const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
     
     resultsDiv.innerHTML = results.map(r => `
-        <div class="result-item" onclick="goToPage(${r.pageNum})">
+        <div class="result-item">
             <div class="result-header">
-                <span class="page-badge">📄 صفحة ${r.pageNum}</span>
+                <span class="page-badge">صفحة ${r.pageNum}</span>
                 <span class="match-count">${r.count} تطابق</span>
             </div>
             <div class="result-context">
                 ${r.context.replace(regex, '<span class="highlight">$1</span>')}
             </div>
+            <button class="go-to-page-btn" onclick="copyPageNumber(${r.pageNum})">
+                📋 نسخ رقم الصفحة
+            </button>
         </div>
     `).join('');
-    
-    resultsDiv.classList.add('active');
 }
 
-function goToPage(pageNum) {
-    // الانتقال لتبويب العرض
-    showTab('viewer');
+function copyPageNumber(pageNum) {
+    navigator.clipboard.writeText(pageNum.toString()).then(() => {
+        showToast(`✅ تم نسخ رقم الصفحة: ${pageNum}`);
+    }).catch(() => {
+        showToast(`📄 الصفحة: ${pageNum}`);
+    });
+}
+
+function showToast(message) {
+    // إنشاء toast إذا لم يكن موجوداً
+    let toast = document.getElementById('toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            z-index: 9999;
+            transition: opacity 0.3s;
+        `;
+        document.body.appendChild(toast);
+    }
     
-    // عرض رسالة
-    alert(`📄 انتقل إلى الصفحة ${pageNum} في العارض`);
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+    }, 2000);
 }
 
 function escapeRegex(string) {
@@ -320,22 +316,13 @@ function escapeRegex(string) {
 
 function clearSearch() {
     document.getElementById('searchInput').value = '';
-    document.getElementById('searchResults').classList.remove('active');
     document.getElementById('searchStats').classList.remove('active');
+    document.getElementById('searchResults').innerHTML = `
+        <div class="empty-state">
+            <p>📝 ابدأ البحث للعثور على النتائج</p>
+        </div>
+    `;
 }
 
-// ============ ربط الأحداث ============
-document.getElementById('searchBtn').addEventListener('click', () => {
-    search(document.getElementById('searchInput').value);
-});
-
-document.getElementById('clearBtn').addEventListener('click', clearSearch);
-
-document.getElementById('searchInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        search(e.target.value);
-    }
-});
-
 // ============ البدء ============
-initViewer();
+init();
