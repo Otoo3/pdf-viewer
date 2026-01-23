@@ -6,160 +6,108 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: #1a1a2e;
     min-height: 100vh;
-}
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* الهيدر */
 .header {
     text-align: center;
-    padding: 20px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    margin-bottom: 15px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
 }
 
 .header h1 {
-    font-size: 2rem;
-    margin-bottom: 5px;
+    font-size: 1.5rem;
+    margin-bottom: 3px;
 }
 
 .header p {
     opacity: 0.8;
-    font-size: 1.1rem;
-}
-
-/* التبويبات */
-.tabs {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.tab {
-    padding: 15px 40px;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    background: rgba(255,255,255,0.2);
-    color: white;
-    transition: all 0.3s;
-}
-
-.tab:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-}
-
-.tab.active {
-    background: white;
-    color: #1e3c72;
-}
-
-/* الأقسام */
-.section {
-    display: none;
-}
-
-.section.active {
-    display: block;
-}
-
-/* عارض PDF */
-.pdf-frame-container {
-    background: #333;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-
-#pdfFrame {
-    width: 100%;
-    height: 85vh;
-    border: none;
+    font-size: 0.9rem;
 }
 
 /* شريط البحث */
-.search-container {
+.search-bar {
+    padding: 15px 20px;
+    background: #16213e;
     display: flex;
-    gap: 10px;
-    justify-content: center;
+    gap: 15px;
+    align-items: center;
     flex-wrap: wrap;
-    padding: 20px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.search-wrapper {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    max-width: 600px;
 }
 
 #searchInput {
     flex: 1;
-    min-width: 300px;
-    max-width: 500px;
-    padding: 15px 25px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 30px;
-    font-size: 18px;
+    border-radius: 25px;
+    font-size: 16px;
     outline: none;
+    background: white;
 }
 
 #searchInput:focus {
-    box-shadow: 0 0 0 4px rgba(255,255,255,0.3);
+    box-shadow: 0 0 0 3px rgba(0,210,255,0.3);
 }
 
-/* الأزرار */
-button {
-    padding: 15px 30px;
+#searchBtn {
+    padding: 12px 25px;
     border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 16px;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+    color: white;
+    font-size: 15px;
     font-weight: bold;
+    cursor: pointer;
     transition: all 0.3s;
 }
 
-.btn-primary {
-    background: linear-gradient(45deg, #00d2ff, #3a7bd5);
-    color: white;
+#searchBtn:hover {
+    transform: scale(1.05);
 }
 
-.btn-danger {
-    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+.btn-clear {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 50%;
+    background: #ff4757;
     color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+.btn-clear:hover {
+    background: #ff3344;
 }
 
 /* حالة الفهرسة */
 .index-status {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 15px;
-    padding: 20px;
+    gap: 10px;
+    padding: 8px 15px;
     background: rgba(255,193,7,0.2);
-    border-radius: 15px;
-    margin-bottom: 15px;
-    color: white;
-    font-size: 18px;
+    border-radius: 20px;
+    color: #ffc107;
+    font-size: 14px;
 }
 
 .index-status.ready {
     background: rgba(76,175,80,0.2);
+    color: #4caf50;
 }
 
 .index-status.hidden {
@@ -167,10 +115,10 @@ button:hover {
 }
 
 .spinner-small {
-    width: 25px;
-    height: 25px;
-    border: 3px solid rgba(255,255,255,0.3);
-    border-top-color: white;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: currentColor;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -179,17 +127,77 @@ button:hover {
     to { transform: rotate(360deg); }
 }
 
+/* المحتوى الرئيسي */
+.main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* لوحة البحث */
+.search-panel {
+    width: 350px;
+    min-width: 350px;
+    background: #0f0f23;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    border-left: 1px solid #333;
+}
+
+.search-panel.collapsed {
+    width: 50px;
+    min-width: 50px;
+}
+
+.search-panel.collapsed .panel-content,
+.search-panel.collapsed .search-stats,
+.search-panel.collapsed .search-results,
+.search-panel.collapsed .panel-header h3 {
+    display: none;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #1a1a3e;
+    border-bottom: 1px solid #333;
+}
+
+.panel-header h3 {
+    color: white;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.toggle-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.toggle-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.search-panel.collapsed .toggle-btn {
+    transform: rotate(180deg);
+}
+
 /* إحصائيات البحث */
 .search-stats {
-    display: none;
+    padding: 12px 15px;
+    background: rgba(76,175,80,0.15);
+    color: #4caf50;
+    font-size: 14px;
     text-align: center;
-    padding: 15px;
-    background: rgba(76, 175, 80, 0.3);
-    border-radius: 15px;
-    margin-bottom: 15px;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
+    display: none;
 }
 
 .search-stats.active {
@@ -198,85 +206,164 @@ button:hover {
 
 /* نتائج البحث */
 .search-results {
-    display: none;
-    max-height: 60vh;
+    flex: 1;
     overflow-y: auto;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    padding: 10px;
 }
 
-.search-results.active {
-    display: block;
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.empty-state p {
+    font-size: 14px;
 }
 
 .result-item {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
+    background: #1a1a3e;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    border: 1px solid transparent;
 }
 
 .result-item:hover {
-    background: #f0f7ff;
-}
-
-.result-item:last-child {
-    border-bottom: none;
+    background: #252550;
+    border-color: #3a7bd5;
+    transform: translateX(-5px);
 }
 
 .result-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
     margin-bottom: 10px;
 }
 
 .page-badge {
-    background: #1e3c72;
+    background: linear-gradient(45deg, #3a7bd5, #00d2ff);
     color: white;
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-size: 14px;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
     font-weight: bold;
 }
 
 .match-count {
-    color: #666;
-    font-size: 14px;
+    color: #888;
+    font-size: 12px;
 }
 
 .result-context {
-    font-size: 15px;
-    color: #444;
-    line-height: 1.8;
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.7;
+    background: rgba(0,0,0,0.2);
     padding: 10px;
-    background: #f9f9f9;
-    border-radius: 10px;
+    border-radius: 8px;
     direction: rtl;
     text-align: right;
+    max-height: 100px;
+    overflow: hidden;
 }
 
 .highlight {
-    background: linear-gradient(120deg, #ffeb3b 0%, #ffc107 100%);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: bold;
+    background: #ffc107;
     color: #000;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: bold;
 }
 
 .no-results {
-    padding: 40px;
     text-align: center;
-    color: #666;
-    font-size: 18px;
+    padding: 30px;
+    color: #888;
+}
+
+/* عارض PDF */
+.pdf-viewer {
+    flex: 1;
+    background: #333;
+    position: relative;
+}
+
+#pdfFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* زر الذهاب للصفحة */
+.go-to-page-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: #3a7bd5;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.go-to-page-btn:hover {
+    background: #00d2ff;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-    .header h1 { font-size: 1.5rem; }
+@media (max-width: 900px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .search-panel {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-height: 40vh;
+        border-left: none;
+        border-bottom: 1px solid #333;
+    }
+    
+    .search-panel.collapsed {
+        max-height: 50px;
+    }
+    
+    .pdf-viewer {
+        min-height: 50vh;
+    }
+    
+    .toggle-btn {
+        transform: rotate(-90deg);
+    }
+    
+    .search-panel.collapsed .toggle-btn {
+        transform: rotate(90deg);
+    }
+}
+
+@media (max-width: 600px) {
+    .header h1 { font-size: 1.2rem; }
+    .search-wrapper { flex-wrap: wrap; }
     #searchInput { min-width: 100%; }
-    .tabs { flex-direction: column; }
-    .tab { width: 100%; }
-    #pdfFrame { height: 70vh; }
+    .search-panel { max-height: 50vh; }
+}
+
+/* تخصيص سكرول */
+.search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: #0a0a15;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: #3a7bd5;
+    border-radius: 3px;
 }
