@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 عارض PDF مع البحث</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- PDF.js مع دعم الخطوط -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- خطوط عربية -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <!-- الهيدر -->
         <header class="header">
-            <h1>📚 عارض الكتاب الإلكتروني</h1>
+            <h1>📚 HS Code 2026</h1>
+            <p>عارض الكتاب الإلكتروني مع محرك بحث</p>
         </header>
 
         <!-- شريط البحث -->
@@ -32,20 +38,26 @@
             <button id="prevPage" class="btn">◀ السابق</button>
             <span id="pageInfo" class="page-info">صفحة 1 من 1</span>
             <button id="nextPage" class="btn">التالي ▶</button>
+            
+            <div class="divider"></div>
+            
             <input type="number" id="goToPage" min="1" placeholder="رقم">
             <button id="goBtn" class="btn">اذهب</button>
+            
+            <div class="divider"></div>
+            
+            <label>الجودة:</label>
             <select id="zoomSelect">
-                <option value="0.5">50%</option>
-                <option value="0.75">75%</option>
-                <option value="1" selected>100%</option>
-                <option value="1.25">125%</option>
-                <option value="1.5">150%</option>
-                <option value="2">200%</option>
+                <option value="1">عادية</option>
+                <option value="1.5" selected>عالية</option>
+                <option value="2">عالية جداً</option>
+                <option value="2.5">ممتازة</option>
+                <option value="3">قصوى</option>
             </select>
         </div>
 
         <!-- عارض PDF -->
-        <div class="pdf-container">
+        <div class="pdf-container" id="pdfContainer">
             <canvas id="pdfCanvas"></canvas>
         </div>
 
