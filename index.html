@@ -8,50 +8,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- الهيدر -->
-        <header class="header">
-            <h1>📚 HS Code 2026</h1>
-            <p>دليل الرموز الجمركية</p>
-        </header>
+    <!-- الهيدر -->
+    <header class="header">
+        <h1>📚 HS Code 2026</h1>
+        <p>دليل الرموز الجمركية</p>
+    </header>
 
-        <!-- التبويبات -->
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('viewer')">📄 عرض الملف</button>
-            <button class="tab" onclick="showTab('search')">🔍 البحث</button>
+    <!-- شريط البحث -->
+    <div class="search-bar">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="🔍 ابحث عن كود جمركي أو منتج...">
+            <button id="searchBtn">بحث</button>
+            <button id="clearBtn" class="btn-clear">✕</button>
         </div>
-
-        <!-- قسم العرض -->
-        <div id="viewerSection" class="section active">
-            <div class="pdf-frame-container">
-                <iframe 
-                    id="pdfFrame"
-                    src=""
-                    frameborder="0"
-                    allowfullscreen>
-                </iframe>
-            </div>
+        <div id="indexStatus" class="index-status">
+            <div class="spinner-small"></div>
+            <span>جاري تجهيز البحث...</span>
         </div>
+    </div>
 
-        <!-- قسم البحث -->
-        <div id="searchSection" class="section">
-            <!-- شريط البحث -->
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="🔍 ابحث عن كود جمركي أو منتج...">
-                <button id="searchBtn" class="btn-primary">بحث</button>
-                <button id="clearBtn" class="btn-danger">مسح</button>
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <!-- نتائج البحث (الجانب) -->
+        <aside id="searchPanel" class="search-panel">
+            <div class="panel-header">
+                <h3>🔍 نتائج البحث</h3>
+                <button id="togglePanel" class="toggle-btn">◀</button>
             </div>
-
-            <!-- حالة الفهرسة -->
-            <div id="indexStatus" class="index-status">
-                <div class="spinner-small"></div>
-                <span>جاري تجهيز البحث...</span>
-            </div>
-
-            <!-- نتائج البحث -->
             <div id="searchStats" class="search-stats"></div>
-            <div id="searchResults" class="search-results"></div>
-        </div>
+            <div id="searchResults" class="search-results">
+                <div class="empty-state">
+                    <p>📝 ابدأ البحث للعثور على النتائج</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- عارض PDF -->
+        <main class="pdf-viewer">
+            <iframe 
+                id="pdfFrame"
+                src=""
+                frameborder="0"
+                allowfullscreen>
+            </iframe>
+        </main>
     </div>
 
     <script src="script.js"></script>
