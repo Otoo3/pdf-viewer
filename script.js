@@ -43,21 +43,20 @@ function togglePanel() {
 
 // ============ فهرسة PDF ============
 async function indexPDF() {
-    const statusDiv = document.getElementById('indexStatus');
+    const driveUrl = `https://drive.google.com/uc?export=download&id=${CONFIG.GOOGLE_DRIVE_FILE_ID}`;
     
-    // قائمة المحاولات
     const attempts = [
         { name: 'GitHub', url: CONFIG.PDF_FILE_NAME },
-        { name: 'Google Drive 1', url: `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://drive.google.com/uc?export=download&id=${CONFIG.GOOGLE_DRIVE_FILE_ID}`)}` },
-        { name: 'Google Drive 2', url: `https://corsproxy.io/?${encodeURIComponent(`https://drive.google.com/uc?export=download&id=${CONFIG.GOOGLE_DRIVE_FILE_ID}`)}` },
+        { name: 'Proxy 1', url: `https://api.allorigins.win/raw?url=${encodeURIComponent(driveUrl)}` },
+        { name: 'Proxy 2', url: `https://corsproxy.io/?${encodeURIComponent(driveUrl)}` },
+        { name: 'Proxy 3', url: `https://proxy.cors.sh/${driveUrl}` },
     ];
     
     let pdfDoc = null;
     
-    // تجربة كل طريقة
     for (let i = 0; i < attempts.length; i++) {
         const attempt = attempts[i];
-        updateStatus(`جاري المحاولة ${i + 1}/${attempts.length}: ${attempt.name}...`, false);
+        updateStatus(`محاولة ${i + 1}/${attempts.length}: ${attempt.name}...`, false);
         
         try {
             pdfDoc = await pdfjsLib.getDocument({
@@ -66,28 +65,28 @@ async function indexPDF() {
                 cMapPacked: true,
             }).promise;
             
-            console.log(`✅ نجح التحميل من: ${attempt.name}`);
+            console.log(`✅ نجح: ${attempt.name}`);
             break;
-            
         } catch (e) {
             console.log(`❌ فشل ${attempt.name}:`, e.message);
-            continue;
         }
     }
     
-    // إذا فشلت كل المحاولات
     if (!pdfDoc) {
         showManualUpload();
         return;
     }
     
-    // بدء الفهرسة
+    await extractText(pdfDoc);
+}
+
+async function extractText(pdfDoc) {
     try {
         const total = pdfDoc.numPages;
         pdfText = [];
         
         for (let i = 1; i <= total; i++) {
-            updateStatus(`فهرسة الصفحة ${i} من ${total}...`, false);
+            updateStatus(`فهرسة ${i} من ${total}...`, false);
             
             try {
                 const page = await pdfDoc.getPage(i);
@@ -100,14 +99,20 @@ async function indexPDF() {
         }
         
         isIndexReady = true;
-        updateStatus(`✅ جاهز للبحث! (${total} صفحة)`, true);
+        updateStatus(`✅ جاهز! (${total} صفحة)`, true);
+        
+        document.getElementById('searchResults').innerHTML = `
+            <div class="empty-state">
+                <p>📝 ابدأ البحث الآن</p>
+            </div>
+        `;
         
         setTimeout(() => {
             document.getElementById('indexStatus').classList.add('hidden');
         }, 3000);
         
     } catch (error) {
-        console.error('خطأ في الفهرسة:', error);
+        console.error('خطأ:', error);
         showManualUpload();
     }
 }
@@ -129,26 +134,18 @@ function updateStatus(text, isReady) {
 }
 
 function showManualUpload() {
-    const statusDiv = document.getElementById('indexStatus');
-    statusDiv.classList.remove('hidden');
-    statusDiv.classList.remove('ready');
-    statusDiv.innerHTML = `
-        <span style="color: #ff6b6b;">⚠️ تعذر التحميل التلقائي</span>
+    document.getElementById('indexStatus').innerHTML = `
+        <span style="color: #ff6b6b;">⚠️ ارفع الملف يدوياً</span>
         <label style="padding: 8px 20px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); 
-                      color: white; border-radius: 20px; cursor: pointer; font-size: 14px; 
-                      font-weight: bold; margin-right: 10px;">
-            📁 ارفع ملف PDF
+                      color: white; border-radius: 20px; cursor: pointer; font-weight: bold;">
+            📁 اختر الملف
             <input type="file" accept=".pdf" onchange="indexLocalPDF(event)" style="display:none">
         </label>
     `;
     
-    // تحديث نتائج البحث
     document.getElementById('searchResults').innerHTML = `
         <div class="empty-state">
-            <p>⚠️ يرجى رفع ملف PDF أولاً</p>
-            <p style="font-size: 12px; margin-top: 10px; color: #888;">
-                اضغط على زر "ارفع ملف PDF" أعلاه
-            </p>
+            <p>⚠️ ارفع ملف PDF للبحث</p>
         </div>
     `;
 }
@@ -157,14 +154,10 @@ async function indexLocalPDF(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    const statusDiv = document.getElementById('indexStatus');
-    
     try {
-        updateStatus('جاري قراءة الملف...', false);
+        updateStatus('جاري القراءة...', false);
         
         const arrayBuffer = await file.arrayBuffer();
-        
-        updateStatus('جاري تحليل الملف...', false);
         
         const pdfDoc = await pdfjsLib.getDocument({
             data: arrayBuffer,
@@ -172,39 +165,10 @@ async function indexLocalPDF(event) {
             cMapPacked: true,
         }).promise;
         
-        const total = pdfDoc.numPages;
-        pdfText = [];
-        
-        for (let i = 1; i <= total; i++) {
-            updateStatus(`فهرسة الصفحة ${i} من ${total}...`, false);
-            
-            try {
-                const page = await pdfDoc.getPage(i);
-                const textContent = await page.getTextContent();
-                const text = textContent.items.map(item => item.str).join(' ');
-                pdfText.push({ pageNum: i, text: text });
-            } catch (e) {
-                pdfText.push({ pageNum: i, text: '' });
-            }
-        }
-        
-        isIndexReady = true;
-        updateStatus(`✅ جاهز للبحث! (${total} صفحة)`, true);
-        
-        // تحديث نتائج البحث
-        document.getElementById('searchResults').innerHTML = `
-            <div class="empty-state">
-                <p>📝 ابدأ البحث للعثور على النتائج</p>
-            </div>
-        `;
-        
-        setTimeout(() => {
-            statusDiv.classList.add('hidden');
-        }, 3000);
+        await extractText(pdfDoc);
         
     } catch (error) {
-        console.error('خطأ:', error);
-        statusDiv.innerHTML = `<span style="color: #ff6b6b;">❌ خطأ: ${error.message}</span>`;
+        alert('خطأ: ' + error.message);
     }
 }
 
@@ -221,13 +185,7 @@ function search(query) {
     document.getElementById('searchPanel').classList.remove('collapsed');
     
     if (!isIndexReady) {
-        resultsDiv.innerHTML = `
-            <div class="no-results">
-                ⚠️ يرجى رفع ملف PDF أولاً
-                <br><br>
-                <small>اضغط على زر "ارفع ملف PDF" في الأعلى</small>
-            </div>
-        `;
+        resultsDiv.innerHTML = `<div class="no-results">⚠️ ارفع الملف أولاً</div>`;
         return;
     }
     
@@ -255,11 +213,7 @@ function search(query) {
             if (start > 0) context = '...' + context;
             if (end < page.text.length) context = context + '...';
             
-            results.push({
-                pageNum: page.pageNum,
-                count: count,
-                context: context
-            });
+            results.push({ pageNum: page.pageNum, count, context });
         }
     });
     
@@ -274,17 +228,14 @@ function displayResults(results, query) {
         statsDiv.classList.remove('active');
         resultsDiv.innerHTML = `
             <div class="no-results">
-                ❌ لا توجد نتائج لـ "<strong>${query}</strong>"
-                <br><br>
-                💡 جرب كلمات مختلفة
+                ❌ لا نتائج لـ "${query}"<br><br>💡 جرب كلمات أخرى
             </div>
         `;
         return;
     }
     
-    const totalMatches = results.reduce((sum, r) => sum + r.count, 0);
-    
-    statsDiv.innerHTML = `✅ ${totalMatches} نتيجة في ${results.length} صفحة`;
+    const total = results.reduce((sum, r) => sum + r.count, 0);
+    statsDiv.innerHTML = `✅ ${total} نتيجة في ${results.length} صفحة`;
     statsDiv.classList.add('active');
     
     const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
@@ -306,50 +257,37 @@ function displayResults(results, query) {
 }
 
 function copyPageNumber(pageNum) {
-    navigator.clipboard.writeText(pageNum.toString()).then(() => {
-        showToast(`✅ تم نسخ: ${pageNum}`);
-    }).catch(() => {
-        showToast(`📄 الصفحة: ${pageNum}`);
-    });
+    navigator.clipboard.writeText(pageNum.toString())
+        .then(() => showToast(`✅ تم نسخ: ${pageNum}`))
+        .catch(() => showToast(`📄 الصفحة: ${pageNum}`));
 }
 
-function showToast(message) {
+function showToast(msg) {
     let toast = document.getElementById('toast');
     if (!toast) {
         toast = document.createElement('div');
         toast.id = 'toast';
         toast.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            z-index: 9999;
-            transition: opacity 0.3s;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 25px; border-radius: 25px;
+            z-index: 9999; transition: opacity 0.3s;
         `;
         document.body.appendChild(toast);
     }
-    
-    toast.textContent = message;
+    toast.textContent = msg;
     toast.style.opacity = '1';
-    
     setTimeout(() => { toast.style.opacity = '0'; }, 2000);
 }
 
-function escapeRegex(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function escapeRegex(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function clearSearch() {
     document.getElementById('searchInput').value = '';
     document.getElementById('searchStats').classList.remove('active');
     document.getElementById('searchResults').innerHTML = `
-        <div class="empty-state">
-            <p>📝 ابدأ البحث للعثور على النتائج</p>
-        </div>
+        <div class="empty-state"><p>📝 ابدأ البحث</p></div>
     `;
 }
 
