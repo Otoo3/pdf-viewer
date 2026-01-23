@@ -1,9 +1,8 @@
-// ============ إعداد PDF.js ============
+// ============ إعداد PDF.js مع دعم الخطوط العربية ============
 pdfjsLib.GlobalWorkerOptions.workerSrc = 
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 // ============ الإعدادات ============
-// ⚠️ غيّر اسم الملف لاسم ملفك بالضبط
 const PDF_FILE_NAME = 'HS Code 2026.pdf';
 
 // ============ المتغيرات ============
@@ -11,7 +10,7 @@ let pdfDoc = null;
 let pageNum = 1;
 let pageRendering = false;
 let pageNumPending = null;
-let scale = 1;
+let scale = 1.5; // جودة عالية افتراضياً
 let pdfText = [];
 
 const canvas = document.getElementById('pdfCanvas');
@@ -28,12 +27,25 @@ function updateLoading(text, percent) {
     if (progressFill) progressFill.style.width = percent + '%';
 }
 
-// ============ تحميل PDF ============
+// ============ تحميل PDF مع دعم الخطوط ============
 async function loadPDF() {
     try {
         updateLoading('جاري تحميل الملف...', 10);
         
-        const loadingTask = pdfjsLib.getDocument(PDF_FILE_NAME);
+        // إعدادات PDF.js مع دعم الخطوط
+        const loadingTask = pdfjsLib.getDocument({
+            url: PDF_FILE_NAME,
+            // دعم الخطوط العربية والخاصة
+            cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+            cMapPacked: true,
+            // دعم الخطوط القياسية
+            standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/',
+            // تفعيل دعم الخطوط المضمنة
+            fontExtraProperties: true,
+            // تحسين العرض
+            useSystemFonts: true,
+            disableFontFace: false,
+        });
         
         loadingTask.onProgress = function(progress) {
             if (progress.total > 0) {
@@ -57,14 +69,15 @@ async function loadPDF() {
         
     } catch (error) {
         console.error('خطأ:', error);
-        showError();
+        showError(error.message);
     }
 }
 
-function showError() {
+function showError(message) {
     document.getElementById('loadingOverlay').innerHTML = `
         <div class="loading-content">
             <h2 style="margin-bottom: 20px;">⚠️ تعذر تحميل الملف</h2>
+            <p style="margin-bottom: 15px; color: #ffcccc;">${message || 'خطأ غير معروف'}</p>
             <p style="margin-bottom: 15px;">تأكد من رفع ملف PDF باسم:</p>
             <code style="background: rgba(255,255,255,0.2); padding: 10px 20px; 
                          border-radius: 10px; display: block; margin-bottom: 20px;">
@@ -107,7 +120,15 @@ async function loadLocalPDF(event) {
         
         updateLoading('جاري معالجة الملف...', 40);
         
-        pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        pdfDoc = await pdfjsLib.getDocument({
+            data: arrayBuffer,
+            cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+            cMapPacked: true,
+            standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/',
+            fontExtraProperties: true,
+            useSystemFonts: true,
+            disableFontFace: false,
+        }).promise;
         
         document.getElementById('pageInfo').textContent = 
             `صفحة ${pageNum} من ${pdfDoc.numPages}`;
@@ -134,14 +155,29 @@ async function extractAllText() {
         
         try {
             const page = await pdfDoc.getPage(i);
-            const textContent = await page.getTextContent();
-            const text = textContent.items.map(item => item.str).join(' ');
+            const textContent = await page.getTextContent({
+                normalizeWhitespace: true,
+                disableCombineTextItems: false,
+            });
+            
+            // تحسين استخراج النص العربي
+            let text = '';
+            let lastY = null;
+            
+            textContent.items.forEach(item => {
+                if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+                    text += '\n';
+                }
+                text += item.str + ' ';
+                lastY = item.transform[5];
+            });
             
             pdfText.push({
                 pageNum: i,
-                text: text
+                text: text.trim()
             });
         } catch (e) {
+            console.warn(`خطأ في الصفحة ${i}:`, e);
             pdfText.push({ pageNum: i, text: '' });
         }
     }
@@ -149,21 +185,43 @@ async function extractAllText() {
     updateLoading('✅ اكتمل التحميل والفهرسة!', 100);
 }
 
-// ============ عرض الصفحة ============
+// ============ عرض الصفحة بجودة عالية ============
 async function renderPage(num) {
     pageRendering = true;
     
     try {
         const page = await pdfDoc.getPage(num);
-        const viewport = page.getViewport({ scale: scale });
         
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+        // حساب أبعاد العرض
+        const viewport = page.getViewport({ scale: 1 });
         
-        await page.render({
+        // الحصول على كثافة البكسل للشاشة
+        const pixelRatio = window.devicePixelRatio || 1;
+        const totalScale = scale * pixelRatio;
+        
+        // إعداد Canvas بدقة عالية
+        const scaledViewport = page.getViewport({ scale: totalScale });
+        
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
+        
+        // تصغير العرض الفعلي مع الحفاظ على الدقة
+        canvas.style.width = (viewport.width * scale) + 'px';
+        canvas.style.height = (viewport.height * scale) + 'px';
+        
+        // تحسين جودة الرسم
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // إعدادات العرض المحسنة
+        const renderContext = {
             canvasContext: ctx,
-            viewport: viewport
-        }).promise;
+            viewport: scaledViewport,
+            enableWebGL: true,
+            renderInteractiveForms: true,
+        };
+        
+        await page.render(renderContext).promise;
         
         document.getElementById('pageInfo').textContent = 
             `صفحة ${num} من ${pdfDoc.numPages}`;
@@ -222,20 +280,34 @@ function search(query) {
     const results = [];
     const queryLower = query.toLowerCase();
     
+    // البحث أيضاً بالأرقام العربية والإنجليزية
+    const queryArabicNums = convertToArabicNumerals(query);
+    const queryEnglishNums = convertToEnglishNumerals(query);
+    
     pdfText.forEach(page => {
         const textLower = page.text.toLowerCase();
         let count = 0;
         let index = 0;
         
+        // البحث بالنص الأصلي
         while ((index = textLower.indexOf(queryLower, index)) !== -1) {
             count++;
             index++;
         }
         
+        // البحث بالأرقام المحولة
+        if (queryArabicNums !== query) {
+            index = 0;
+            while ((index = textLower.indexOf(queryArabicNums.toLowerCase(), index)) !== -1) {
+                count++;
+                index++;
+            }
+        }
+        
         if (count > 0) {
             const firstIndex = textLower.indexOf(queryLower);
-            const start = Math.max(0, firstIndex - 50);
-            const end = Math.min(page.text.length, firstIndex + query.length + 50);
+            const start = Math.max(0, firstIndex - 60);
+            const end = Math.min(page.text.length, firstIndex + query.length + 60);
             let context = page.text.substring(start, end);
             
             if (start > 0) context = '...' + context;
@@ -250,6 +322,16 @@ function search(query) {
     });
     
     displayResults(results, query);
+}
+
+// تحويل الأرقام
+function convertToArabicNumerals(str) {
+    const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return str.replace(/[0-9]/g, d => arabicNums[parseInt(d)]);
+}
+
+function convertToEnglishNumerals(str) {
+    return str.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 }
 
 function displayResults(results, query) {
