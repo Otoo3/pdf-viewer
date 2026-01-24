@@ -37,6 +37,7 @@
             --shadow: rgba(0, 0, 0, 0.3);
             --pdf-bg: #1a1a1a;
             --panel-width: 400px;
+            --scrollbar-width: 8px;
         }
         
         [data-theme="light"] {
@@ -62,6 +63,33 @@
             color: var(--text);
             overflow: hidden;
             transition: background 0.3s, color 0.3s;
+        }
+        
+        /* ========== Custom Scrollbar ========== */
+        ::-webkit-scrollbar {
+            width: var(--scrollbar-width);
+            height: var(--scrollbar-width);
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--surface2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+            border: 2px solid var(--surface2);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+        
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--surface2);
         }
         
         /* ========== App Layout ========== */
@@ -179,7 +207,7 @@
         }
         
         .search-container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             gap: 10px;
@@ -189,7 +217,7 @@
         
         .search-input-wrapper {
             flex: 1;
-            min-width: 250px;
+            min-width: 200px;
             position: relative;
         }
         
@@ -225,7 +253,6 @@
             pointer-events: none;
         }
         
-        /* Fixed Text Indicator */
         .text-fixed-indicator {
             position: absolute;
             right: 12px;
@@ -258,6 +285,57 @@
         #searchBtn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px var(--glow);
+        }
+        
+        /* ========== Mini Navigation (في شريط البحث) ========== */
+        .mini-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--surface2);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        .mini-nav.hidden { display: none; }
+        
+        .mini-nav-count {
+            font-size: 0.85rem;
+            color: var(--text);
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .mini-nav-count .highlight {
+            color: var(--primary-light);
+        }
+        
+        .mini-nav-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .mini-nav-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .mini-nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
         
         .search-status {
@@ -386,11 +464,6 @@
             color: white;
         }
         
-        .action-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-        
         /* Nav Controls */
         .nav-controls {
             display: flex;
@@ -437,9 +510,10 @@
         .pinned-section {
             background: var(--pinned-bg);
             border-bottom: 2px solid var(--pinned-border);
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
             display: none;
+            flex-shrink: 0;
         }
         
         .pinned-section.has-items { display: block; }
@@ -455,6 +529,7 @@
             color: var(--pinned-border);
             position: sticky;
             top: 0;
+            z-index: 1;
         }
         
         .clear-pinned {
@@ -471,12 +546,35 @@
         
         #pinnedList { padding: 8px; }
         
-        /* Results List */
+        /* Results List - شريط تمرير واضح */
         #resultsList {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 10px;
             scroll-behavior: smooth;
+            min-height: 0; /* مهم للـ flexbox */
+        }
+        
+        /* تحسين شريط التمرير للنتائج */
+        #resultsList::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        #resultsList::-webkit-scrollbar-track {
+            background: var(--bg);
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        
+        #resultsList::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), #8b5cf6);
+            border-radius: 5px;
+            border: 2px solid var(--bg);
+        }
+        
+        #resultsList::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--primary-light), #a78bfa);
         }
         
         .placeholder {
@@ -546,8 +644,8 @@
         }
         
         .result-action-btn {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -556,11 +654,12 @@
             border-radius: 5px;
             color: var(--text2);
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             transition: all 0.2s;
         }
         
         .result-action-btn:hover { background: var(--primary); color: white; }
+        .result-action-btn.copy-btn:hover { background: var(--info); }
         .result-action-btn.pin-btn:hover { background: var(--success); }
         .result-action-btn.delete-btn:hover { background: var(--error); }
         .result-action-btn.pinned { background: var(--success); color: white; }
@@ -579,6 +678,7 @@
             border-radius: 6px;
             max-height: 60px;
             overflow: hidden;
+            user-select: text;
         }
         
         .result-text .hl {
@@ -589,19 +689,18 @@
             font-weight: 600;
         }
         
-        .result-code {
-            font-family: 'Courier New', monospace;
-            direction: ltr;
-            display: inline-block;
+        .result-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
         }
         
         .go-btn {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            width: 100%;
-            margin-top: 8px;
             padding: 8px;
             background: var(--primary);
             border: none;
@@ -615,6 +714,27 @@
         }
         
         .go-btn:hover { filter: brightness(1.15); }
+        
+        .copy-result-btn {
+            padding: 8px 12px;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .copy-result-btn:hover {
+            background: var(--info);
+            border-color: var(--info);
+            color: white;
+        }
         
         /* ========== PDF Viewer ========== */
         .pdf-section {
@@ -716,12 +836,6 @@
         #toast.warning { border-color: var(--warning); }
         #toast.info { border-color: var(--info); }
         
-        /* ========== Scrollbar ========== */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-        
         /* ========== Responsive ========== */
         @media (max-width: 1024px) {
             :root { --panel-width: 320px; }
@@ -742,6 +856,8 @@
             }
             
             .pdf-section { order: 1; }
+            
+            .search-container { justify-content: center; }
         }
         
         @media (max-width: 600px) {
@@ -754,6 +870,7 @@
             #searchBtn { width: 100%; }
             .search-tips { display: none; }
             .toggle-panel-btn span:last-child { display: none; }
+            .mini-nav { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -803,6 +920,18 @@
                     <span id="textFixedIndicator" class="text-fixed-indicator">✓ تم الإصلاح</span>
                 </div>
                 <button id="searchBtn">🔎 بحث</button>
+                
+                <!-- Mini Navigation - يظهر دائماً عند وجود نتائج -->
+                <div id="miniNav" class="mini-nav hidden">
+                    <button class="mini-nav-btn" id="miniPrevBtn" disabled onclick="navResult(-1)" title="السابق">◀</button>
+                    <span class="mini-nav-count">
+                        <span id="miniCurrentPos" class="highlight">0</span>
+                        /
+                        <span id="miniTotalResults">0</span>
+                    </span>
+                    <button class="mini-nav-btn" id="miniNextBtn" disabled onclick="navResult(1)" title="التالي">▶</button>
+                </div>
+                
                 <div id="searchStatus" class="search-status loading">
                     <div class="spinner"></div>
                     <span>جاري التجهيز...</span>
@@ -811,7 +940,7 @@
             <div class="search-tips">
                 <span class="search-tip">💡 يمكنك لصق الكود بدون مسافات</span>
                 <span class="search-tip">🔄 يتم إصلاح النص المعكوس تلقائياً</span>
-                <span class="search-tip">📌 اضغط على 📌 لتثبيت النتيجة</span>
+                <span class="search-tip">📋 اضغط على زر النسخ لنسخ النتيجة</span>
             </div>
         </div>
 
@@ -827,7 +956,7 @@
                     </h3>
                     <div class="results-actions">
                         <button class="action-btn" onclick="clearAllResults()" title="مسح الكل">🗑️</button>
-                        <button class="action-btn" onclick="exportResults()" title="تصدير النتائج">📋</button>
+                        <button class="action-btn" onclick="exportResults()" title="تصدير الكل">📋</button>
                     </div>
                 </div>
                 
@@ -846,6 +975,7 @@
                     <div id="pinnedList"></div>
                 </div>
                 
+                <!-- Results List with visible scrollbar -->
                 <div id="resultsList">
                     <div class="placeholder">
                         <div class="placeholder-icon">🔍</div>
@@ -897,30 +1027,20 @@
         let panelVisible = true;
 
         // ========== Text Processing Utilities ==========
-        
-        /**
-         * إصلاح النص المعكوس والأرقام
-         * يعالج مشاكل النسخ من PDF العربي
-         */
         function fixReversedText(text) {
-            if (!text) return text;
+            if (!text) return { text: text, wasFixed: false };
             
             let fixed = text;
             let wasFixed = false;
             
-            // 1. إزالة المسافات الزائدة
             fixed = fixed.replace(/\s+/g, ' ').trim();
             
-            // 2. اكتشاف وإصلاح الأرقام المعكوسة (مثل الأكواد الجمركية)
-            // نمط الكود الجمركي: أرقام مع مسافات
             const codePattern = /(\d{2}\s*){3,6}/g;
             const matches = fixed.match(codePattern);
             
             if (matches) {
                 matches.forEach(match => {
-                    // إزالة المسافات من الكود
                     const cleanCode = match.replace(/\s/g, '');
-                    // التحقق إذا كان معكوساً
                     if (isLikelyReversed(cleanCode)) {
                         const reversedCode = reverseString(cleanCode);
                         fixed = fixed.replace(match, reversedCode);
@@ -931,86 +1051,48 @@
                 });
             }
             
-            // 3. اكتشاف النص العربي المعكوس
             if (containsArabic(fixed) && isLikelyReversedArabic(fixed)) {
                 fixed = reverseArabicText(fixed);
                 wasFixed = true;
             }
             
-            // 4. إصلاح الأرقام المختلطة (عربية/إنجليزية)
             fixed = normalizeNumbers(fixed);
             
             return { text: fixed, wasFixed: wasFixed };
         }
         
-        /**
-         * التحقق إذا كان الكود معكوساً
-         */
         function isLikelyReversed(code) {
-            // الأكواد الجمركية عادة تبدأ بـ 01-99 (الأقسام)
-            // إذا بدأ بـ 00 وانتهى برقم أكبر، قد يكون معكوساً
             if (code.length >= 6) {
                 const firstTwo = parseInt(code.substring(0, 2));
                 const lastTwo = parseInt(code.substring(code.length - 2));
-                
-                // إذا كان آخر رقمين أكبر من أول رقمين بشكل كبير
-                // وأول رقمين صغيرة جداً، قد يكون معكوساً
-                if (firstTwo < 10 && lastTwo > 50) {
-                    return true;
-                }
+                if (firstTwo < 10 && lastTwo > 50) return true;
             }
             return false;
         }
         
-        /**
-         * عكس النص
-         */
         function reverseString(str) {
             return str.split('').reverse().join('');
         }
         
-        /**
-         * التحقق إذا كان يحتوي على عربي
-         */
         function containsArabic(text) {
             return /[\u0600-\u06FF]/.test(text);
         }
         
-        /**
-         * التحقق إذا كان النص العربي معكوساً
-         * بناءً على أنماط شائعة
-         */
         function isLikelyReversedArabic(text) {
-            // كلمات شائعة في النهاية بدل البداية تدل على العكس
             const endWords = ['ال', 'من', 'في', 'على'];
-            const startWords = ['ة', 'ات', 'ين', 'ون'];
-            
             for (let word of endWords) {
-                if (text.endsWith(word) && !text.startsWith(word)) {
-                    return true;
-                }
+                if (text.endsWith(word) && !text.startsWith(word)) return true;
             }
-            
             return false;
         }
         
-        /**
-         * عكس النص العربي مع الحفاظ على الأرقام
-         */
         function reverseArabicText(text) {
-            // فصل الكلمات
-            const words = text.split(' ');
-            // عكس ترتيب الكلمات فقط (وليس الحروف داخل الكلمة)
-            return words.reverse().join(' ');
+            return text.split(' ').reverse().join(' ');
         }
         
-        /**
-         * توحيد الأرقام (تحويل العربية للإنجليزية)
-         */
         function normalizeNumbers(text) {
             const arabicNums = '٠١٢٣٤٥٦٧٨٩';
             const englishNums = '0123456789';
-            
             let result = text;
             for (let i = 0; i < 10; i++) {
                 result = result.replace(new RegExp(arabicNums[i], 'g'), englishNums[i]);
@@ -1018,49 +1100,20 @@
             return result;
         }
         
-        /**
-         * تنظيف نص البحث
-         * إزالة المسافات من الأكواد، توحيد الأرقام، إصلاح العكس
-         */
-        function cleanSearchQuery(query) {
-            let cleaned = query.trim();
-            
-            // إصلاح النص المعكوس
-            const fixResult = fixReversedText(cleaned);
-            cleaned = fixResult.text;
-            
-            // إزالة كل المسافات للبحث (للأكواد)
-            const noSpaces = cleaned.replace(/\s/g, '');
-            
-            // توحيد الأرقام
-            const normalized = normalizeNumbers(noSpaces);
-            
-            return {
-                original: query,
-                cleaned: cleaned,
-                noSpaces: noSpaces,
-                normalized: normalized,
-                wasFixed: fixResult.wasFixed
-            };
-        }
-        
-        /**
-         * البحث الذكي - يبحث بطرق متعددة
-         */
         function smartSearch(text, query) {
             const textLower = text.toLowerCase();
             const textNoSpaces = text.replace(/\s/g, '').toLowerCase();
             const textNormalized = normalizeNumbers(textNoSpaces);
             
-            const queryData = cleanSearchQuery(query);
+            const queryClean = query.trim().toLowerCase();
+            const queryNoSpaces = query.replace(/\s/g, '').toLowerCase();
+            const queryNormalized = normalizeNumbers(queryNoSpaces);
             
-            // البحث بعدة طرق
             const searchVariants = [
-                queryData.cleaned.toLowerCase(),
-                queryData.noSpaces.toLowerCase(),
-                queryData.normalized.toLowerCase(),
-                // البحث بالأرقام العربية أيضاً
-                toArabicNums(queryData.noSpaces).toLowerCase()
+                queryClean,
+                queryNoSpaces,
+                queryNormalized,
+                toArabicNums(queryNoSpaces).toLowerCase()
             ];
             
             let totalMatches = 0;
@@ -1069,7 +1122,6 @@
             for (let variant of searchVariants) {
                 if (!variant) continue;
                 
-                // البحث في النص العادي
                 let idx = textLower.indexOf(variant);
                 if (idx !== -1 && firstIndex === -1) firstIndex = idx;
                 while (idx !== -1) {
@@ -1077,34 +1129,23 @@
                     idx = textLower.indexOf(variant, idx + 1);
                 }
                 
-                // البحث في النص بدون مسافات
                 idx = textNoSpaces.indexOf(variant);
                 while (idx !== -1) {
                     totalMatches++;
                     idx = textNoSpaces.indexOf(variant, idx + 1);
                 }
-                
-                // البحث في النص الموحد
-                idx = textNormalized.indexOf(variant);
-                while (idx !== -1) {
-                    totalMatches++;
-                    idx = textNormalized.indexOf(variant, idx + 1);
-                }
             }
             
             return {
-                matches: Math.ceil(totalMatches / 3), // تجنب العد المكرر
-                firstIndex: firstIndex,
-                wasFixed: queryData.wasFixed
+                matches: Math.ceil(totalMatches / 2),
+                firstIndex: firstIndex
             };
         }
 
         // ========== Theme Management ==========
         function initTheme() {
             const saved = localStorage.getItem('hs-code-theme');
-            if (saved) {
-                document.body.setAttribute('data-theme', saved);
-            }
+            if (saved) document.body.setAttribute('data-theme', saved);
         }
         
         function toggleTheme() {
@@ -1129,9 +1170,7 @@
         document.addEventListener('adobe_dc_view_sdk.ready', initApp);
         
         setTimeout(() => {
-            if (!window.AdobeDC) {
-                indexPDFForSearch();
-            }
+            if (!window.AdobeDC) indexPDFForSearch();
         }, 5000);
 
         async function initApp() {
@@ -1146,28 +1185,24 @@
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
             
-            // معالجة اللصق - إصلاح النص تلقائياً
             searchInput.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 const fixResult = fixReversedText(pastedText);
                 
-                // إدراج النص المصلح
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
                 const text = this.value;
                 this.value = text.substring(0, start) + fixResult.text + text.substring(end);
                 this.selectionStart = this.selectionEnd = start + fixResult.text.length;
                 
-                // إظهار مؤشر الإصلاح
                 if (fixResult.wasFixed) {
                     const indicator = document.getElementById('textFixedIndicator');
                     indicator.classList.add('show');
                     setTimeout(() => indicator.classList.remove('show'), 2000);
-                    showToast('✨ تم إصلاح النص المعكوس تلقائياً', 'success');
+                    showToast('✨ تم إصلاح النص تلقائياً', 'success');
                 }
                 
-                // تشغيل البحث
                 if (fixResult.text.length >= CONFIG.MIN_SEARCH_LENGTH) {
                     setTimeout(doSearch, 100);
                 }
@@ -1202,7 +1237,6 @@
             document.getElementById('prevBtn').addEventListener('click', () => navResult(-1));
             document.getElementById('nextBtn').addEventListener('click', () => navResult(1));
             
-            // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT') return;
                 
@@ -1215,14 +1249,8 @@
                 if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
                 if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
                 if (e.key === 'Escape') searchInput.blur();
-                
-                // P للتثبيت
-                if (e.key === 'p' && resultIdx >= 0) {
-                    togglePin(resultIdx);
-                }
             });
             
-            // Load pinned from localStorage
             loadPinnedResults();
         }
 
@@ -1312,15 +1340,28 @@
             try {
                 const page = await pdf.getPage(pageNum);
                 const content = await page.getTextContent();
-                const text = content.items.map(item => item.str).join(' ');
+                
+                // حفظ معلومات موقع النص لاستخدامها لاحقاً
+                const items = content.items;
+                let text = '';
+                let textPositions = [];
+                
+                items.forEach((item, idx) => {
+                    text += item.str + ' ';
+                    textPositions.push({
+                        str: item.str,
+                        transform: item.transform,
+                        y: item.transform[5] // الموقع العمودي
+                    });
+                });
+                
                 pdfText[pageNum - 1] = { 
                     page: pageNum, 
                     text: text,
-                    textNoSpaces: text.replace(/\s/g, ''),
-                    textNormalized: normalizeNumbers(text.replace(/\s/g, ''))
+                    textPositions: textPositions
                 };
             } catch (e) {
-                pdfText[pageNum - 1] = { page: pageNum, text: '', textNoSpaces: '', textNormalized: '' };
+                pdfText[pageNum - 1] = { page: pageNum, text: '', textPositions: [] };
             }
         }
 
@@ -1354,7 +1395,6 @@
                 const searchResult = smartSearch(p.text, query);
                 
                 if (searchResult.matches > 0) {
-                    // استخراج السياق
                     const i = searchResult.firstIndex !== -1 ? searchResult.firstIndex : 0;
                     const start = Math.max(0, i - 35);
                     const end = Math.min(p.text.length, i + query.length + 55);
@@ -1362,11 +1402,27 @@
                     if (start > 0) ctx = '...' + ctx;
                     if (end < p.text.length) ctx += '...';
                     
+                    // حساب الموقع التقريبي في الصفحة
+                    let matchPosition = 0.5; // افتراضي في المنتصف
+                    if (p.textPositions && p.textPositions.length > 0) {
+                        const searchLower = query.toLowerCase();
+                        for (let pos of p.textPositions) {
+                            if (pos.str.toLowerCase().includes(searchLower)) {
+                                // تحويل Y position لنسبة (0 = أعلى، 1 = أسفل)
+                                const pageHeight = 842; // A4 height تقريباً
+                                matchPosition = 1 - (pos.y / pageHeight);
+                                matchPosition = Math.max(0, Math.min(1, matchPosition));
+                                break;
+                            }
+                        }
+                    }
+                    
                     results.push({ 
                         page: p.page, 
                         count: searchResult.matches, 
                         ctx,
                         matchIndex: searchResult.firstIndex,
+                        matchPosition: matchPosition,
                         searchTerm: query,
                         id: `result-${p.page}-${Date.now()}`
                     });
@@ -1375,6 +1431,7 @@
             
             results.sort((a, b) => b.count - a.count);
             showResults(query);
+            updateMiniNav();
             
             if (results.length > 0) {
                 resultIdx = 0;
@@ -1399,12 +1456,33 @@
                     <p>اكتب في مربع البحث<br>للعثور على الأكواد</p>
                 </div>
             `;
+            updateMiniNav();
         }
         
         function clearAllResults() {
             clearSearchResults();
             document.getElementById('searchInput').value = '';
             showToast('🗑️ تم مسح جميع النتائج', 'info');
+        }
+        
+        // ========== Mini Navigation ==========
+        function updateMiniNav() {
+            const miniNav = document.getElementById('miniNav');
+            const miniCurrentPos = document.getElementById('miniCurrentPos');
+            const miniTotalResults = document.getElementById('miniTotalResults');
+            const miniPrevBtn = document.getElementById('miniPrevBtn');
+            const miniNextBtn = document.getElementById('miniNextBtn');
+            
+            if (results.length === 0) {
+                miniNav.classList.add('hidden');
+                return;
+            }
+            
+            miniNav.classList.remove('hidden');
+            miniCurrentPos.textContent = resultIdx + 1;
+            miniTotalResults.textContent = results.length;
+            miniPrevBtn.disabled = resultIdx <= 0;
+            miniNextBtn.disabled = resultIdx >= results.length - 1;
         }
 
         function showResults(query) {
@@ -1446,6 +1524,10 @@
                     <div class="result-top">
                         <span class="page-badge">📄 صفحة ${r.page}</span>
                         <div class="result-actions">
+                            <button class="result-action-btn copy-btn" 
+                                    onclick="event.stopPropagation(); copyResult(${i})" title="نسخ">
+                                📋
+                            </button>
                             <button class="result-action-btn pin-btn ${isPinned ? 'pinned' : ''}" 
                                     onclick="event.stopPropagation(); togglePin(${i})" title="تثبيت">
                                 📌
@@ -1456,12 +1538,38 @@
                             </button>
                         </div>
                     </div>
-                    <div class="result-text">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
-                    <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
-                        ← انتقال وتظليل
-                    </button>
+                    <div class="result-text" id="resultText${i}">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
+                    <div class="result-buttons">
+                        <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
+                            ← انتقال للصفحة
+                        </button>
+                        <button class="copy-result-btn" onclick="event.stopPropagation(); copyResult(${i})">
+                            📋 نسخ
+                        </button>
+                    </div>
                 </div>
             `}).join('');
+        }
+
+        // ========== Copy Single Result ==========
+        function copyResult(index) {
+            if (index < 0 || index >= results.length) return;
+            
+            const result = results[index];
+            const textToCopy = `صفحة ${result.page}: ${result.ctx.replace(/\.\.\./g, '')}`;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast('📋 تم نسخ النتيجة', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('📋 تم نسخ النتيجة', 'success');
+            });
         }
 
         // ========== Result Navigation ==========
@@ -1469,6 +1577,7 @@
             if (i < 0 || i >= results.length) return;
             resultIdx = i;
             
+            // تحديث واجهة النتائج
             document.querySelectorAll('.result-card').forEach((c, j) => {
                 c.classList.toggle('active', j === i);
             });
@@ -1477,33 +1586,75 @@
             document.getElementById('prevBtn').disabled = i === 0;
             document.getElementById('nextBtn').disabled = i === results.length - 1;
             
-            const pageNum = results[i].page;
+            // تحديث Mini Nav
+            updateMiniNav();
+            
+            const result = results[i];
+            const pageNum = result.page;
             
             if (window.pdfAPIs) {
                 try {
-                    // الانتقال للصفحة
+                    // 1. الانتقال للصفحة
                     await window.pdfAPIs.gotoLocation(pageNum);
                     
-                    // البحث والتظليل في Adobe
+                    // 2. تفعيل البحث للتظليل والتمرير لموقع النص
                     setTimeout(async () => {
                         try {
-                            // محاولة استخدام البحث المدمج
-                            if (window.pdfAPIs.search) {
-                                await window.pdfAPIs.search(currentSearchTerm);
+                            // استخدام Search API للتظليل والتمرير
+                            if (adobeViewer) {
+                                const searchPromise = new Promise((resolve) => {
+                                    // محاولة البحث باستخدام Adobe API
+                                    try {
+                                        adobeViewer.getAPIs().then(apis => {
+                                            if (apis.search) {
+                                                apis.search(currentSearchTerm, {
+                                                    caseSensitive: false,
+                                                    wholeWord: false
+                                                }).then(searchResult => {
+                                                    console.log('Search completed:', searchResult);
+                                                    resolve(true);
+                                                }).catch(e => {
+                                                    console.log('Search API error:', e);
+                                                    resolve(false);
+                                                });
+                                            } else {
+                                                resolve(false);
+                                            }
+                                        });
+                                    } catch (e) {
+                                        resolve(false);
+                                    }
+                                });
+                                
+                                await searchPromise;
                             }
                         } catch (e) {
-                            console.log('Search API:', e);
+                            console.log('Search highlighting:', e);
                         }
-                    }, 500);
+                        
+                        // 3. محاولة التمرير للموقع التقريبي
+                        // بناءً على موقع النص في الصفحة
+                        if (result.matchPosition !== undefined) {
+                            try {
+                                // Adobe API قد يدعم zoom to specific area
+                                const zoomLevel = await window.pdfAPIs.getZoomLevel();
+                                
+                                // يمكن محاولة استخدام gotoLocation مع zoom
+                                // للتقريب على منطقة معينة
+                            } catch (e) {
+                                console.log('Zoom adjustment:', e);
+                            }
+                        }
+                    }, 300);
                     
                 } catch (e) {
                     console.log('Navigation:', e);
                 }
             }
             
-            showToast(`📄 صفحة ${pageNum}`, 'success');
+            showToast(`📄 صفحة ${pageNum} - "${currentSearchTerm}"`, 'success');
             
-            // تمرير البطاقة للعرض
+            // تمرير البطاقة للعرض في لوحة النتائج
             const card = document.querySelector('.result-card.active');
             if (card) {
                 card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1525,11 +1676,9 @@
             );
             
             if (existingIndex >= 0) {
-                // إلغاء التثبيت
                 pinnedResults.splice(existingIndex, 1);
                 showToast('📌 تم إلغاء التثبيت', 'info');
             } else {
-                // تثبيت
                 pinnedResults.push({...result, pinnedAt: Date.now()});
                 showToast('📌 تم تثبيت النتيجة', 'success');
             }
@@ -1547,10 +1696,9 @@
             if (results.length === 0) {
                 clearSearchResults();
             } else {
-                if (resultIdx >= results.length) {
-                    resultIdx = results.length - 1;
-                }
+                if (resultIdx >= results.length) resultIdx = results.length - 1;
                 showResults(currentSearchTerm);
+                updateMiniNav();
                 if (results.length > 0) {
                     gotoResult(Math.min(index, results.length - 1));
                 }
@@ -1579,13 +1727,42 @@
             section.classList.add('has-items');
             
             list.innerHTML = pinnedResults.map((r, i) => `
-                <div class="result-card pinned" onclick="gotoPinnedResult(${i})">
-                    <div class="result-top">
+                <div class="result-card pinned" onclick="gotoPinnedResult(${i})" style="margin-bottom: 6px; padding: 10px;">
+                    <div class="result-top" style="margin-bottom: 4px;">
                         <span class="page-badge">📄 ${r.page}</span>
-                        <span class="match-count">"${r.searchTerm}"</span>
+                        <div class="result-actions">
+                            <button class="result-action-btn copy-btn" 
+                                    onclick="event.stopPropagation(); copyPinnedResult(${i})" title="نسخ">
+                                📋
+                            </button>
+                            <button class="result-action-btn delete-btn" 
+                                    onclick="event.stopPropagation(); removePinned(${i})" title="إزالة">
+                                ✕
+                            </button>
+                        </div>
                     </div>
+                    <div style="font-size: 0.75rem; color: var(--text3);">"${r.searchTerm}"</div>
                 </div>
             `).join('');
+        }
+        
+        function copyPinnedResult(index) {
+            if (index < 0 || index >= pinnedResults.length) return;
+            const result = pinnedResults[index];
+            const textToCopy = `صفحة ${result.page}: ${result.ctx.replace(/\.\.\./g, '')}`;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast('📋 تم نسخ النتيجة المثبتة', 'success');
+            });
+        }
+        
+        function removePinned(index) {
+            if (index < 0 || index >= pinnedResults.length) return;
+            pinnedResults.splice(index, 1);
+            savePinnedResults();
+            updatePinnedSection();
+            showResults(currentSearchTerm);
+            showToast('📌 تم إزالة النتيجة المثبتة', 'info');
         }
         
         async function gotoPinnedResult(index) {
@@ -1594,6 +1771,20 @@
             
             if (window.pdfAPIs) {
                 await window.pdfAPIs.gotoLocation(result.page);
+                
+                // محاولة البحث للتظليل
+                setTimeout(async () => {
+                    try {
+                        if (adobeViewer) {
+                            const apis = await adobeViewer.getAPIs();
+                            if (apis.search) {
+                                await apis.search(result.searchTerm);
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Search:', e);
+                    }
+                }, 300);
             }
             showToast(`📌 صفحة ${result.page}`, 'success');
         }
@@ -1625,14 +1816,16 @@
             
             if (pinnedResults.length > 0) {
                 text += `📌 النتائج المثبتة (${pinnedResults.length}):\n`;
+                text += `${'-'.repeat(30)}\n`;
                 pinnedResults.forEach((r, i) => {
                     text += `${i + 1}. صفحة ${r.page} - "${r.searchTerm}"\n`;
+                    text += `   ${r.ctx}\n\n`;
                 });
-                text += `\n`;
             }
             
             if (results.length > 0) {
                 text += `🔍 نتائج البحث "${currentSearchTerm}" (${results.length}):\n`;
+                text += `${'-'.repeat(30)}\n`;
                 results.forEach((r, i) => {
                     text += `${i + 1}. صفحة ${r.page} (${r.count} تطابق)\n`;
                     text += `   ${r.ctx}\n\n`;
@@ -1640,7 +1833,7 @@
             }
             
             navigator.clipboard.writeText(text).then(() => {
-                showToast('📋 تم نسخ النتائج للحافظة', 'success');
+                showToast('📋 تم نسخ جميع النتائج', 'success');
             }).catch(() => {
                 showToast('⚠️ فشل النسخ', 'error');
             });
@@ -1670,6 +1863,10 @@
         window.clearPinned = clearPinned;
         window.clearAllResults = clearAllResults;
         window.exportResults = exportResults;
+        window.navResult = navResult;
+        window.copyResult = copyResult;
+        window.copyPinnedResult = copyPinnedResult;
+        window.removePinned = removePinned;
     </script>
 </body>
 </html>
