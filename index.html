@@ -5,24 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 HS Code 2026 - دليل الرموز الجمركية</title>
     
-    <!-- Preload للتحميل السريع -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- تحميل PDF.js أولاً -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <style>
         /* ========== Theme Variables ========== */
         :root {
-            /* الوضع الداكن (افتراضي) */
             --primary: #6366f1;
             --primary-dark: #4f46e5;
             --primary-light: #818cf8;
             --success: #22c55e;
             --warning: #f59e0b;
             --error: #ef4444;
+            --info: #3b82f6;
             --bg: #0a0a0f;
             --surface: #12121a;
             --surface2: #1e1e2e;
@@ -33,12 +31,14 @@
             --border: #2e2e42;
             --highlight: #fbbf24;
             --highlight-bg: rgba(251, 191, 36, 0.2);
+            --pinned-bg: rgba(34, 197, 94, 0.15);
+            --pinned-border: #22c55e;
             --glow: rgba(99, 102, 241, 0.4);
             --shadow: rgba(0, 0, 0, 0.3);
             --pdf-bg: #1a1a1a;
+            --panel-width: 400px;
         }
         
-        /* الوضع الفاتح */
         [data-theme="light"] {
             --bg: #f8fafc;
             --surface: #ffffff;
@@ -48,22 +48,16 @@
             --text2: #475569;
             --text3: #64748b;
             --border: #cbd5e1;
-            --highlight: #f59e0b;
-            --highlight-bg: rgba(245, 158, 11, 0.2);
             --glow: rgba(99, 102, 241, 0.2);
             --shadow: rgba(0, 0, 0, 0.1);
             --pdf-bg: #e5e5e5;
+            --pinned-bg: rgba(34, 197, 94, 0.1);
         }
         
-        /* ========== Reset & Base ========== */
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif; 
+            font-family: 'Tajawal', sans-serif; 
             background: var(--bg); 
             color: var(--text);
             overflow: hidden;
@@ -82,26 +76,26 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 25px;
+            padding: 10px 20px;
             background: linear-gradient(180deg, var(--surface) 0%, var(--surface2) 100%);
             border-bottom: 1px solid var(--border);
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         
         .logo-icon {
-            font-size: 2.2rem;
+            font-size: 2rem;
             filter: drop-shadow(0 0 10px var(--glow));
         }
         
         .logo h1 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             background: linear-gradient(135deg, var(--primary-light), #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -109,126 +103,151 @@
         }
         
         .logo p {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text2);
         }
         
-        /* ========== Header Controls ========== */
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         
         /* Theme Toggle */
         .theme-toggle {
-            position: relative;
-            width: 60px;
-            height: 32px;
+            width: 56px;
+            height: 28px;
             background: var(--surface3);
-            border-radius: 16px;
+            border-radius: 14px;
             border: 2px solid var(--border);
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 6px;
+            padding: 0 5px;
+            position: relative;
         }
         
-        .theme-toggle:hover {
-            border-color: var(--primary);
-        }
+        .theme-toggle:hover { border-color: var(--primary); }
         
-        .theme-toggle-icon {
-            font-size: 1rem;
-            z-index: 1;
-            transition: opacity 0.3s;
-        }
-        
+        .theme-toggle-icon { font-size: 0.9rem; z-index: 1; transition: opacity 0.3s; }
         .theme-toggle .sun { opacity: 0.4; }
         .theme-toggle .moon { opacity: 1; }
-        
         [data-theme="light"] .theme-toggle .sun { opacity: 1; }
         [data-theme="light"] .theme-toggle .moon { opacity: 0.4; }
         
         .theme-toggle-slider {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             background: var(--primary);
             border-radius: 50%;
             right: 4px;
             transition: all 0.3s;
-            box-shadow: 0 2px 8px var(--shadow);
         }
         
-        [data-theme="light"] .theme-toggle-slider {
-            right: calc(100% - 28px);
+        [data-theme="light"] .theme-toggle-slider { right: calc(100% - 24px); }
+        
+        /* Toggle Panel Button */
+        .toggle-panel-btn {
+            padding: 8px 14px;
+            background: var(--surface3);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
         }
         
-        /* ========== Search Bar (في الأعلى) ========== */
+        .toggle-panel-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* ========== Search Bar ========== */
         .search-bar {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 15px 25px;
+            padding: 12px 20px;
         }
         
         .search-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .search-input-wrapper {
             flex: 1;
+            min-width: 250px;
             position: relative;
         }
         
         #searchInput {
             width: 100%;
-            padding: 14px 20px;
-            padding-left: 50px; /* مساحة للأيقونة على اليسار */
+            padding: 12px 18px 12px 45px;
             background: var(--surface2);
             border: 2px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px;
             color: var(--text);
             font-size: 1rem;
             font-family: inherit;
             transition: all 0.3s;
+            direction: ltr;
+            text-align: right;
         }
         
         #searchInput:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--glow);
-            background: var(--surface3);
         }
         
-        #searchInput::placeholder {
-            color: var(--text3);
-        }
+        #searchInput::placeholder { color: var(--text3); }
         
-        /* أيقونة البحث - تم نقلها لليسار */
         .search-icon {
             position: absolute;
-            left: 16px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--text3);
             pointer-events: none;
         }
         
+        /* Fixed Text Indicator */
+        .text-fixed-indicator {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: var(--success);
+            background: var(--surface3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .text-fixed-indicator.show { display: block; }
+        
         #searchBtn {
-            padding: 14px 28px;
+            padding: 12px 24px;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-family: inherit;
             font-weight: 600;
             cursor: pointer;
@@ -241,19 +260,14 @@
             box-shadow: 0 8px 25px var(--glow);
         }
         
-        #searchBtn:active {
-            transform: translateY(0);
-        }
-        
-        /* Status Badge */
         .search-status {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
+            gap: 6px;
+            padding: 8px 14px;
             background: var(--surface2);
             border-radius: 10px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text2);
             white-space: nowrap;
         }
@@ -263,8 +277,8 @@
         .search-status.hidden { display: none; }
         
         .spinner {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border: 2px solid currentColor;
             border-top-color: transparent;
             border-radius: 50%;
@@ -273,11 +287,36 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
         
+        /* Search Tips */
+        .search-tips {
+            width: 100%;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--text3);
+        }
+        
+        .search-tip {
+            padding: 4px 10px;
+            background: var(--surface2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
         /* ========== Main Content ========== */
         .main-content {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: var(--panel-width) 1fr;
             overflow: hidden;
+            transition: grid-template-columns 0.3s;
+        }
+        
+        .main-content.panel-hidden {
+            grid-template-columns: 0 1fr;
         }
         
         /* ========== Results Panel ========== */
@@ -287,52 +326,94 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .main-content.panel-hidden .results-panel {
+            opacity: 0;
+            pointer-events: none;
         }
         
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 18px;
+            padding: 12px 15px;
             background: var(--surface2);
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
         
         .results-header h3 {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--text);
+            gap: 6px;
         }
         
         #resultsCount {
-            padding: 4px 10px;
+            padding: 3px 8px;
             background: var(--primary);
-            border-radius: 20px;
-            font-size: 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
             color: white;
         }
         
-        .nav-buttons {
+        .results-actions {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
         }
         
-        .nav-btn {
-            width: 32px;
-            height: 32px;
+        .action-btn {
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--surface3);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 6px;
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .action-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Nav Controls */
+        .nav-controls {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        
+        .nav-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
             color: var(--text);
             cursor: pointer;
-            font-family: inherit;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             transition: all 0.2s;
         }
         
@@ -342,26 +423,60 @@
             color: white;
         }
         
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         
         #resultPos {
-            padding: 6px 10px;
-            background: var(--bg);
-            border-radius: 6px;
-            font-size: 0.8rem;
-            min-width: 60px;
+            flex: 1;
             text-align: center;
+            font-size: 0.8rem;
             color: var(--text2);
+            padding: 0 8px;
         }
+        
+        /* Pinned Results Section */
+        .pinned-section {
+            background: var(--pinned-bg);
+            border-bottom: 2px solid var(--pinned-border);
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .pinned-section.has-items { display: block; }
+        
+        .pinned-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(34, 197, 94, 0.1);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--pinned-border);
+            position: sticky;
+            top: 0;
+        }
+        
+        .clear-pinned {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            background: var(--surface3);
+            border: none;
+            border-radius: 10px;
+            color: var(--text2);
+            cursor: pointer;
+        }
+        
+        .clear-pinned:hover { background: var(--error); color: white; }
+        
+        #pinnedList { padding: 8px; }
         
         /* Results List */
         #resultsList {
             flex: 1;
             overflow-y: auto;
-            padding: 12px;
+            padding: 10px;
+            scroll-behavior: smooth;
         }
         
         .placeholder {
@@ -376,30 +491,27 @@
         }
         
         .placeholder-icon {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
+            font-size: 3rem;
+            margin-bottom: 12px;
             opacity: 0.4;
-        }
-        
-        .placeholder p {
-            line-height: 1.8;
         }
         
         /* Result Card */
         .result-card {
             background: var(--surface2);
             border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
         
         .result-card:hover {
             border-color: var(--primary);
-            transform: translateX(-4px);
-            box-shadow: 4px 0 15px var(--glow);
+            transform: translateX(-3px);
+            box-shadow: 3px 0 12px var(--glow);
         }
         
         .result-card.active {
@@ -407,69 +519,102 @@
             background: var(--highlight-bg);
         }
         
+        .result-card.pinned {
+            border-color: var(--pinned-border);
+            background: var(--pinned-bg);
+        }
+        
         .result-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .page-badge {
-            padding: 5px 12px;
+            padding: 4px 10px;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border-radius: 20px;
-            font-size: 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
             font-weight: 600;
             color: white;
         }
         
+        .result-actions {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .result-action-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface3);
+            border: none;
+            border-radius: 5px;
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+        
+        .result-action-btn:hover { background: var(--primary); color: white; }
+        .result-action-btn.pin-btn:hover { background: var(--success); }
+        .result-action-btn.delete-btn:hover { background: var(--error); }
+        .result-action-btn.pinned { background: var(--success); color: white; }
+        
         .match-count {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text3);
         }
         
         .result-text {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text2);
-            line-height: 1.7;
-            padding: 10px;
+            line-height: 1.6;
+            padding: 8px;
             background: var(--bg);
-            border-radius: 8px;
-            max-height: 70px;
+            border-radius: 6px;
+            max-height: 60px;
             overflow: hidden;
         }
         
         .result-text .hl {
             background: var(--highlight);
             color: #000;
-            padding: 1px 5px;
+            padding: 1px 4px;
             border-radius: 3px;
             font-weight: 600;
+        }
+        
+        .result-code {
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            display: inline-block;
         }
         
         .go-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 8px;
+            padding: 8px;
             background: var(--primary);
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             color: white;
             font-family: inherit;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .go-btn:hover {
-            filter: brightness(1.15);
-            transform: scale(1.02);
-        }
+        .go-btn:hover { filter: brightness(1.15); }
         
         /* ========== PDF Viewer ========== */
         .pdf-section {
@@ -478,10 +623,7 @@
             overflow: hidden;
         }
         
-        #pdf-container {
-            width: 100%;
-            height: 100%;
-        }
+        #pdf-container { width: 100%; height: 100%; }
         
         /* ========== Loading Overlay ========== */
         .loading-overlay {
@@ -496,39 +638,35 @@
             transition: opacity 0.5s, visibility 0.5s;
         }
         
-        .loading-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
         
         .loading-logo {
-            font-size: 5rem;
-            margin-bottom: 20px;
+            font-size: 4.5rem;
+            margin-bottom: 18px;
             animation: bounce 2s ease-in-out infinite;
         }
         
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-12px); }
         }
         
         .loading-overlay h2 {
-            font-size: 2rem;
-            margin-bottom: 8px;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
             background: linear-gradient(135deg, #c7d2fe, #e9d5ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         
         .loading-overlay p {
             color: rgba(255,255,255,0.7);
-            font-size: 1rem;
-            margin-bottom: 25px;
+            font-size: 0.95rem;
+            margin-bottom: 22px;
         }
         
         .loading-bar {
-            width: 280px;
+            width: 260px;
             height: 5px;
             background: rgba(255,255,255,0.2);
             border-radius: 3px;
@@ -541,7 +679,6 @@
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             border-radius: 3px;
-            transition: width 0.3s;
         }
         
         @keyframes shimmer {
@@ -550,56 +687,52 @@
         }
         
         #loadingPercent {
-            margin-top: 12px;
-            font-size: 1.1rem;
+            margin-top: 10px;
+            font-size: 1rem;
             color: rgba(255,255,255,0.9);
         }
         
         /* ========== Toast ========== */
         #toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--surface2);
             border: 1px solid var(--border);
-            padding: 14px 28px;
-            border-radius: 12px;
+            padding: 12px 24px;
+            border-radius: 10px;
             box-shadow: 0 10px 40px var(--shadow);
             opacity: 0;
             transition: all 0.3s;
             z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
             color: var(--text);
+            font-size: 0.9rem;
         }
         
-        #toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         #toast.success { border-color: var(--success); }
         #toast.error { border-color: var(--error); }
         #toast.warning { border-color: var(--warning); }
+        #toast.info { border-color: var(--info); }
         
         /* ========== Scrollbar ========== */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { 
-            background: var(--surface3); 
-            border-radius: 3px; 
-        }
-        ::-webkit-scrollbar-thumb:hover { 
-            background: var(--primary); 
-        }
+        ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         
         /* ========== Responsive ========== */
         @media (max-width: 1024px) {
+            :root { --panel-width: 320px; }
+            
             .main-content {
                 grid-template-columns: 1fr;
                 grid-template-rows: 1fr 45vh;
+            }
+            
+            .main-content.panel-hidden {
+                grid-template-rows: 1fr 0;
             }
             
             .results-panel {
@@ -608,64 +741,19 @@
                 order: 2;
             }
             
-            .pdf-section {
-                order: 1;
-            }
-            
-            .search-container {
-                flex-wrap: wrap;
-            }
-            
-            .search-status {
-                width: 100%;
-                justify-content: center;
-            }
+            .pdf-section { order: 1; }
         }
         
         @media (max-width: 600px) {
-            .header {
-                padding: 10px 15px;
-            }
-            
+            .header { padding: 8px 12px; }
             .logo h1 { font-size: 1.1rem; }
             .logo p { display: none; }
-            .logo-icon { font-size: 1.8rem; }
-            
-            .search-bar {
-                padding: 12px 15px;
-            }
-            
-            .search-container {
-                flex-direction: column;
-            }
-            
-            #searchBtn { 
-                width: 100%; 
-            }
-            
-            .theme-toggle {
-                width: 50px;
-                height: 28px;
-            }
-            
-            .main-content {
-                grid-template-rows: 1fr 40vh;
-            }
-        }
-        
-        /* ========== تحسين الطباعة ========== */
-        @media print {
-            .loading-overlay,
-            .search-bar,
-            .results-panel,
-            .header-controls,
-            #toast {
-                display: none !important;
-            }
-            
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+            .logo-icon { font-size: 1.6rem; }
+            .search-bar { padding: 10px 12px; }
+            .search-container { flex-direction: column; }
+            #searchBtn { width: 100%; }
+            .search-tips { display: none; }
+            .toggle-panel-btn span:last-child { display: none; }
         }
     </style>
 </head>
@@ -694,8 +782,11 @@
             </div>
             
             <div class="header-controls">
-                <!-- Theme Toggle -->
-                <div class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
+                <button class="toggle-panel-btn" onclick="togglePanel()" title="إخفاء/إظهار النتائج">
+                    <span id="panelToggleIcon">◀</span>
+                    <span>النتائج</span>
+                </button>
+                <div class="theme-toggle" onclick="toggleTheme()" title="الوضع الليلي/النهاري">
                     <span class="theme-toggle-icon sun">☀️</span>
                     <span class="theme-toggle-icon moon">🌙</span>
                     <div class="theme-toggle-slider"></div>
@@ -703,12 +794,13 @@
             </div>
         </header>
         
-        <!-- Search Bar (في الأعلى في المنتصف) -->
+        <!-- Search Bar -->
         <div class="search-bar">
             <div class="search-container">
                 <div class="search-input-wrapper">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="searchInput" placeholder="ابحث عن كود جمركي أو منتج..." autocomplete="off">
+                    <span id="textFixedIndicator" class="text-fixed-indicator">✓ تم الإصلاح</span>
                 </div>
                 <button id="searchBtn">🔎 بحث</button>
                 <div id="searchStatus" class="search-status loading">
@@ -716,10 +808,15 @@
                     <span>جاري التجهيز...</span>
                 </div>
             </div>
+            <div class="search-tips">
+                <span class="search-tip">💡 يمكنك لصق الكود بدون مسافات</span>
+                <span class="search-tip">🔄 يتم إصلاح النص المعكوس تلقائياً</span>
+                <span class="search-tip">📌 اضغط على 📌 لتثبيت النتيجة</span>
+            </div>
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <!-- Results Panel -->
             <aside class="results-panel">
                 <div class="results-header">
@@ -728,11 +825,25 @@
                         النتائج
                         <span id="resultsCount" style="display:none">0</span>
                     </h3>
-                    <div class="nav-buttons">
-                        <button id="prevBtn" class="nav-btn" disabled title="السابق">▲</button>
-                        <span id="resultPos">-</span>
-                        <button id="nextBtn" class="nav-btn" disabled title="التالي">▼</button>
+                    <div class="results-actions">
+                        <button class="action-btn" onclick="clearAllResults()" title="مسح الكل">🗑️</button>
+                        <button class="action-btn" onclick="exportResults()" title="تصدير النتائج">📋</button>
                     </div>
+                </div>
+                
+                <div class="nav-controls">
+                    <button id="prevBtn" class="nav-btn" disabled title="السابق">▲</button>
+                    <span id="resultPos">-</span>
+                    <button id="nextBtn" class="nav-btn" disabled title="التالي">▼</button>
+                </div>
+                
+                <!-- Pinned Results -->
+                <div id="pinnedSection" class="pinned-section">
+                    <div class="pinned-header">
+                        <span>📌 النتائج المثبتة</span>
+                        <button class="clear-pinned" onclick="clearPinned()">مسح الكل</button>
+                    </div>
+                    <div id="pinnedList"></div>
                 </div>
                 
                 <div id="resultsList">
@@ -753,9 +864,7 @@
     <!-- Toast -->
     <div id="toast"></div>
 
-    <!-- تحميل Adobe SDK بعد تحميل الصفحة -->
     <script>
-        // تحميل Adobe SDK بشكل غير متزامن
         (function() {
             const script = document.createElement('script');
             script.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
@@ -769,7 +878,7 @@
         const CONFIG = {
             ADOBE_CLIENT_ID: '5edf16250afa446aa490af6313d351b2',
             PDF_FILE: 'HS Code 2026.pdf',
-            SEARCH_DELAY: 350,
+            SEARCH_DELAY: 300,
             MIN_SEARCH_LENGTH: 2
         };
         
@@ -780,20 +889,221 @@
         let adobeViewer = null;
         let pdfText = [];
         let results = [];
+        let pinnedResults = [];
         let resultIdx = -1;
         let totalPages = 0;
         let indexed = false;
         let currentSearchTerm = '';
+        let panelVisible = true;
+
+        // ========== Text Processing Utilities ==========
+        
+        /**
+         * إصلاح النص المعكوس والأرقام
+         * يعالج مشاكل النسخ من PDF العربي
+         */
+        function fixReversedText(text) {
+            if (!text) return text;
+            
+            let fixed = text;
+            let wasFixed = false;
+            
+            // 1. إزالة المسافات الزائدة
+            fixed = fixed.replace(/\s+/g, ' ').trim();
+            
+            // 2. اكتشاف وإصلاح الأرقام المعكوسة (مثل الأكواد الجمركية)
+            // نمط الكود الجمركي: أرقام مع مسافات
+            const codePattern = /(\d{2}\s*){3,6}/g;
+            const matches = fixed.match(codePattern);
+            
+            if (matches) {
+                matches.forEach(match => {
+                    // إزالة المسافات من الكود
+                    const cleanCode = match.replace(/\s/g, '');
+                    // التحقق إذا كان معكوساً
+                    if (isLikelyReversed(cleanCode)) {
+                        const reversedCode = reverseString(cleanCode);
+                        fixed = fixed.replace(match, reversedCode);
+                        wasFixed = true;
+                    } else {
+                        fixed = fixed.replace(match, cleanCode);
+                    }
+                });
+            }
+            
+            // 3. اكتشاف النص العربي المعكوس
+            if (containsArabic(fixed) && isLikelyReversedArabic(fixed)) {
+                fixed = reverseArabicText(fixed);
+                wasFixed = true;
+            }
+            
+            // 4. إصلاح الأرقام المختلطة (عربية/إنجليزية)
+            fixed = normalizeNumbers(fixed);
+            
+            return { text: fixed, wasFixed: wasFixed };
+        }
+        
+        /**
+         * التحقق إذا كان الكود معكوساً
+         */
+        function isLikelyReversed(code) {
+            // الأكواد الجمركية عادة تبدأ بـ 01-99 (الأقسام)
+            // إذا بدأ بـ 00 وانتهى برقم أكبر، قد يكون معكوساً
+            if (code.length >= 6) {
+                const firstTwo = parseInt(code.substring(0, 2));
+                const lastTwo = parseInt(code.substring(code.length - 2));
+                
+                // إذا كان آخر رقمين أكبر من أول رقمين بشكل كبير
+                // وأول رقمين صغيرة جداً، قد يكون معكوساً
+                if (firstTwo < 10 && lastTwo > 50) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        /**
+         * عكس النص
+         */
+        function reverseString(str) {
+            return str.split('').reverse().join('');
+        }
+        
+        /**
+         * التحقق إذا كان يحتوي على عربي
+         */
+        function containsArabic(text) {
+            return /[\u0600-\u06FF]/.test(text);
+        }
+        
+        /**
+         * التحقق إذا كان النص العربي معكوساً
+         * بناءً على أنماط شائعة
+         */
+        function isLikelyReversedArabic(text) {
+            // كلمات شائعة في النهاية بدل البداية تدل على العكس
+            const endWords = ['ال', 'من', 'في', 'على'];
+            const startWords = ['ة', 'ات', 'ين', 'ون'];
+            
+            for (let word of endWords) {
+                if (text.endsWith(word) && !text.startsWith(word)) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        /**
+         * عكس النص العربي مع الحفاظ على الأرقام
+         */
+        function reverseArabicText(text) {
+            // فصل الكلمات
+            const words = text.split(' ');
+            // عكس ترتيب الكلمات فقط (وليس الحروف داخل الكلمة)
+            return words.reverse().join(' ');
+        }
+        
+        /**
+         * توحيد الأرقام (تحويل العربية للإنجليزية)
+         */
+        function normalizeNumbers(text) {
+            const arabicNums = '٠١٢٣٤٥٦٧٨٩';
+            const englishNums = '0123456789';
+            
+            let result = text;
+            for (let i = 0; i < 10; i++) {
+                result = result.replace(new RegExp(arabicNums[i], 'g'), englishNums[i]);
+            }
+            return result;
+        }
+        
+        /**
+         * تنظيف نص البحث
+         * إزالة المسافات من الأكواد، توحيد الأرقام، إصلاح العكس
+         */
+        function cleanSearchQuery(query) {
+            let cleaned = query.trim();
+            
+            // إصلاح النص المعكوس
+            const fixResult = fixReversedText(cleaned);
+            cleaned = fixResult.text;
+            
+            // إزالة كل المسافات للبحث (للأكواد)
+            const noSpaces = cleaned.replace(/\s/g, '');
+            
+            // توحيد الأرقام
+            const normalized = normalizeNumbers(noSpaces);
+            
+            return {
+                original: query,
+                cleaned: cleaned,
+                noSpaces: noSpaces,
+                normalized: normalized,
+                wasFixed: fixResult.wasFixed
+            };
+        }
+        
+        /**
+         * البحث الذكي - يبحث بطرق متعددة
+         */
+        function smartSearch(text, query) {
+            const textLower = text.toLowerCase();
+            const textNoSpaces = text.replace(/\s/g, '').toLowerCase();
+            const textNormalized = normalizeNumbers(textNoSpaces);
+            
+            const queryData = cleanSearchQuery(query);
+            
+            // البحث بعدة طرق
+            const searchVariants = [
+                queryData.cleaned.toLowerCase(),
+                queryData.noSpaces.toLowerCase(),
+                queryData.normalized.toLowerCase(),
+                // البحث بالأرقام العربية أيضاً
+                toArabicNums(queryData.noSpaces).toLowerCase()
+            ];
+            
+            let totalMatches = 0;
+            let firstIndex = -1;
+            
+            for (let variant of searchVariants) {
+                if (!variant) continue;
+                
+                // البحث في النص العادي
+                let idx = textLower.indexOf(variant);
+                if (idx !== -1 && firstIndex === -1) firstIndex = idx;
+                while (idx !== -1) {
+                    totalMatches++;
+                    idx = textLower.indexOf(variant, idx + 1);
+                }
+                
+                // البحث في النص بدون مسافات
+                idx = textNoSpaces.indexOf(variant);
+                while (idx !== -1) {
+                    totalMatches++;
+                    idx = textNoSpaces.indexOf(variant, idx + 1);
+                }
+                
+                // البحث في النص الموحد
+                idx = textNormalized.indexOf(variant);
+                while (idx !== -1) {
+                    totalMatches++;
+                    idx = textNormalized.indexOf(variant, idx + 1);
+                }
+            }
+            
+            return {
+                matches: Math.ceil(totalMatches / 3), // تجنب العد المكرر
+                firstIndex: firstIndex,
+                wasFixed: queryData.wasFixed
+            };
+        }
 
         // ========== Theme Management ==========
         function initTheme() {
             const saved = localStorage.getItem('hs-code-theme');
             if (saved) {
                 document.body.setAttribute('data-theme', saved);
-            } else {
-                // اكتشاف تفضيل النظام
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
             }
         }
         
@@ -805,16 +1115,21 @@
             showToast(newTheme === 'dark' ? '🌙 الوضع الليلي' : '☀️ الوضع النهاري', 'success');
         }
         
-        // تهيئة الثيم عند التحميل
         initTheme();
+
+        // ========== Panel Toggle ==========
+        function togglePanel() {
+            panelVisible = !panelVisible;
+            document.getElementById('mainContent').classList.toggle('panel-hidden', !panelVisible);
+            document.getElementById('panelToggleIcon').textContent = panelVisible ? '◀' : '▶';
+            showToast(panelVisible ? '📊 إظهار النتائج' : '📄 عرض PDF كامل', 'info');
+        }
 
         // ========== Initialize ==========
         document.addEventListener('adobe_dc_view_sdk.ready', initApp);
         
-        // Fallback if SDK doesn't load
         setTimeout(() => {
             if (!window.AdobeDC) {
-                console.warn('Adobe SDK not loaded, using fallback');
                 indexPDFForSearch();
             }
         }, 5000);
@@ -831,14 +1146,40 @@
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
             
-            // Debounced search
+            // معالجة اللصق - إصلاح النص تلقائياً
+            searchInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const fixResult = fixReversedText(pastedText);
+                
+                // إدراج النص المصلح
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const text = this.value;
+                this.value = text.substring(0, start) + fixResult.text + text.substring(end);
+                this.selectionStart = this.selectionEnd = start + fixResult.text.length;
+                
+                // إظهار مؤشر الإصلاح
+                if (fixResult.wasFixed) {
+                    const indicator = document.getElementById('textFixedIndicator');
+                    indicator.classList.add('show');
+                    setTimeout(() => indicator.classList.remove('show'), 2000);
+                    showToast('✨ تم إصلاح النص المعكوس تلقائياً', 'success');
+                }
+                
+                // تشغيل البحث
+                if (fixResult.text.length >= CONFIG.MIN_SEARCH_LENGTH) {
+                    setTimeout(doSearch, 100);
+                }
+            });
+            
             let searchTimer;
             searchInput.addEventListener('input', function() {
                 clearTimeout(searchTimer);
                 if (this.value.length >= CONFIG.MIN_SEARCH_LENGTH) {
                     searchTimer = setTimeout(doSearch, CONFIG.SEARCH_DELAY);
                 } else if (this.value.length === 0) {
-                    clearResults();
+                    clearSearchResults();
                 }
             });
             
@@ -847,7 +1188,6 @@
                     clearTimeout(searchTimer);
                     doSearch();
                 }
-                // التنقل بين النتائج باستخدام الأسهم
                 if (e.key === 'ArrowDown' && results.length > 0) {
                     e.preventDefault();
                     navResult(1);
@@ -866,7 +1206,6 @@
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT') return;
                 
-                // Ctrl/Cmd + F للبحث
                 if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                     e.preventDefault();
                     searchInput.focus();
@@ -875,20 +1214,21 @@
                 
                 if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
                 if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
+                if (e.key === 'Escape') searchInput.blur();
                 
-                // Escape لإغلاق البحث
-                if (e.key === 'Escape') {
-                    searchInput.blur();
+                // P للتثبيت
+                if (e.key === 'p' && resultIdx >= 0) {
+                    togglePin(resultIdx);
                 }
             });
+            
+            // Load pinned from localStorage
+            loadPinnedResults();
         }
 
         // ========== Adobe Viewer ==========
         async function initAdobeViewer() {
-            if (!window.AdobeDC) {
-                console.warn('Adobe DC not available');
-                return;
-            }
+            if (!window.AdobeDC) return;
             
             updateLoading('جاري تحميل العارض...', 20);
             
@@ -914,7 +1254,6 @@
                 
                 updateLoading('تم تحميل العارض', 50);
                 
-                // Get PDF APIs for navigation and search
                 const apis = await adobeViewer.getAPIs();
                 window.pdfAPIs = apis;
                 
@@ -924,7 +1263,7 @@
             }
         }
 
-        // ========== PDF Indexing for Search ==========
+        // ========== PDF Indexing ==========
         async function indexPDFForSearch() {
             updateLoading('جاري فهرسة الملف للبحث...', 30);
             
@@ -938,7 +1277,6 @@
                 totalPages = pdf.numPages;
                 pdfText = new Array(totalPages);
                 
-                // فهرسة الصفحات بشكل متوازي (أسرع)
                 const batchSize = 10;
                 for (let i = 0; i < totalPages; i += batchSize) {
                     const batch = [];
@@ -954,12 +1292,10 @@
                 indexed = true;
                 updateLoading('جاهز!', 100);
                 
-                // Update status
                 const status = document.getElementById('searchStatus');
                 status.className = 'search-status ready';
                 status.innerHTML = `<span>✅</span><span>جاهز (${totalPages} صفحة)</span>`;
                 
-                // Hide loading
                 setTimeout(() => {
                     document.getElementById('loadingOverlay').classList.add('hidden');
                     setTimeout(() => status.classList.add('hidden'), 2000);
@@ -967,9 +1303,7 @@
                 
             } catch (error) {
                 console.error('Indexing Error:', error);
-                const status = document.getElementById('searchStatus');
-                status.className = 'search-status';
-                status.innerHTML = `<span>⚠️</span><span>خطأ في الفهرسة</span>`;
+                document.getElementById('searchStatus').innerHTML = `<span>⚠️</span><span>خطأ</span>`;
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }
         }
@@ -979,9 +1313,14 @@
                 const page = await pdf.getPage(pageNum);
                 const content = await page.getTextContent();
                 const text = content.items.map(item => item.str).join(' ');
-                pdfText[pageNum - 1] = { page: pageNum, text: text };
+                pdfText[pageNum - 1] = { 
+                    page: pageNum, 
+                    text: text,
+                    textNoSpaces: text.replace(/\s/g, ''),
+                    textNormalized: normalizeNumbers(text.replace(/\s/g, ''))
+                };
             } catch (e) {
-                pdfText[pageNum - 1] = { page: pageNum, text: '' };
+                pdfText[pageNum - 1] = { page: pageNum, text: '', textNoSpaces: '', textNormalized: '' };
             }
         }
 
@@ -995,7 +1334,7 @@
         function doSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query || query.length < CONFIG.MIN_SEARCH_LENGTH) {
-                if (query.length > 0 && query.length < CONFIG.MIN_SEARCH_LENGTH) {
+                if (query.length > 0) {
                     showToast(`⚠️ أدخل ${CONFIG.MIN_SEARCH_LENGTH} أحرف على الأقل`, 'warning');
                 }
                 return;
@@ -1008,58 +1347,45 @@
             
             currentSearchTerm = query;
             results = [];
-            const qLower = query.toLowerCase();
-            const qArabic = toArabicNums(query);
-            const qEnglish = toEnglishNums(query);
-            const searchTerms = [...new Set([qLower, qArabic.toLowerCase(), qEnglish.toLowerCase()])];
             
             pdfText.forEach(p => {
                 if (!p || !p.text) return;
-                const textLower = p.text.toLowerCase();
                 
-                let count = 0;
-                let firstIndex = -1;
+                const searchResult = smartSearch(p.text, query);
                 
-                searchTerms.forEach(q => {
-                    let idx = 0;
-                    while ((idx = textLower.indexOf(q, idx)) !== -1) { 
-                        count++; 
-                        if (firstIndex === -1) firstIndex = idx;
-                        idx++; 
-                    }
-                });
-                
-                if (count > 0) {
+                if (searchResult.matches > 0) {
                     // استخراج السياق
-                    const i = firstIndex !== -1 ? firstIndex : 0;
-                    const start = Math.max(0, i - 40);
-                    const end = Math.min(p.text.length, i + query.length + 60);
+                    const i = searchResult.firstIndex !== -1 ? searchResult.firstIndex : 0;
+                    const start = Math.max(0, i - 35);
+                    const end = Math.min(p.text.length, i + query.length + 55);
                     let ctx = p.text.substring(start, end).trim();
                     if (start > 0) ctx = '...' + ctx;
                     if (end < p.text.length) ctx += '...';
                     
                     results.push({ 
                         page: p.page, 
-                        count, 
+                        count: searchResult.matches, 
                         ctx,
-                        matchIndex: firstIndex
+                        matchIndex: searchResult.firstIndex,
+                        searchTerm: query,
+                        id: `result-${p.page}-${Date.now()}`
                     });
                 }
             });
             
-            // ترتيب حسب عدد التطابقات
             results.sort((a, b) => b.count - a.count);
             showResults(query);
             
             if (results.length > 0) {
                 resultIdx = 0;
                 gotoResult(0);
+                showToast(`✅ تم العثور على ${results.length} نتيجة`, 'success');
             } else {
                 showToast(`😕 لا توجد نتائج لـ "${query}"`, 'warning');
             }
         }
         
-        function clearResults() {
+        function clearSearchResults() {
             results = [];
             resultIdx = -1;
             currentSearchTerm = '';
@@ -1070,9 +1396,15 @@
             document.getElementById('resultsList').innerHTML = `
                 <div class="placeholder">
                     <div class="placeholder-icon">🔍</div>
-                    <p>اكتب في مربع البحث أعلاه<br>للعثور على الأكواد والمنتجات</p>
+                    <p>اكتب في مربع البحث<br>للعثور على الأكواد</p>
                 </div>
             `;
+        }
+        
+        function clearAllResults() {
+            clearSearchResults();
+            document.getElementById('searchInput').value = '';
+            showToast('🗑️ تم مسح جميع النتائج', 'info');
         }
 
         function showResults(query) {
@@ -1106,26 +1438,37 @@
             const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const regex = new RegExp(`(${escaped})`, 'gi');
             
-            list.innerHTML = results.map((r, i) => `
-                <div class="result-card ${i === 0 ? 'active' : ''}" onclick="gotoResult(${i})" data-index="${i}">
+            list.innerHTML = results.map((r, i) => {
+                const isPinned = pinnedResults.some(p => p.page === r.page && p.searchTerm === r.searchTerm);
+                return `
+                <div class="result-card ${i === 0 ? 'active' : ''} ${isPinned ? 'pinned' : ''}" 
+                     data-index="${i}" onclick="gotoResult(${i})">
                     <div class="result-top">
                         <span class="page-badge">📄 صفحة ${r.page}</span>
-                        <span class="match-count">${r.count} تطابق</span>
+                        <div class="result-actions">
+                            <button class="result-action-btn pin-btn ${isPinned ? 'pinned' : ''}" 
+                                    onclick="event.stopPropagation(); togglePin(${i})" title="تثبيت">
+                                📌
+                            </button>
+                            <button class="result-action-btn delete-btn" 
+                                    onclick="event.stopPropagation(); deleteResult(${i})" title="حذف">
+                                ✕
+                            </button>
+                        </div>
                     </div>
                     <div class="result-text">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
                     <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
-                        <span>←</span>
-                        <span>انتقال وتظليل</span>
+                        ← انتقال وتظليل
                     </button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
+        // ========== Result Navigation ==========
         async function gotoResult(i) {
             if (i < 0 || i >= results.length) return;
             resultIdx = i;
             
-            // Update UI
             document.querySelectorAll('.result-card').forEach((c, j) => {
                 c.classList.toggle('active', j === i);
             });
@@ -1136,41 +1479,34 @@
             
             const pageNum = results[i].page;
             
-            // Navigate and highlight in Adobe viewer
             if (window.pdfAPIs) {
                 try {
                     // الانتقال للصفحة
                     await window.pdfAPIs.gotoLocation(pageNum);
                     
-                    // محاولة البحث والتظليل
-                    if (currentSearchTerm) {
+                    // البحث والتظليل في Adobe
+                    setTimeout(async () => {
                         try {
-                            // استخدام Search API إذا كان متاحاً
-                            const searchAPI = await adobeViewer.getAPIs();
-                            if (searchAPI.search) {
-                                await searchAPI.search(currentSearchTerm)
-                                    .then(result => {
-                                        if (result && result.searchResults) {
-                                            console.log('Search results:', result.searchResults.length);
-                                        }
-                                    })
-                                    .catch(e => console.log('Search API not fully supported'));
+                            // محاولة استخدام البحث المدمج
+                            if (window.pdfAPIs.search) {
+                                await window.pdfAPIs.search(currentSearchTerm);
                             }
-                        } catch (searchError) {
-                            console.log('Search highlighting not available:', searchError);
+                        } catch (e) {
+                            console.log('Search API:', e);
                         }
-                    }
+                    }, 500);
+                    
                 } catch (e) {
-                    console.log('Navigation error:', e);
+                    console.log('Navigation:', e);
                 }
             }
             
-            showToast(`📄 صفحة ${pageNum} - "${currentSearchTerm}"`, 'success');
+            showToast(`📄 صفحة ${pageNum}`, 'success');
             
-            // Scroll result card into view
+            // تمرير البطاقة للعرض
             const card = document.querySelector('.result-card.active');
             if (card) {
-                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
@@ -1178,17 +1514,142 @@
             const n = resultIdx + dir;
             if (n >= 0 && n < results.length) gotoResult(n);
         }
+        
+        // ========== Pin/Delete Results ==========
+        function togglePin(index) {
+            const result = results[index];
+            if (!result) return;
+            
+            const existingIndex = pinnedResults.findIndex(p => 
+                p.page === result.page && p.searchTerm === result.searchTerm
+            );
+            
+            if (existingIndex >= 0) {
+                // إلغاء التثبيت
+                pinnedResults.splice(existingIndex, 1);
+                showToast('📌 تم إلغاء التثبيت', 'info');
+            } else {
+                // تثبيت
+                pinnedResults.push({...result, pinnedAt: Date.now()});
+                showToast('📌 تم تثبيت النتيجة', 'success');
+            }
+            
+            savePinnedResults();
+            updatePinnedSection();
+            showResults(currentSearchTerm);
+        }
+        
+        function deleteResult(index) {
+            if (index < 0 || index >= results.length) return;
+            
+            results.splice(index, 1);
+            
+            if (results.length === 0) {
+                clearSearchResults();
+            } else {
+                if (resultIdx >= results.length) {
+                    resultIdx = results.length - 1;
+                }
+                showResults(currentSearchTerm);
+                if (results.length > 0) {
+                    gotoResult(Math.min(index, results.length - 1));
+                }
+            }
+            
+            showToast('🗑️ تم حذف النتيجة', 'info');
+        }
+        
+        function clearPinned() {
+            pinnedResults = [];
+            savePinnedResults();
+            updatePinnedSection();
+            showResults(currentSearchTerm);
+            showToast('📌 تم مسح النتائج المثبتة', 'info');
+        }
+        
+        function updatePinnedSection() {
+            const section = document.getElementById('pinnedSection');
+            const list = document.getElementById('pinnedList');
+            
+            if (pinnedResults.length === 0) {
+                section.classList.remove('has-items');
+                return;
+            }
+            
+            section.classList.add('has-items');
+            
+            list.innerHTML = pinnedResults.map((r, i) => `
+                <div class="result-card pinned" onclick="gotoPinnedResult(${i})">
+                    <div class="result-top">
+                        <span class="page-badge">📄 ${r.page}</span>
+                        <span class="match-count">"${r.searchTerm}"</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function gotoPinnedResult(index) {
+            const result = pinnedResults[index];
+            if (!result) return;
+            
+            if (window.pdfAPIs) {
+                await window.pdfAPIs.gotoLocation(result.page);
+            }
+            showToast(`📌 صفحة ${result.page}`, 'success');
+        }
+        
+        function savePinnedResults() {
+            localStorage.setItem('hs-code-pinned', JSON.stringify(pinnedResults));
+        }
+        
+        function loadPinnedResults() {
+            try {
+                const saved = localStorage.getItem('hs-code-pinned');
+                if (saved) {
+                    pinnedResults = JSON.parse(saved);
+                    updatePinnedSection();
+                }
+            } catch (e) {
+                pinnedResults = [];
+            }
+        }
+        
+        function exportResults() {
+            if (results.length === 0 && pinnedResults.length === 0) {
+                showToast('⚠️ لا توجد نتائج للتصدير', 'warning');
+                return;
+            }
+            
+            let text = `نتائج البحث - HS Code 2026\n`;
+            text += `${'='.repeat(40)}\n\n`;
+            
+            if (pinnedResults.length > 0) {
+                text += `📌 النتائج المثبتة (${pinnedResults.length}):\n`;
+                pinnedResults.forEach((r, i) => {
+                    text += `${i + 1}. صفحة ${r.page} - "${r.searchTerm}"\n`;
+                });
+                text += `\n`;
+            }
+            
+            if (results.length > 0) {
+                text += `🔍 نتائج البحث "${currentSearchTerm}" (${results.length}):\n`;
+                results.forEach((r, i) => {
+                    text += `${i + 1}. صفحة ${r.page} (${r.count} تطابق)\n`;
+                    text += `   ${r.ctx}\n\n`;
+                });
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 تم نسخ النتائج للحافظة', 'success');
+            }).catch(() => {
+                showToast('⚠️ فشل النسخ', 'error');
+            });
+        }
 
         // ========== Helpers ==========
         function toArabicNums(str) {
             const ar = '٠١٢٣٤٥٦٧٨٩';
             return str.replace(/[0-9]/g, d => ar[d]);
-        }
-
-        function toEnglishNums(str) {
-            const en = '0123456789';
-            const ar = '٠١٢٣٤٥٦٧٨٩';
-            return str.replace(/[٠-٩]/g, d => en[ar.indexOf(d)]);
         }
 
         function showToast(msg, type = 'info') {
@@ -1199,9 +1660,16 @@
             window.toastTimer = setTimeout(() => toast.className = '', 3000);
         }
 
-        // Global functions
+        // Global
         window.gotoResult = gotoResult;
+        window.gotoPinnedResult = gotoPinnedResult;
         window.toggleTheme = toggleTheme;
+        window.togglePanel = togglePanel;
+        window.togglePin = togglePin;
+        window.deleteResult = deleteResult;
+        window.clearPinned = clearPinned;
+        window.clearAllResults = clearAllResults;
+        window.exportResults = exportResults;
     </script>
 </body>
 </html>
