@@ -1,192 +1,193 @@
 // ========== الإعدادات ==========
-const PDF_FILE = 'HS Code 2026.pdf';
+var GOOGLE_DRIVE_FILE_ID = '1sxY3ePFcEOrEaJFsQ6vI8vX9NS7MEA5V';
+var PDF_FILE = 'HS Code 2026.pdf';
 
 // ========== PDF.js ==========
 pdfjsLib.GlobalWorkerOptions.workerSrc = 
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 // ========== المتغيرات ==========
-let pdf = null;
-let currentPage = 1;
-let totalPages = 0;
-let scale = 1.5;
-let pdfText = [];
-let results = [];
-let resultIdx = -1;
-let indexed = false;
-let history = JSON.parse(localStorage.getItem('pdfHistory') || '[]');
-let debounceTimer = null;
+var pdfText = [];
+var results = [];
+var resultIdx = -1;
+var totalPages = 0;
+var indexed = false;
+var history = [];
+var debounceTimer = null;
 
-// ========== تهيئة التطبيق ==========
+// ========== بدء التطبيق ==========
 document.addEventListener('DOMContentLoaded', function() {
-    initApp();
+    // تحميل التاريخ
+    try {
+        history = JSON.parse(localStorage.getItem('pdfHistory')) || [];
+    } catch(e) {
+        history = [];
+    }
+    
+    // إعداد العارض
+    setupViewer();
+    
+    // ربط الأحداث
+    setupEvents();
+    
+    // عرض التاريخ
+    showHistory();
+    
+    // بدء الفهرسة
+    indexPDF();
 });
 
-function initApp() {
-    // ربط الأحداث
+// ========== إعداد العارض ==========
+function setupViewer() {
+    var frame = document.getElementById('pdfFrame');
+    var downloadBtn = document.getElementById('downloadBtn');
+    
+    // عرض PDF عبر Google Drive
+    frame.src = 'https://drive.google.com/file/d/' + GOOGLE_DRIVE_FILE_ID + '/preview';
+    
+    // رابط التحميل
+    downloadBtn.href = 'https://drive.google.com/uc?export=download&id=' + GOOGLE_DRIVE_FILE_ID;
+}
+
+// ========== ربط الأحداث ==========
+function setupEvents() {
+    // البحث
     document.getElementById('searchInput').addEventListener('input', onSearchInput);
     document.getElementById('searchInput').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') doSearch();
     });
+    
+    // مسح البحث
     document.getElementById('clearBtn').addEventListener('click', clearSearch);
-    document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+    
+    // الشريط الجانبي
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+    });
+    
+    // التنقل بين النتائج
     document.getElementById('prevBtn').addEventListener('click', function() { navResult(-1); });
     document.getElementById('nextBtn').addEventListener('click', function() { navResult(1); });
-    document.getElementById('pagePrev').addEventListener('click', function() { goPage(currentPage - 1); });
-    document.getElementById('pageNext').addEventListener('click', function() { goPage(currentPage + 1); });
-    document.getElementById('pageNum').addEventListener('change', function(e) { goPage(parseInt(e.target.value)); });
-    document.getElementById('pageRange').addEventListener('input', function(e) { goPage(parseInt(e.target.value)); });
-    document.getElementById('zoomIn').addEventListener('click', function() { setZoom(scale + 0.25); });
-    document.getElementById('zoomOut').addEventListener('click', function() { setZoom(scale - 0.25); });
-    document.getElementById('zoomFit').addEventListener('click', fitWidth);
-    document.getElementById('themeBtn').addEventListener('click', toggleTheme);
-    document.addEventListener('keydown', onKeyDown);
-
-    // عرض التاريخ
-    showHistory();
     
-    // تحميل PDF
-    loadPDF();
-}
-
-// ========== تحميل PDF ==========
-async function loadPDF() {
-    setLoader('جاري تحميل الملف...', 10);
+    // الثيم
+    document.getElementById('themeBtn').addEventListener('click', function() {
+        document.body.classList.toggle('light');
+        this.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+    });
     
-    try {
-        pdf = await pdfjsLib.getDocument({
-            url: PDF_FILE,
-            cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
-            cMapPacked: true,
-            standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/',
-        }).promise;
-        
-        totalPages = pdf.numPages;
-        document.getElementById('pageTotal').textContent = totalPages;
-        document.getElementById('pageRange').max = totalPages;
-        
-        setLoader('جاري عرض الصفحة الأولى...', 30);
-        await renderPage(1);
-        
-        await indexPDF();
-        
-        document.getElementById('loadingScreen').classList.add('hide');
-        document.getElementById('searchInput').focus();
-        
-    } catch (err) {
-        setLoader('❌ خطأ في تحميل الملف: ' + err.message, 0);
-        console.error('خطأ:', err);
-    }
-}
-
-function setLoader(text, percent) {
-    document.getElementById('loaderText').textContent = text;
-    document.getElementById('loaderProgress').style.width = percent + '%';
-}
-
-// ========== فهرسة PDF ==========
-async function indexPDF() {
-    const status = document.getElementById('searchStatus');
-    status.textContent = 'جاري تجهيز البحث...';
-    status.className = 'search-status';
-    pdfText = [];
-    
-    for (let i = 1; i <= totalPages; i++) {
-        setLoader('فهرسة الصفحة ' + i + ' من ' + totalPages, 30 + (i / totalPages) * 65);
-        status.textContent = 'فهرسة ' + i + '/' + totalPages + '...';
-        
-        try {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            const text = textContent.items.map(function(item) { return item.str; }).join(' ');
-            pdfText.push({ page: i, text: text });
-        } catch (e) {
-            pdfText.push({ page: i, text: '' });
-        }
-    }
-    
-    indexed = true;
-    status.textContent = '✅ جاهز للبحث (' + totalPages + ' صفحة)';
-    status.className = 'search-status ready';
-    
-    setTimeout(function() {
-        status.textContent = '';
-    }, 3000);
-}
-
-// ========== عرض الصفحة ==========
-async function renderPage(num) {
-    if (!pdf || num < 1 || num > totalPages) return;
-    currentPage = num;
-    
-    const page = await pdf.getPage(num);
-    const viewport = page.getViewport({ scale: scale });
-    
-    const canvas = document.getElementById('pdfCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    const ratio = window.devicePixelRatio || 1;
-    canvas.width = viewport.width * ratio;
-    canvas.height = viewport.height * ratio;
-    canvas.style.width = viewport.width + 'px';
-    canvas.style.height = viewport.height + 'px';
-    
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-    
-    // طبقة النص
-    await renderTextLayer(page, viewport);
-    
-    // تحديث الواجهة
-    document.getElementById('pageNum').value = num;
-    document.getElementById('pageRange').value = num;
-    document.getElementById('pagePrev').disabled = num <= 1;
-    document.getElementById('pageNext').disabled = num >= totalPages;
-}
-
-async function renderTextLayer(page, viewport) {
-    const textContent = await page.getTextContent();
-    const textLayer = document.getElementById('textLayer');
-    textLayer.innerHTML = '';
-    textLayer.style.width = viewport.width + 'px';
-    textLayer.style.height = viewport.height + 'px';
-    
-    textContent.items.forEach(function(item) {
-        const span = document.createElement('span');
-        const transform = item.transform;
-        const fontSize = Math.sqrt(transform[0] * transform[0] + transform[1] * transform[1]);
-        
-        span.textContent = item.str;
-        span.style.left = transform[4] + 'px';
-        span.style.top = (viewport.height - transform[5]) + 'px';
-        span.style.fontSize = fontSize * scale + 'px';
-        
-        textLayer.appendChild(span);
+    // اختصارات لوحة المفاتيح
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT') return;
+        if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
+        if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
     });
 }
 
-function goPage(num) {
-    num = Math.max(1, Math.min(totalPages, num));
-    renderPage(num);
+// ========== فهرسة PDF للبحث ==========
+function indexPDF() {
+    var status = document.getElementById('searchStatus');
+    status.textContent = 'جاري تجهيز البحث...';
+    status.className = 'search-status';
+    
+    // محاولة التحميل من GitHub أولاً
+    tryLoadPDF(PDF_FILE)
+        .then(function(pdf) {
+            return extractText(pdf);
+        })
+        .catch(function() {
+            // محاولة من Google Drive
+            status.textContent = 'جاري المحاولة من مصدر آخر...';
+            var proxyUrl = 'https://api.allorigins.win/raw?url=' + 
+                encodeURIComponent('https://drive.google.com/uc?export=download&id=' + GOOGLE_DRIVE_FILE_ID);
+            return tryLoadPDF(proxyUrl).then(extractText);
+        })
+        .catch(function() {
+            // محاولة أخرى
+            var proxyUrl2 = 'https://corsproxy.io/?' + 
+                encodeURIComponent('https://drive.google.com/uc?export=download&id=' + GOOGLE_DRIVE_FILE_ID);
+            return tryLoadPDF(proxyUrl2).then(extractText);
+        })
+        .then(function() {
+            indexed = true;
+            status.textContent = '✅ جاهز للبحث (' + totalPages + ' صفحة)';
+            status.className = 'search-status ready';
+            setTimeout(function() { status.classList.add('hidden'); }, 3000);
+        })
+        .catch(function(err) {
+            console.error('فشل الفهرسة:', err);
+            status.textContent = '⚠️ يمكنك البحث بعد رفع الملف يدوياً';
+            showManualUpload();
+        });
 }
 
-function setZoom(z) {
-    scale = Math.max(0.5, Math.min(3, z));
-    document.getElementById('zoomVal').textContent = Math.round(scale * 100) + '%';
-    renderPage(currentPage);
+function tryLoadPDF(url) {
+    return pdfjsLib.getDocument({
+        url: url,
+        cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+        cMapPacked: true
+    }).promise;
 }
 
-function fitWidth() {
-    const container = document.getElementById('pdfContainer');
-    const width = container.clientWidth - 40;
-    scale = width / 612;
-    document.getElementById('zoomVal').textContent = Math.round(scale * 100) + '%';
-    renderPage(currentPage);
+function extractText(pdf) {
+    totalPages = pdf.numPages;
+    pdfText = [];
+    
+    var status = document.getElementById('searchStatus');
+    var promises = [];
+    
+    for (var i = 1; i <= totalPages; i++) {
+        promises.push(extractPageText(pdf, i, status));
+    }
+    
+    return Promise.all(promises);
+}
+
+function extractPageText(pdf, pageNum, status) {
+    return pdf.getPage(pageNum).then(function(page) {
+        status.textContent = 'فهرسة ' + pageNum + '/' + totalPages + '...';
+        return page.getTextContent();
+    }).then(function(textContent) {
+        var text = textContent.items.map(function(item) { return item.str; }).join(' ');
+        pdfText.push({ page: pageNum, text: text });
+    }).catch(function() {
+        pdfText.push({ page: pageNum, text: '' });
+    });
+}
+
+function showManualUpload() {
+    var status = document.getElementById('searchStatus');
+    status.innerHTML = '⚠️ <label style="cursor:pointer;text-decoration:underline;">ارفع الملف للبحث<input type="file" accept=".pdf" style="display:none" onchange="handleManualUpload(event)"></label>';
+}
+
+function handleManualUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    
+    var status = document.getElementById('searchStatus');
+    status.textContent = 'جاري قراءة الملف...';
+    
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var data = new Uint8Array(e.target.result);
+        pdfjsLib.getDocument({
+            data: data,
+            cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+            cMapPacked: true
+        }).promise.then(function(pdf) {
+            return extractText(pdf);
+        }).then(function() {
+            indexed = true;
+            status.textContent = '✅ جاهز للبحث (' + totalPages + ' صفحة)';
+            status.className = 'search-status ready';
+            setTimeout(function() { status.classList.add('hidden'); }, 3000);
+        });
+    };
+    reader.readAsArrayBuffer(file);
 }
 
 // ========== البحث ==========
 function onSearchInput(e) {
-    const value = e.target.value;
+    var value = e.target.value;
     document.getElementById('clearBtn').style.display = value ? 'block' : 'none';
     
     clearTimeout(debounceTimer);
@@ -198,23 +199,28 @@ function onSearchInput(e) {
 }
 
 function doSearch() {
-    const query = document.getElementById('searchInput').value.trim();
-    if (!query || !indexed) return;
+    var query = document.getElementById('searchInput').value.trim();
+    if (!query) return;
+    
+    if (!indexed) {
+        showToast('⏳ انتظر اكتمال التجهيز أو ارفع الملف');
+        return;
+    }
     
     addHistory(query);
     
     results = [];
-    const queryLower = query.toLowerCase();
-    const queryArabic = toArabicNums(query);
-    const queryEnglish = toEnglishNums(query);
+    var queryLower = query.toLowerCase();
+    var queryAr = toArabic(query);
+    var queryEn = toEnglish(query);
     
     pdfText.forEach(function(p) {
         if (!p.text) return;
-        const textLower = p.text.toLowerCase();
+        var textLower = p.text.toLowerCase();
         
-        let count = 0;
-        [queryLower, queryArabic.toLowerCase(), queryEnglish.toLowerCase()].forEach(function(q) {
-            let idx = 0;
+        var count = 0;
+        [queryLower, queryAr.toLowerCase(), queryEn.toLowerCase()].forEach(function(q) {
+            var idx = 0;
             while ((idx = textLower.indexOf(q, idx)) !== -1) {
                 count++;
                 idx++;
@@ -222,16 +228,20 @@ function doSearch() {
         });
         
         if (count > 0) {
-            const idx = textLower.indexOf(queryLower);
-            const start = Math.max(0, idx - 50);
-            const end = Math.min(p.text.length, idx + query.length + 50);
-            let context = p.text.substring(start, end);
+            var idx = textLower.indexOf(queryLower);
+            if (idx === -1) idx = 0;
+            var start = Math.max(0, idx - 50);
+            var end = Math.min(p.text.length, idx + query.length + 50);
+            var context = p.text.substring(start, end);
             if (start > 0) context = '...' + context;
             if (end < p.text.length) context += '...';
             
             results.push({ page: p.page, count: count, context: context });
         }
     });
+    
+    // ترتيب حسب عدد التطابقات
+    results.sort(function(a, b) { return b.count - a.count; });
     
     showResults(query);
     
@@ -242,12 +252,12 @@ function doSearch() {
 }
 
 function showResults(query) {
-    const sidebar = document.getElementById('sidebar');
-    const stats = document.getElementById('statsBar');
-    const list = document.getElementById('resultsList');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const pos = document.getElementById('resultPos');
+    var sidebar = document.getElementById('sidebar');
+    var stats = document.getElementById('statsBar');
+    var list = document.getElementById('resultsList');
+    var prevBtn = document.getElementById('prevBtn');
+    var nextBtn = document.getElementById('nextBtn');
+    var pos = document.getElementById('resultPos');
     
     sidebar.classList.remove('collapsed');
     
@@ -260,45 +270,39 @@ function showResults(query) {
         return;
     }
     
-    const total = results.reduce(function(sum, r) { return sum + r.count; }, 0);
+    var total = results.reduce(function(s, r) { return s + r.count; }, 0);
     stats.textContent = '✅ ' + total + ' نتيجة في ' + results.length + ' صفحة';
     
     prevBtn.disabled = true;
     nextBtn.disabled = results.length <= 1;
     pos.textContent = '1/' + results.length;
     
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp('(' + escapedQuery + ')', 'gi');
+    var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var regex = new RegExp('(' + escaped + ')', 'gi');
     
-    let html = '';
+    var html = '';
     results.forEach(function(r, i) {
-        const highlighted = r.context.replace(regex, '<span class="hl">$1</span>');
-        html += '<div class="result-card' + (i === 0 ? ' active' : '') + '" data-index="' + i + '">';
+        var highlighted = r.context.replace(regex, '<span class="hl">$1</span>');
+        html += '<div class="result-card' + (i === 0 ? ' active' : '') + '" onclick="gotoResult(' + i + ')">';
         html += '<div class="result-card-header">';
         html += '<span class="page-tag">📄 صفحة ' + r.page + '</span>';
         html += '<span class="match-tag">' + r.count + ' تطابق</span>';
         html += '</div>';
         html += '<div class="result-card-body">' + highlighted + '</div>';
-        html += '<button class="go-page-btn" onclick="gotoResult(' + i + ')">← انتقال للصفحة</button>';
+        html += '<button class="go-page-btn" onclick="event.stopPropagation(); gotoResult(' + i + ')">← انتقال للصفحة</button>';
         html += '</div>';
     });
     
     list.innerHTML = html;
-    
-    // ربط النقر على البطاقات
-    list.querySelectorAll('.result-card').forEach(function(card) {
-        card.addEventListener('click', function() {
-            gotoResult(parseInt(card.dataset.index));
-        });
-    });
 }
 
 function gotoResult(index) {
     if (index < 0 || index >= results.length) return;
     resultIdx = index;
     
-    // تحديث البطاقة النشطة
-    document.querySelectorAll('.result-card').forEach(function(card, i) {
+    // تحديث الكارت النشط
+    var cards = document.querySelectorAll('.result-card');
+    cards.forEach(function(card, i) {
         card.classList.toggle('active', i === index);
     });
     
@@ -307,20 +311,30 @@ function gotoResult(index) {
     document.getElementById('prevBtn').disabled = index === 0;
     document.getElementById('nextBtn').disabled = index === results.length - 1;
     
-    // الانتقال للصفحة
-    goPage(results[index].page);
+    // الانتقال للصفحة في العارض
+    var pageNum = results[index].page;
+    goToPage(pageNum);
     
-    // تمرير البطاقة للعرض
-    const card = document.querySelector('.result-card[data-index="' + index + '"]');
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // تمرير الكارت
+    var activeCard = document.querySelector('.result-card.active');
+    if (activeCard) activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     
-    showToast('📄 صفحة ' + results[index].page);
+    showToast('📄 صفحة ' + pageNum);
 }
 
-function navResult(direction) {
-    const newIndex = resultIdx + direction;
-    if (newIndex >= 0 && newIndex < results.length) {
-        gotoResult(newIndex);
+function goToPage(pageNum) {
+    var frame = document.getElementById('pdfFrame');
+    var pageInfo = document.getElementById('pageInfo');
+    
+    // تحديث العارض مع رقم الصفحة
+    frame.src = 'https://drive.google.com/file/d/' + GOOGLE_DRIVE_FILE_ID + '/preview#page=' + pageNum;
+    pageInfo.textContent = 'صفحة ' + pageNum;
+}
+
+function navResult(dir) {
+    var newIdx = resultIdx + dir;
+    if (newIdx >= 0 && newIdx < results.length) {
+        gotoResult(newIdx);
     }
 }
 
@@ -343,20 +357,22 @@ function addHistory(query) {
     history = history.filter(function(h) { return h !== query; });
     history.unshift(query);
     history = history.slice(0, 8);
-    localStorage.setItem('pdfHistory', JSON.stringify(history));
+    try {
+        localStorage.setItem('pdfHistory', JSON.stringify(history));
+    } catch(e) {}
     showHistory();
 }
 
 function showHistory() {
-    const container = document.getElementById('historyTags');
-    if (history.length === 0) {
-        container.innerHTML = '<span style="color:var(--text2);font-size:0.8rem;">لا يوجد</span>';
+    var container = document.getElementById('historyTags');
+    if (!history || history.length === 0) {
+        container.innerHTML = '<span style="color:var(--text2);font-size:0.85rem;">لا يوجد</span>';
         return;
     }
     
-    let html = '';
+    var html = '';
     history.forEach(function(h) {
-        html += '<span class="history-tag" onclick="useHistory(\'' + h + '\')">' + h + '</span>';
+        html += '<span class="history-tag" onclick="useHistory(\'' + h.replace(/'/g, "\\'") + '\')">' + h + '</span>';
     });
     container.innerHTML = html;
 }
@@ -366,64 +382,26 @@ function useHistory(query) {
     doSearch();
 }
 
-// ========== الواجهة ==========
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('collapsed');
-}
-
-function toggleTheme() {
-    document.body.classList.toggle('light');
-    document.getElementById('themeBtn').textContent = 
-        document.body.classList.contains('light') ? '☀️' : '🌙';
-}
-
-function onKeyDown(e) {
-    if (e.target.tagName === 'INPUT') return;
-    
-    switch (e.key) {
-        case 'ArrowUp':
-            e.preventDefault();
-            navResult(-1);
-            break;
-        case 'ArrowDown':
-            e.preventDefault();
-            navResult(1);
-            break;
-        case 'ArrowLeft':
-            goPage(currentPage + 1);
-            break;
-        case 'ArrowRight':
-            goPage(currentPage - 1);
-            break;
-        case '+':
-        case '=':
-            setZoom(scale + 0.25);
-            break;
-        case '-':
-            setZoom(scale - 0.25);
-            break;
-    }
-}
-
 // ========== المساعدات ==========
-function toArabicNums(str) {
-    const arabic = '٠١٢٣٤٥٦٧٨٩';
-    return str.replace(/[0-9]/g, function(d) { return arabic[d]; });
+function toArabic(str) {
+    var ar = '٠١٢٣٤٥٦٧٨٩';
+    return str.replace(/[0-9]/g, function(d) { return ar[d]; });
 }
 
-function toEnglishNums(str) {
-    return str.replace(/[٠-٩]/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
+function toEnglish(str) {
+    var en = '0123456789';
+    var ar = '٠١٢٣٤٥٦٧٨٩';
+    return str.replace(/[٠-٩]/g, function(d) { return en[ar.indexOf(d)]; });
 }
 
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
+function showToast(msg) {
+    var toast = document.getElementById('toast');
+    toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(function() {
-        toast.classList.remove('show');
-    }, 2500);
+    setTimeout(function() { toast.classList.remove('show'); }, 2500);
 }
 
 // جعل الدوال متاحة عالمياً
 window.gotoResult = gotoResult;
 window.useHistory = useHistory;
+window.handleManualUpload = handleManualUpload;
