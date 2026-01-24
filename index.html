@@ -3,856 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 HS Code 2026 - دليل الرموز الجمركية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>📚 HS Code 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
             --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --success: #22c55e;
+            --success: #10b981;
             --warning: #f59e0b;
-            --bg: #0a0a0f;
-            --surface: #12121a;
-            --surface2: #1e1e2e;
-            --surface3: #2a2a3e;
+            --bg: #0a0a12;
+            --surface: #13131f;
+            --surface2: #1e1e30;
             --text: #f1f5f9;
             --text2: #94a3b8;
-            --border: #2e2e42;
+            --border: #2a2a42;
             --highlight: #fbbf24;
-            --glow: rgba(99, 102, 241, 0.4);
         }
-        
+        [data-theme="light"] {
+            --bg: #f1f5f9; --surface: #fff; --surface2: #e2e8f0;
+            --text: #1e293b; --text2: #64748b; --border: #cbd5e1;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Tajawal', sans-serif; 
-            background: var(--bg); 
-            color: var(--text);
-            overflow: hidden;
-        }
-        
-        .app {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            grid-template-rows: auto 1fr;
-            height: 100vh;
-        }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); }
+        .app { display: flex; flex-direction: column; height: 100vh; }
         
         /* Header */
         .header {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 25px;
-            background: linear-gradient(180deg, var(--surface) 0%, var(--surface2) 100%);
-            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
         }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo span { font-size: 2rem; }
+        .logo h1 { font-size: 1.3rem; color: var(--primary); }
+        .header-btns { display: flex; gap: 8px; }
+        .icon-btn {
+            width: 40px; height: 40px; border: none; border-radius: 10px;
+            background: var(--surface2); color: var(--text); font-size: 1.2rem; cursor: pointer;
         }
+        .icon-btn:hover { background: var(--primary); }
         
-        .logo-icon {
-            font-size: 2.5rem;
-            filter: drop-shadow(0 0 10px var(--glow));
+        /* Search Section */
+        .search-section {
+            padding: 15px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
         }
-        
-        .logo h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .logo p {
-            font-size: 0.85rem;
-            color: var(--text2);
-        }
-        
-        /* Search Panel */
-        .search-panel {
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .search-header {
-            padding: 20px;
-            background: var(--surface2);
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .search-box {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .search-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-        
+        .search-row { display: flex; gap: 10px; max-width: 700px; margin: 0 auto; align-items: center; }
         #searchInput {
-            width: 100%;
-            padding: 14px 20px 14px 45px;
-            background: var(--surface3);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s;
+            flex: 1; padding: 12px 18px; background: var(--surface2); border: 2px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 1rem; font-family: inherit;
         }
-        
-        #searchInput:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--glow);
+        #searchInput:focus { outline: none; border-color: var(--primary); }
+        #searchInput:disabled { opacity: 0.5; }
+        #searchBtn, #activateBtn {
+            padding: 12px 24px; border: none; border-radius: 12px;
+            font-size: 1rem; font-family: inherit; font-weight: 600; cursor: pointer;
         }
+        #searchBtn { background: var(--primary); color: #fff; display: none; }
+        #activateBtn { background: var(--success); color: #fff; }
+        #activateBtn:hover, #searchBtn:hover { filter: brightness(1.1); }
         
-        #searchInput::placeholder {
-            color: var(--text2);
+        #status {
+            text-align: center; margin-top: 10px; font-size: 0.85rem; color: var(--text2);
         }
+        #status.loading { color: var(--warning); }
+        #status.ready { color: var(--success); }
         
-        .search-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-            color: var(--text2);
+        /* Main */
+        .main { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 350px; background: var(--surface); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column;
         }
-        
-        #searchBtn {
-            padding: 14px 24px;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+        .sidebar-header {
+            padding: 12px 15px; background: var(--surface2);
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .sidebar-header h3 { font-size: 0.95rem; }
+        #resultsCount { padding: 2px 10px; background: var(--primary); border-radius: 10px; font-size: 0.75rem; }
         
-        #searchBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px var(--glow);
-        }
-        
-        /* Status */
-        #searchStatus {
-            margin-top: 12px;
-            padding: 10px 15px;
-            background: var(--surface3);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        #searchStatus.loading { color: var(--warning); }
-        #searchStatus.ready { color: var(--success); }
-        #searchStatus.hidden { display: none; }
-        
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid currentColor;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Results */
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: var(--surface2);
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .results-header h3 {
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        #resultsCount {
-            padding: 4px 12px;
-            background: var(--primary);
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        
-        .nav-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        
+        .nav-row { display: flex; gap: 8px; padding: 10px 15px; border-bottom: 1px solid var(--border); }
         .nav-btn {
-            padding: 8px 16px;
-            background: var(--surface3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
+            flex: 1; padding: 8px; background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); cursor: pointer; font-family: inherit;
         }
+        .nav-btn:hover:not(:disabled) { background: var(--primary); }
+        .nav-btn:disabled { opacity: 0.4; }
+        #resultPos { padding: 8px 12px; background: var(--bg); border-radius: 8px; text-align: center; }
         
-        .nav-btn:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-        
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        
-        #resultPos {
-            padding: 8px 12px;
-            background: var(--bg);
-            border-radius: 8px;
-            font-size: 0.85rem;
-            min-width: 70px;
-            text-align: center;
-        }
-        
-        /* Results List */
-        #resultsList {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-        }
-        
-        .placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text2);
-            text-align: center;
-        }
-        
-        .placeholder-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
+        #resultsList { flex: 1; overflow-y: auto; padding: 12px; }
+        .empty { text-align: center; padding: 40px 15px; color: var(--text2); }
+        .empty span { font-size: 3rem; display: block; margin-bottom: 10px; opacity: 0.4; }
         
         .result-card {
-            background: var(--surface2);
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: var(--surface2); border: 2px solid var(--border); border-radius: 12px;
+            padding: 12px; margin-bottom: 10px; cursor: pointer;
         }
-        
-        .result-card:hover {
-            border-color: var(--primary);
-            transform: translateX(-5px);
-            box-shadow: 5px 0 20px var(--glow);
-        }
-        
-        .result-card.active {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-        }
-        
-        .result-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .page-badge {
-            padding: 6px 14px;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .match-count {
-            font-size: 0.8rem;
-            color: var(--text2);
-        }
-        
+        .result-card:hover { border-color: var(--primary); }
+        .result-card.active { border-color: var(--primary); background: rgba(99,102,241,0.1); }
+        .result-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .page-badge { padding: 4px 12px; background: var(--primary); border-radius: 12px; font-size: 0.8rem; }
         .result-text {
-            font-size: 0.9rem;
-            color: var(--text2);
-            line-height: 1.8;
-            padding: 12px;
-            background: var(--bg);
-            border-radius: 10px;
-            max-height: 80px;
-            overflow: hidden;
+            font-size: 0.85rem; color: var(--text2); line-height: 1.6;
+            padding: 10px; background: var(--bg); border-radius: 8px; max-height: 65px; overflow: hidden;
         }
-        
-        .result-text .hl {
-            background: var(--highlight);
-            color: #000;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        
+        .result-text mark { background: var(--highlight); color: #000; padding: 1px 3px; border-radius: 2px; }
         .go-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            margin-top: 12px;
-            padding: 10px;
-            background: var(--primary);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+            display: block; width: 100%; margin-top: 10px; padding: 10px;
+            background: var(--primary); border: none; border-radius: 8px;
+            color: #fff; font-family: inherit; font-weight: 600; cursor: pointer;
         }
         
-        .go-btn:hover {
-            filter: brightness(1.15);
+        /* PDF */
+        .pdf-area { flex: 1; background: #1a1a1a; }
+        #pdf-container { width: 100%; height: 100%; }
+        
+        /* Page Indicator */
+        #pageIndicator {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            padding: 15px 30px; background: var(--primary); border-radius: 15px;
+            font-size: 1.2rem; font-weight: 700; color: #fff; z-index: 1000;
+            opacity: 0; transition: opacity 0.3s;
         }
-        
-        /* PDF Viewer */
-        .pdf-section {
-            position: relative;
-            background: #1a1a1a;
-            overflow: hidden;
-        }
-        
-        #pdf-container {
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* Hide Adobe branding with CSS */
-        #pdf-container [class*="spectrum-Button"],
-        #pdf-container [data-testid*="adobe"],
-        #pdf-container .spectrum-Heading--sizeXXS,
-        #pdf-container [aria-label*="Adobe"],
-        #pdf-container img[src*="adobe"] {
-            opacity: 0 !important;
-            pointer-events: none !important;
-        }
-        
-        /* Loading */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: all 0.5s;
-        }
-        
-        .loading-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            font-size: 6rem;
-            margin-bottom: 25px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-        
-        .loading-overlay h2 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #c7d2fe, #e9d5ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .loading-overlay p {
-            color: rgba(255,255,255,0.7);
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-        }
-        
-        .loading-bar {
-            width: 320px;
-            height: 6px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .loading-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 3px;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        #loadingPercent {
-            margin-top: 15px;
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        /* Toast */
-        #toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            padding: 15px 30px;
-            border-radius: 14px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        #toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        
-        #toast.success { border-color: var(--success); }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        #pageIndicator.show { opacity: 1; }
         
         /* Responsive */
-        @media (max-width: 1024px) {
-            .app {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto 1fr;
-            }
-            
-            .search-panel {
-                max-height: 50vh;
-                border-left: none;
-                border-bottom: 1px solid var(--border);
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .logo h1 { font-size: 1.2rem; }
-            .logo p { display: none; }
-            .search-box { flex-direction: column; }
-            #searchBtn { width: 100%; }
+        @media (max-width: 800px) {
+            .main { flex-direction: column-reverse; }
+            .sidebar { width: 100%; max-height: 40vh; border-left: none; border-top: 1px solid var(--border); }
+            .search-row { flex-wrap: wrap; }
+            #searchInput { width: 100%; }
+            #searchBtn, #activateBtn { width: 100%; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-logo">📚</div>
-        <h2>HS Code 2026</h2>
-        <p id="loadingText">جاري تحميل دليل الرموز الجمركية...</p>
-        <div class="loading-bar">
-            <div id="loadingFill" class="loading-fill" style="width: 0%"></div>
-        </div>
-        <div id="loadingPercent">0%</div>
-    </div>
-
-    <!-- Main App -->
     <div class="app">
-        <!-- Header -->
         <header class="header">
             <div class="logo">
-                <span class="logo-icon">📚</span>
-                <div>
-                    <h1>HS Code 2026</h1>
-                    <p>دليل الرموز الجمركية - سلطنة عمان</p>
-                </div>
+                <span>📚</span>
+                <h1>HS Code 2026</h1>
+            </div>
+            <div class="header-btns">
+                <button id="themeBtn" class="icon-btn">🌙</button>
             </div>
         </header>
 
-        <!-- Search Panel -->
-        <aside class="search-panel">
-            <div class="search-header">
-                <div class="search-box">
-                    <div class="search-input-wrapper">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="ابحث عن كود أو منتج...">
-                    </div>
-                    <button id="searchBtn">بحث</button>
-                </div>
-                <div id="searchStatus" class="loading">
-                    <div class="spinner"></div>
-                    <span>جاري تجهيز البحث...</span>
-                </div>
+        <div class="search-section">
+            <div class="search-row">
+                <input type="text" id="searchInput" placeholder="🔍 ابحث عن كود أو منتج..." disabled>
+                <button id="activateBtn">🚀 تفعيل البحث</button>
+                <button id="searchBtn">بحث</button>
             </div>
-            
-            <div class="results-header">
-                <h3>
-                    <span>📊</span>
-                    النتائج
-                    <span id="resultsCount" style="display:none">0</span>
-                </h3>
-                <div class="nav-buttons">
+            <div id="status">اضغط "تفعيل البحث" لتشغيل محرك البحث</div>
+        </div>
+
+        <div class="main">
+            <main class="pdf-area">
+                <div id="pdf-container"></div>
+            </main>
+
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h3>📊 النتائج <span id="resultsCount" style="display:none">0</span></h3>
+                </div>
+                <div class="nav-row">
                     <button id="prevBtn" class="nav-btn" disabled>▲</button>
                     <span id="resultPos">-</span>
                     <button id="nextBtn" class="nav-btn" disabled>▼</button>
                 </div>
-            </div>
-            
-            <div id="resultsList">
-                <div class="placeholder">
-                    <div class="placeholder-icon">🔍</div>
-                    <p>اكتب في مربع البحث أعلاه<br>للعثور على الأكواد والمنتجات</p>
+                <div id="resultsList">
+                    <div class="empty">
+                        <span>🔍</span>
+                        <p>فعّل البحث ثم اكتب للبحث</p>
+                    </div>
                 </div>
-            </div>
-        </aside>
-
-        <!-- PDF Viewer -->
-        <main class="pdf-section">
-            <div id="pdf-container"></div>
-        </main>
+            </aside>
+        </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast"></div>
+    <div id="pageIndicator"></div>
 
     <script>
-        // ========== Configuration ==========
-        const CONFIG = {
-            ADOBE_CLIENT_ID: '5edf16250afa446aa490af6313d351b2',
-            PDF_FILE: 'HS Code 2026.pdf'
-        };
+        // Config
+        const CLIENT_ID = '5edf16250afa446aa490af6313d351b2';
+        const PDF_FILE = 'HS Code 2026.pdf';
         
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        // ========== State ==========
-        let adobeViewer = null;
-        let pdfText = [];
+        // State
+        let pdfData = [];
         let results = [];
         let resultIdx = -1;
-        let totalPages = 0;
-        let indexed = false;
-
-        // ========== Initialize ==========
-        document.addEventListener('adobe_dc_view_sdk.ready', initApp);
-
-        async function initApp() {
-            setupEvents();
-            await Promise.all([
-                initAdobeViewer(),
-                indexPDFForSearch()
-            ]);
+        let isReady = false;
+        
+        // Load Adobe Viewer immediately
+        if (window.AdobeDC) {
+            loadViewer();
+        } else {
+            document.addEventListener('adobe_dc_view_sdk.ready', loadViewer);
         }
-
-        function setupEvents() {
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            
-            searchInput.addEventListener('input', function() {
-                clearTimeout(window.searchTimer);
-                if (this.value.length >= 2) {
-                    window.searchTimer = setTimeout(doSearch, 400);
-                }
-            });
-            
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') doSearch();
-            });
-            
-            searchBtn.addEventListener('click', doSearch);
-            document.getElementById('prevBtn').addEventListener('click', () => navResult(-1));
-            document.getElementById('nextBtn').addEventListener('click', () => navResult(1));
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.target.tagName === 'INPUT') return;
-                if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
-                if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
-            });
+        
+        function loadViewer() {
+            new AdobeDC.View({ clientId: CLIENT_ID, divId: 'pdf-container' })
+                .previewFile(
+                    { content: { location: { url: PDF_FILE } }, metaData: { fileName: PDF_FILE } },
+                    { embedMode: 'FULL_WINDOW', defaultViewMode: 'FIT_WIDTH', showDownloadPDF: true, showLeftHandPanel: true }
+                )
+                .then(v => { window.pdfAPIs = v.getAPIs ? v.getAPIs() : null; });
         }
-
-        // ========== Adobe Viewer ==========
-        async function initAdobeViewer() {
-            updateLoading('جاري تحميل العارض...', 20);
+        
+        // Events
+        document.getElementById('activateBtn').onclick = activateSearch;
+        document.getElementById('searchBtn').onclick = doSearch;
+        document.getElementById('searchInput').onkeydown = e => { if (e.key === 'Enter' && isReady) doSearch(); };
+        document.getElementById('searchInput').oninput = function() {
+            clearTimeout(window.t);
+            if (this.value.length >= 2 && isReady) window.t = setTimeout(doSearch, 400);
+        };
+        document.getElementById('prevBtn').onclick = () => nav(-1);
+        document.getElementById('nextBtn').onclick = () => nav(1);
+        document.getElementById('themeBtn').onclick = toggleTheme;
+        
+        // Activate Search (loads PDF.js on demand)
+        async function activateSearch() {
+            const btn = document.getElementById('activateBtn');
+            const status = document.getElementById('status');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ جاري التحميل...';
+            status.textContent = 'جاري تحميل محرك البحث...';
+            status.className = 'loading';
+            
+            // Load PDF.js dynamically
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
             
             try {
-                const adobeDCView = new AdobeDC.View({
-                    clientId: CONFIG.ADOBE_CLIENT_ID,
-                    divId: 'pdf-container'
-                });
+                status.textContent = 'جاري فتح الملف...';
+                const pdf = await pdfjsLib.getDocument({ url: PDF_FILE, cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/', cMapPacked: true }).promise;
+                const total = pdf.numPages;
+                pdfData = [];
                 
-                adobeViewer = await adobeDCView.previewFile({
-                    content: { location: { url: CONFIG.PDF_FILE } },
-                    metaData: { fileName: CONFIG.PDF_FILE }
-                }, {
-                    embedMode: 'FULL_WINDOW',
-                    defaultViewMode: 'FIT_WIDTH',
-                    showAnnotationTools: false,
-                    showLeftHandPanel: true,
-                    showPageControls: true,
-                    showDownloadPDF: true,
-                    showPrintPDF: false
-                });
-                
-                updateLoading('تم تحميل العارض', 50);
-                
-                // Get PDF APIs for navigation
-                const apis = await adobeViewer.getAPIs();
-                window.pdfAPIs = apis;
-                
-            } catch (error) {
-                console.error('Adobe Error:', error);
-                showToast('⚠️ خطأ في تحميل العارض', 'error');
-            }
-        }
-
-        // ========== PDF Indexing for Search ==========
-        async function indexPDFForSearch() {
-            updateLoading('جاري فهرسة الملف للبحث...', 30);
-            
-            try {
-                const pdf = await pdfjsLib.getDocument({
-                    url: CONFIG.PDF_FILE,
-                    cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
-                    cMapPacked: true
-                }).promise;
-                
-                totalPages = pdf.numPages;
-                pdfText = [];
-                
-                for (let i = 1; i <= totalPages; i++) {
-                    const percent = 50 + Math.round((i / totalPages) * 45);
-                    updateLoading(`فهرسة الصفحة ${i} من ${totalPages}...`, percent);
-                    
+                for (let i = 1; i <= total; i++) {
+                    status.textContent = `فهرسة ${i}/${total}...`;
                     try {
                         const page = await pdf.getPage(i);
                         const content = await page.getTextContent();
-                        const text = content.items.map(item => item.str).join(' ');
-                        pdfText.push({ page: i, text: text });
-                    } catch (e) {
-                        pdfText.push({ page: i, text: '' });
+                        const text = content.items.map(x => x.str).join(' ');
+                        pdfData.push({ page: i, text: norm(text), orig: text });
+                    } catch(e) {
+                        pdfData.push({ page: i, text: '', orig: '' });
                     }
+                    if (i % 10 === 0) await new Promise(r => setTimeout(r, 10));
                 }
                 
-                indexed = true;
-                updateLoading('جاهز!', 100);
-                
-                // Update status
-                const status = document.getElementById('searchStatus');
+                isReady = true;
+                btn.style.display = 'none';
+                document.getElementById('searchBtn').style.display = 'block';
+                document.getElementById('searchInput').disabled = false;
+                document.getElementById('searchInput').focus();
+                status.textContent = `✅ جاهز (${total} صفحة)`;
                 status.className = 'ready';
-                status.innerHTML = `<span>✅</span><span>جاهز للبحث (${totalPages} صفحة)</span>`;
+                setTimeout(() => status.style.display = 'none', 3000);
                 
-                // Hide loading after delay
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').classList.add('hidden');
-                    status.classList.add('hidden');
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Indexing Error:', error);
-                document.getElementById('searchStatus').innerHTML = 
-                    `<span>⚠️</span><span>خطأ في الفهرسة</span>`;
-                document.getElementById('loadingOverlay').classList.add('hidden');
+            } catch(e) {
+                status.textContent = '❌ خطأ: ' + e.message;
+                btn.disabled = false;
+                btn.textContent = '🚀 تفعيل البحث';
             }
         }
-
-        function updateLoading(text, percent) {
-            document.getElementById('loadingText').textContent = text;
-            document.getElementById('loadingPercent').textContent = percent + '%';
-            document.getElementById('loadingFill').style.width = percent + '%';
+        
+        function loadScript(src) {
+            return new Promise((res, rej) => {
+                if (document.querySelector(`script[src="${src}"]`)) return res();
+                const s = document.createElement('script');
+                s.src = src; s.onload = res; s.onerror = rej;
+                document.head.appendChild(s);
+            });
         }
-
-        // ========== Search ==========
+        
+        function norm(t) {
+            return t.replace(/\s+/g, ' ').replace(/[أإآا]/g, 'ا').replace(/[ىي]/g, 'ي').replace(/ة/g, 'ه').trim();
+        }
+        
+        // Search
         function doSearch() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
+            const q = document.getElementById('searchInput').value.trim();
+            if (!q || !isReady) return;
             
-            if (!indexed) {
-                showToast('⏳ انتظر اكتمال الفهرسة', 'warning');
-                return;
-            }
-            
+            const qn = norm(q).toLowerCase();
             results = [];
-            const qLower = query.toLowerCase();
-            const qArabic = toArabicNums(query);
-            const qEnglish = toEnglishNums(query);
             
-            pdfText.forEach(p => {
-                if (!p || !p.text) return;
-                const textLower = p.text.toLowerCase();
-                
-                let count = 0;
-                [qLower, qArabic.toLowerCase(), qEnglish.toLowerCase()].forEach(q => {
-                    let idx = 0;
-                    while ((idx = textLower.indexOf(q, idx)) !== -1) { count++; idx++; }
-                });
-                
-                if (count > 0) {
-                    let i = textLower.indexOf(qLower);
-                    if (i === -1) i = 0;
-                    const start = Math.max(0, i - 50);
-                    const end = Math.min(p.text.length, i + query.length + 50);
-                    let ctx = p.text.substring(start, end);
-                    if (start > 0) ctx = '...' + ctx;
-                    if (end < p.text.length) ctx += '...';
-                    
-                    results.push({ page: p.page, count, ctx });
+            pdfData.forEach(p => {
+                if (!p.text) return;
+                const t = p.text.toLowerCase();
+                let c = 0, i = 0;
+                while ((i = t.indexOf(qn, i)) !== -1) { c++; i++; }
+                if (c > 0) {
+                    const idx = t.indexOf(qn);
+                    let ctx = p.orig.substring(Math.max(0, idx - 40), Math.min(p.orig.length, idx + q.length + 60));
+                    if (idx > 40) ctx = '...' + ctx;
+                    if (idx + q.length + 60 < p.orig.length) ctx += '...';
+                    results.push({ page: p.page, count: c, ctx });
                 }
             });
             
             results.sort((a, b) => b.count - a.count);
-            showResults(query);
-            
-            if (results.length > 0) {
-                resultIdx = 0;
-                gotoResult(0);
-            }
+            showResults(q);
+            if (results.length > 0) { resultIdx = 0; goTo(0); }
         }
-
-        function showResults(query) {
+        
+        function showResults(q) {
             const list = document.getElementById('resultsList');
-            const countEl = document.getElementById('resultsCount');
-            const posEl = document.getElementById('resultPos');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
+            const cnt = document.getElementById('resultsCount');
             
             if (results.length === 0) {
-                countEl.style.display = 'none';
-                posEl.textContent = '-';
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-                list.innerHTML = `
-                    <div class="placeholder">
-                        <div class="placeholder-icon">😕</div>
-                        <p>لا توجد نتائج لـ "${query}"</p>
-                    </div>
-                `;
+                cnt.style.display = 'none';
+                document.getElementById('resultPos').textContent = '-';
+                document.getElementById('prevBtn').disabled = document.getElementById('nextBtn').disabled = true;
+                list.innerHTML = `<div class="empty"><span>😕</span><p>لا نتائج لـ "${q}"</p></div>`;
                 return;
             }
             
-            const total = results.reduce((s, r) => s + r.count, 0);
-            countEl.textContent = total;
-            countEl.style.display = 'inline';
-            posEl.textContent = `1/${results.length}`;
-            prevBtn.disabled = true;
-            nextBtn.disabled = results.length <= 1;
+            cnt.textContent = results.length;
+            cnt.style.display = 'inline';
+            document.getElementById('resultPos').textContent = `1/${results.length}`;
+            document.getElementById('prevBtn').disabled = true;
+            document.getElementById('nextBtn').disabled = results.length <= 1;
             
-            const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`(${escaped})`, 'gi');
-            
+            const rx = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
             list.innerHTML = results.map((r, i) => `
-                <div class="result-card ${i === 0 ? 'active' : ''}" onclick="gotoResult(${i})">
+                <div class="result-card ${i === 0 ? 'active' : ''}" onclick="goTo(${i})">
                     <div class="result-top">
                         <span class="page-badge">📄 صفحة ${r.page}</span>
-                        <span class="match-count">${r.count} تطابق</span>
+                        <span style="font-size:0.75rem;color:var(--text2)">${r.count} تطابق</span>
                     </div>
-                    <div class="result-text">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
-                    <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
-                        <span>←</span>
-                        <span>انتقال للصفحة</span>
-                    </button>
+                    <div class="result-text">${r.ctx.replace(rx, '<mark>$1</mark>')}</div>
+                    <button class="go-btn" onclick="event.stopPropagation();goTo(${i})">← انتقال</button>
                 </div>
             `).join('');
         }
-
-        async function gotoResult(i) {
+        
+        async function goTo(i) {
             if (i < 0 || i >= results.length) return;
             resultIdx = i;
             
-            // Update UI
-            document.querySelectorAll('.result-card').forEach((c, j) => {
-                c.classList.toggle('active', j === i);
-            });
-            
+            document.querySelectorAll('.result-card').forEach((c, j) => c.classList.toggle('active', j === i));
             document.getElementById('resultPos').textContent = `${i + 1}/${results.length}`;
             document.getElementById('prevBtn').disabled = i === 0;
             document.getElementById('nextBtn').disabled = i === results.length - 1;
             
-            // Navigate to page in Adobe viewer
-            const pageNum = results[i].page;
+            const page = results[i].page;
+            const ind = document.getElementById('pageIndicator');
+            ind.textContent = `📄 صفحة ${page}`;
+            ind.classList.add('show');
+            setTimeout(() => ind.classList.remove('show'), 1500);
             
-            if (window.pdfAPIs) {
-                try {
-                    await window.pdfAPIs.gotoLocation(pageNum);
-                } catch (e) {
-                    console.log('Navigation via API failed, trying alternative');
-                }
-            }
-            
-            showToast(`📄 الصفحة ${pageNum}`, 'success');
-            
-            // Scroll result into view
-            const card = document.querySelector('.result-card.active');
-            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (window.pdfAPIs) try { await window.pdfAPIs.gotoLocation(page); } catch(e) {}
+            document.querySelector('.result-card.active')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-
-        function navResult(dir) {
-            const n = resultIdx + dir;
-            if (n >= 0 && n < results.length) gotoResult(n);
+        
+        function nav(d) { const n = resultIdx + d; if (n >= 0 && n < results.length) goTo(n); }
+        
+        function toggleTheme() {
+            const isLight = document.body.getAttribute('data-theme') === 'light';
+            document.body.setAttribute('data-theme', isLight ? '' : 'light');
+            document.getElementById('themeBtn').textContent = isLight ? '🌙' : '☀️';
         }
-
-        // ========== Helpers ==========
-        function toArabicNums(str) {
-            const ar = '٠١٢٣٤٥٦٧٨٩';
-            return str.replace(/[0-9]/g, d => ar[d]);
-        }
-
-        function toEnglishNums(str) {
-            const en = '0123456789';
-            const ar = '٠١٢٣٤٥٦٧٨٩';
-            return str.replace(/[٠-٩]/g, d => en[ar.indexOf(d)]);
-        }
-
-        function showToast(msg, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = `show ${type}`;
-            setTimeout(() => toast.className = '', 3000);
-        }
-
-        // Global
-        window.gotoResult = gotoResult;
+        
+        window.goTo = goTo;
     </script>
 </body>
 </html>
