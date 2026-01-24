@@ -4,471 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 HS Code 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
     <style>
         :root {
             --primary: #6366f1;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --bg: #0a0a12;
-            --surface: #13131d;
-            --surface2: #1c1c2d;
-            --text: #f1f5f9;
-            --text2: #94a3b8;
+            --bg: #0f0f1a;
+            --surface: #1a1a2e;
+            --text: #fff;
+            --text2: #a0a0b0;
             --border: #2a2a40;
-            --highlight: #fbbf24;
         }
-        
-        [data-theme="light"] {
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --surface2: #f1f5f9;
-            --text: #1e293b;
-            --text2: #64748b;
-            --border: #e2e8f0;
-        }
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); }
         
-        .app { display: flex; flex-direction: column; height: 100vh; }
-        
         /* Header */
         .header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
         }
-        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo { display: flex; align-items: center; gap: 12px; }
         .logo span { font-size: 2rem; }
-        .logo h1 { font-size: 1.3rem; color: var(--primary); }
-        .header-btns { display: flex; gap: 8px; }
-        .icon-btn {
-            width: 40px; height: 40px; border: none; border-radius: 10px;
-            background: var(--surface2); color: var(--text); font-size: 1.2rem; cursor: pointer;
-        }
-        .icon-btn:hover { background: var(--primary); }
+        .logo h1 { font-size: 1.4rem; color: var(--primary); }
         
-        /* Search */
-        .search-section { padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
-        .search-row { display: flex; gap: 10px; max-width: 700px; margin: 0 auto; }
-        #searchInput {
-            flex: 1; padding: 12px 18px; background: var(--surface2); border: 2px solid var(--border);
-            border-radius: 12px; color: var(--text); font-size: 1rem; font-family: inherit;
-        }
-        #searchInput:focus { outline: none; border-color: var(--primary); }
-        #searchBtn {
-            padding: 12px 24px; background: var(--primary); border: none; border-radius: 12px;
-            color: #fff; font-size: 1rem; font-family: inherit; font-weight: 600; cursor: pointer;
-        }
-        #searchBtn:hover { filter: brightness(1.1); }
-        #searchBtn:disabled { opacity: 0.6; cursor: wait; }
-        #status { text-align: center; margin-top: 8px; font-size: 0.85rem; color: var(--warning); }
-        #status.ready { color: var(--success); }
-        
-        /* Main */
-        .main { display: flex; flex: 1; overflow: hidden; }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 350px; background: var(--surface); border-left: 1px solid var(--border);
-            display: flex; flex-direction: column;
-        }
-        .sidebar-header {
-            padding: 12px 15px; background: var(--surface2); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .sidebar-header h3 { font-size: 0.95rem; }
-        #resultsCount { padding: 3px 10px; background: var(--primary); border-radius: 12px; font-size: 0.75rem; }
-        
-        .nav-row { display: flex; gap: 8px; padding: 10px 15px; border-bottom: 1px solid var(--border); }
-        .nav-btn {
-            flex: 1; padding: 8px; background: var(--surface2); border: 1px solid var(--border);
-            border-radius: 8px; color: var(--text); cursor: pointer; font-family: inherit;
-        }
-        .nav-btn:hover:not(:disabled) { background: var(--primary); }
-        .nav-btn:disabled { opacity: 0.4; }
-        #resultPos { padding: 8px 12px; background: var(--bg); border-radius: 8px; text-align: center; min-width: 60px; }
-        
-        #resultsList { flex: 1; overflow-y: auto; padding: 12px; }
-        .placeholder { text-align: center; padding: 40px 15px; color: var(--text2); }
-        .placeholder span { font-size: 3rem; display: block; margin-bottom: 10px; opacity: 0.4; }
-        
-        .result-card {
-            background: var(--surface2); border: 2px solid var(--border); border-radius: 12px;
-            padding: 12px; margin-bottom: 10px; cursor: pointer;
-        }
-        .result-card:hover { border-color: var(--primary); }
-        .result-card.active { border-color: var(--primary); background: rgba(99,102,241,0.1); }
-        .result-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .page-badge { padding: 4px 12px; background: var(--primary); border-radius: 12px; font-size: 0.8rem; }
-        .result-text {
-            font-size: 0.85rem; color: var(--text2); line-height: 1.6;
-            padding: 10px; background: var(--bg); border-radius: 8px; max-height: 70px; overflow: hidden;
-        }
-        .result-text .hl { background: var(--highlight); color: #000; padding: 1px 4px; border-radius: 3px; }
-        .go-btn {
-            display: block; width: 100%; margin-top: 10px; padding: 10px;
-            background: var(--primary); border: none; border-radius: 8px;
-            color: #fff; font-family: inherit; font-weight: 600; cursor: pointer;
+        #themeBtn {
+            padding: 10px 15px;
+            background: var(--border);
+            border: none;
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
         }
         
-        /* PDF */
-        .pdf-area { flex: 1; background: #1a1a1a; }
-        #pdf-container { width: 100%; height: 100%; }
-        
-        /* Page indicator */
-        #pageIndicator {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            padding: 15px 30px; background: var(--primary); border-radius: 15px;
-            font-size: 1.3rem; font-weight: 700; color: #fff; z-index: 1000;
-            opacity: 0; transition: opacity 0.3s;
+        /* PDF Container */
+        #pdf-container {
+            width: 100%;
+            height: calc(100vh - 70px);
         }
-        #pageIndicator.show { opacity: 1; }
         
         /* Toast */
         #toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
-            background: var(--surface); padding: 12px 25px; border-radius: 12px;
-            border: 1px solid var(--border); opacity: 0; transition: all 0.3s; z-index: 999;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface);
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: 1px solid var(--primary);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 9999;
         }
-        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        
-        /* Responsive */
-        @media (max-width: 800px) {
-            .main { flex-direction: column-reverse; }
-            .sidebar { width: 100%; max-height: 40vh; border-left: none; border-top: 1px solid var(--border); }
-            .search-row { flex-wrap: wrap; }
-            #searchInput { width: 100%; }
-            #searchBtn { width: 100%; }
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <span>📚</span>
-                <h1>HS Code 2026</h1>
-            </div>
-            <div class="header-btns">
-                <button id="themeBtn" class="icon-btn" title="تبديل الوضع">🌙</button>
-            </div>
-        </header>
-
-        <!-- Search -->
-        <div class="search-section">
-            <div class="search-row">
-                <input type="text" id="searchInput" placeholder="🔍 ابحث عن كود أو منتج...">
-                <button id="searchBtn" disabled>بحث</button>
-            </div>
-            <div id="status">⏳ جاري تجهيز البحث...</div>
+    <header class="header">
+        <div class="logo">
+            <span>📚</span>
+            <h1>HS Code 2026</h1>
         </div>
+        <button id="themeBtn">🌙</button>
+    </header>
 
-        <!-- Main -->
-        <div class="main">
-            <!-- PDF -->
-            <main class="pdf-area">
-                <div id="pdf-container"></div>
-            </main>
-
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h3>📊 النتائج <span id="resultsCount" style="display:none">0</span></h3>
-                </div>
-                <div class="nav-row">
-                    <button id="prevBtn" class="nav-btn" disabled>▲</button>
-                    <span id="resultPos">-</span>
-                    <button id="nextBtn" class="nav-btn" disabled>▼</button>
-                </div>
-                <div id="resultsList">
-                    <div class="placeholder">
-                        <span>🔍</span>
-                        <p>اكتب للبحث</p>
-                    </div>
-                </div>
-            </aside>
-        </div>
-    </div>
-
-    <div id="pageIndicator"></div>
+    <div id="pdf-container"></div>
     <div id="toast"></div>
 
     <script>
-        // Config
         const CLIENT_ID = '5edf16250afa446aa490af6313d351b2';
         const PDF_FILE = 'HS Code 2026.pdf';
         
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        
-        // State
-        let pdfText = [];
-        let fuseIndex = null;
-        let results = [];
-        let resultIdx = -1;
-        let totalPages = 0;
-        let indexed = false;
-        
-        // Init
-        document.addEventListener('adobe_dc_view_sdk.ready', startApp);
-        
-        // Timeout fallback
-        setTimeout(() => {
-            if (!window.AdobeDC) {
-                document.getElementById('status').textContent = '⚠️ جاري التحميل... انتظر قليلاً';
-            }
-        }, 5000);
-        
-        async function startApp() {
-            setupEvents();
-            loadTheme();
-            
-            // تحميل العارض أولاً (أهم شيء)
-            await initViewer();
-            
-            // الفهرسة في الخلفية بعد تحميل العارض
-            indexInBackground();
+        // انتظار تحميل Adobe SDK
+        if (window.AdobeDC) {
+            loadPDF();
+        } else {
+            document.addEventListener('adobe_dc_view_sdk.ready', loadPDF);
         }
         
-        function setupEvents() {
-            document.getElementById('searchInput').addEventListener('input', function() {
-                clearTimeout(window.timer);
-                if (this.value.length >= 2 && indexed) {
-                    window.timer = setTimeout(doSearch, 400);
-                }
-            });
-            document.getElementById('searchInput').addEventListener('keydown', e => {
-                if (e.key === 'Enter' && indexed) doSearch();
-            });
-            document.getElementById('searchBtn').addEventListener('click', doSearch);
-            document.getElementById('prevBtn').addEventListener('click', () => navResult(-1));
-            document.getElementById('nextBtn').addEventListener('click', () => navResult(1));
-            document.getElementById('themeBtn').addEventListener('click', toggleTheme);
-        }
-        
-        // Adobe Viewer
-        async function initViewer() {
-            try {
-                const view = new AdobeDC.View({ clientId: CLIENT_ID, divId: 'pdf-container' });
-                
-                const viewer = await view.previewFile({
-                    content: { location: { url: PDF_FILE } },
-                    metaData: { fileName: PDF_FILE }
-                }, {
-                    embedMode: 'FULL_WINDOW',
-                    defaultViewMode: 'FIT_WIDTH',
-                    showAnnotationTools: false,
-                    showLeftHandPanel: true,
-                    showPageControls: true,
-                    showDownloadPDF: true
-                });
-                
-                window.pdfAPIs = await viewer.getAPIs();
-                
-            } catch (e) {
-                console.error('Viewer error:', e);
-                document.getElementById('status').textContent = '⚠️ خطأ في تحميل العارض';
-            }
-        }
-        
-        // Background indexing
-        async function indexInBackground() {
-            const status = document.getElementById('status');
-            const searchBtn = document.getElementById('searchBtn');
-            
-            try {
-                status.textContent = '⏳ جاري تجهيز البحث...';
-                
-                const pdf = await pdfjsLib.getDocument({
-                    url: PDF_FILE,
-                    cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
-                    cMapPacked: true
-                }).promise;
-                
-                totalPages = pdf.numPages;
-                pdfText = [];
-                
-                // فهرسة صفحة صفحة مع تأخير لمنع التجميد
-                for (let i = 1; i <= totalPages; i++) {
-                    status.textContent = `⏳ فهرسة ${i}/${totalPages}...`;
-                    
-                    try {
-                        const page = await pdf.getPage(i);
-                        const content = await page.getTextContent();
-                        const text = content.items.map(item => item.str).join(' ');
-                        pdfText.push({ page: i, text: normalize(text), original: text });
-                    } catch (e) {
-                        pdfText.push({ page: i, text: '', original: '' });
-                    }
-                    
-                    // تأخير صغير كل 10 صفحات لمنع التجميد
-                    if (i % 10 === 0) {
-                        await new Promise(r => setTimeout(r, 10));
-                    }
-                }
-                
-                // بناء فهرس Fuse
-                fuseIndex = new Fuse(pdfText, {
-                    keys: ['text'],
-                    threshold: 0.4,
-                    includeScore: true,
-                    ignoreLocation: true
-                });
-                
-                indexed = true;
-                searchBtn.disabled = false;
-                status.textContent = `✅ جاهز (${totalPages} صفحة)`;
-                status.className = 'ready';
-                
-                setTimeout(() => status.style.display = 'none', 3000);
-                
-            } catch (e) {
-                console.error('Index error:', e);
-                status.textContent = '⚠️ خطأ في الفهرسة - حاول تحديث الصفحة';
-            }
-        }
-        
-        function normalize(text) {
-            return text
-                .replace(/\s+/g, ' ')
-                .replace(/[أإآا]/g, 'ا')
-                .replace(/[ىي]/g, 'ي')
-                .replace(/ة/g, 'ه')
-                .trim();
-        }
-        
-        // Search
-        function doSearch() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query || !indexed) return;
-            
-            const q = normalize(query).toLowerCase();
-            results = [];
-            const seen = new Set();
-            
-            // بحث تقليدي أولاً
-            pdfText.forEach(p => {
-                if (!p.text) return;
-                let count = 0, idx = 0;
-                const t = p.text.toLowerCase();
-                while ((idx = t.indexOf(q, idx)) !== -1) { count++; idx++; }
-                if (count > 0 && !seen.has(p.page)) {
-                    seen.add(p.page);
-                    results.push({ page: p.page, count, score: 100, text: p.original });
-                }
+        function loadPDF() {
+            const adobeDCView = new AdobeDC.View({
+                clientId: CLIENT_ID,
+                divId: 'pdf-container'
             });
             
-            // بحث Fuse للنتائج المشابهة
-            const fuseResults = fuseIndex.search(q);
-            fuseResults.slice(0, 30).forEach(r => {
-                if (!seen.has(r.item.page)) {
-                    seen.add(r.item.page);
-                    results.push({
-                        page: r.item.page,
-                        count: 1,
-                        score: Math.round((1 - r.score) * 100),
-                        text: r.item.original
-                    });
-                }
+            adobeDCView.previewFile({
+                content: { location: { url: PDF_FILE } },
+                metaData: { fileName: 'HS Code 2026.pdf' }
+            }, {
+                embedMode: 'FULL_WINDOW',
+                defaultViewMode: 'FIT_WIDTH',
+                showDownloadPDF: true,
+                showPrintPDF: true,
+                showLeftHandPanel: true,
+                showAnnotationTools: false
+            }).then(function() {
+                showToast('✅ تم تحميل الملف - استخدم Ctrl+F للبحث');
+            }).catch(function(error) {
+                showToast('⚠️ خطأ في التحميل');
+                console.error(error);
             });
-            
-            results.sort((a, b) => b.score - a.score);
-            results = results.slice(0, 40);
-            
-            showResults(query);
-            if (results.length > 0) gotoResult(0);
         }
         
-        function showResults(query) {
-            const list = document.getElementById('resultsList');
-            const count = document.getElementById('resultsCount');
-            
-            if (results.length === 0) {
-                count.style.display = 'none';
-                list.innerHTML = `<div class="placeholder"><span>😕</span><p>لا نتائج لـ "${query}"</p></div>`;
-                document.getElementById('resultPos').textContent = '-';
-                document.getElementById('prevBtn').disabled = true;
-                document.getElementById('nextBtn').disabled = true;
-                return;
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 4000);
+        }
+        
+        // Theme toggle
+        document.getElementById('themeBtn').onclick = function() {
+            const isLight = document.body.style.background === 'rgb(248, 250, 252)';
+            if (isLight) {
+                document.body.style.background = '#0f0f1a';
+                document.body.style.color = '#fff';
+                this.textContent = '🌙';
+            } else {
+                document.body.style.background = '#f8fafc';
+                document.body.style.color = '#1e293b';
+                this.textContent = '☀️';
             }
-            
-            count.textContent = results.length;
-            count.style.display = 'inline';
-            document.getElementById('resultPos').textContent = `1/${results.length}`;
-            document.getElementById('prevBtn').disabled = true;
-            document.getElementById('nextBtn').disabled = results.length <= 1;
-            
-            const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`(${escaped})`, 'gi');
-            
-            list.innerHTML = results.map((r, i) => {
-                let ctx = r.text.substring(0, 120);
-                if (r.text.length > 120) ctx += '...';
-                
-                return `
-                    <div class="result-card ${i === 0 ? 'active' : ''}" onclick="gotoResult(${i})">
-                        <div class="result-top">
-                            <span class="page-badge">📄 صفحة ${r.page}</span>
-                            <span style="font-size:0.75rem;color:var(--text2)">${r.score}%</span>
-                        </div>
-                        <div class="result-text">${ctx.replace(regex, '<span class="hl">$1</span>')}</div>
-                        <button class="go-btn" onclick="event.stopPropagation();gotoResult(${i})">← انتقال</button>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        async function gotoResult(i) {
-            if (i < 0 || i >= results.length) return;
-            resultIdx = i;
-            
-            document.querySelectorAll('.result-card').forEach((c, j) => c.classList.toggle('active', j === i));
-            document.getElementById('resultPos').textContent = `${i + 1}/${results.length}`;
-            document.getElementById('prevBtn').disabled = i === 0;
-            document.getElementById('nextBtn').disabled = i === results.length - 1;
-            
-            const page = results[i].page;
-            
-            // Show indicator
-            const ind = document.getElementById('pageIndicator');
-            ind.textContent = `📄 صفحة ${page}`;
-            ind.classList.add('show');
-            setTimeout(() => ind.classList.remove('show'), 1500);
-            
-            // Navigate
-            if (window.pdfAPIs) {
-                try { await window.pdfAPIs.gotoLocation(page); } catch (e) {}
-            }
-            
-            document.querySelector('.result-card.active')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        
-        function navResult(d) {
-            const n = resultIdx + d;
-            if (n >= 0 && n < results.length) gotoResult(n);
-        }
-        
-        // Theme
-        function toggleTheme() {
-            const isDark = document.body.getAttribute('data-theme') !== 'light';
-            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-        }
-        
-        function loadTheme() {
-            if (localStorage.getItem('theme') === 'light') {
-                document.body.setAttribute('data-theme', 'light');
-                document.getElementById('themeBtn').textContent = '☀️';
-            }
-        }
-        
-        window.gotoResult = gotoResult;
+        };
     </script>
 </body>
 </html>
