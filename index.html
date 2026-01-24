@@ -4,80 +4,411 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 HS Code 2026</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #22c55e;
+            --warning: #eab308;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #334155;
+            --text: #f1f5f9;
+            --text2: #94a3b8;
+            --border: #475569;
+            --highlight: #fbbf24;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); }
+        
+        .app { display: flex; flex-direction: column; height: 100vh; }
+        
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo span { font-size: 2rem; }
+        .logo h1 { font-size: 1.3rem; color: var(--primary); }
+        
+        .search-area { padding: 15px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+        .search-box {
+            display: flex; max-width: 600px; margin: 0 auto;
+            background: var(--bg); border: 2px solid var(--border); border-radius: 25px; padding: 5px 15px;
+        }
+        .search-box:focus-within { border-color: var(--primary); }
+        #searchInput {
+            flex: 1; border: none; background: transparent; color: var(--text);
+            font-size: 1rem; padding: 10px; outline: none; font-family: inherit;
+        }
+        #searchBtn {
+            padding: 10px 20px; border: none; border-radius: 20px;
+            background: var(--primary); color: #fff; cursor: pointer; font-family: inherit;
+        }
+        #searchStatus { text-align: center; margin-top: 10px; font-size: 0.9rem; color: var(--warning); }
+        #searchStatus.ready { color: var(--success); }
+        
+        .content { display: flex; flex: 1; overflow: hidden; }
+        
+        .sidebar {
+            width: 350px; background: var(--surface); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .sidebar-header { padding: 15px; background: var(--surface2); font-weight: 600; }
+        #statsBar { padding: 10px 15px; background: rgba(34,197,94,0.1); color: var(--success); text-align: center; }
+        #statsBar:empty { display: none; }
+        
+        .results-nav { display: flex; gap: 8px; padding: 10px 15px; border-bottom: 1px solid var(--border); }
+        .results-nav button {
+            flex: 1; padding: 8px; border: none; border-radius: 8px;
+            background: var(--surface2); color: var(--text); cursor: pointer; font-family: inherit;
+        }
+        .results-nav button:disabled { opacity: 0.4; }
+        .results-nav button:hover:not(:disabled) { background: var(--primary); }
+        #resultPos { padding: 8px 15px; background: var(--bg); border-radius: 8px; font-size: 0.9rem; }
+        
+        #resultsList { flex: 1; overflow-y: auto; padding: 10px; }
+        .placeholder { text-align: center; padding: 40px; color: var(--text2); }
+        .placeholder span { font-size: 3rem; display: block; margin-bottom: 10px; opacity: 0.5; }
+        
+        .result-card {
+            background: var(--bg); border: 2px solid var(--border); border-radius: 12px;
+            padding: 12px; margin-bottom: 10px; cursor: pointer;
+        }
+        .result-card:hover { border-color: var(--primary); }
+        .result-card.active { border-color: var(--primary); background: rgba(79,70,229,0.1); }
+        .result-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .page-tag { padding: 4px 10px; background: var(--primary); color: #fff; border-radius: 10px; font-size: 0.8rem; }
+        .match-count { font-size: 0.8rem; color: var(--text2); }
+        .result-text { font-size: 0.85rem; color: var(--text2); line-height: 1.6; max-height: 60px; overflow: hidden; }
+        .result-text .hl { background: var(--highlight); color: #000; padding: 0 3px; border-radius: 2px; }
+        .go-btn {
+            display: block; width: 100%; margin-top: 10px; padding: 8px;
+            border: none; border-radius: 8px; background: var(--primary); color: #fff;
+            cursor: pointer; font-family: inherit; font-weight: 600;
+        }
+        
+        .viewer { flex: 1; display: flex; flex-direction: column; background: #333; }
+        .viewer-toolbar {
+            display: flex; justify-content: center; align-items: center; gap: 15px;
+            padding: 10px; background: var(--surface); border-bottom: 1px solid var(--border);
+        }
+        .tool-btn { padding: 8px 15px; border: none; border-radius: 8px; background: var(--surface2); color: var(--text); cursor: pointer; }
+        .tool-btn:hover { background: var(--primary); }
+        .tool-btn:disabled { opacity: 0.4; }
+        #pageInfo { padding: 8px 15px; background: var(--bg); border-radius: 8px; }
+        #pageInput { width: 50px; border: none; background: transparent; color: var(--text); text-align: center; font-family: inherit; }
+        
+        #pdfContainer { flex: 1; overflow: auto; display: flex; justify-content: center; padding: 20px; }
+        #pdfCanvas { box-shadow: 0 5px 30px rgba(0,0,0,0.5); }
+        
+        #toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--surface); padding: 12px 25px; border-radius: 10px;
+            border-right: 4px solid var(--success); opacity: 0; transition: 0.3s; z-index: 999;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        
+        @media (max-width: 800px) {
+            .content { flex-direction: column; }
+            .sidebar { width: 100%; max-height: 40vh; border-left: none; border-bottom: 1px solid var(--border); }
+        }
+    </style>
 </head>
 <body>
     <div class="app">
-        <!-- الهيدر -->
         <header class="header">
             <div class="logo">
                 <span>📚</span>
-                <div>
-                    <h1>HS Code 2026</h1>
-                    <small>دليل الرموز الجمركية</small>
-                </div>
+                <h1>HS Code 2026</h1>
             </div>
-            <button id="themeBtn" class="theme-btn">🌙</button>
         </header>
 
-        <!-- البحث -->
         <div class="search-area">
             <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="ابحث هنا... (كود، منتج، وصف)">
-                <button id="clearBtn" class="clear-btn">✕</button>
+                <input type="text" id="searchInput" placeholder="🔍 ابحث هنا...">
+                <button id="searchBtn">بحث</button>
             </div>
-            <div id="searchStatus" class="search-status">جاري تجهيز البحث...</div>
+            <div id="searchStatus">جاري التحميل...</div>
         </div>
 
-        <!-- المحتوى -->
         <div class="content">
-            <!-- النتائج -->
-            <aside id="sidebar" class="sidebar">
-                <div class="sidebar-header">
-                    <h3>📊 النتائج</h3>
-                    <button id="sidebarToggle" class="sidebar-toggle">◀</button>
-                </div>
-                
-                <div id="statsBar" class="stats-bar"></div>
-                
+            <aside class="sidebar">
+                <div class="sidebar-header">📊 نتائج البحث</div>
+                <div id="statsBar"></div>
                 <div class="results-nav">
-                    <button id="prevBtn" disabled>▲ السابق</button>
+                    <button id="prevBtn" disabled>▲</button>
                     <span id="resultPos">-</span>
-                    <button id="nextBtn" disabled>▼ التالي</button>
+                    <button id="nextBtn" disabled>▼</button>
                 </div>
-                
-                <div id="resultsList" class="results-list">
+                <div id="resultsList">
                     <div class="placeholder">
                         <span>🔍</span>
                         <p>اكتب للبحث</p>
                     </div>
                 </div>
-                
-                <div class="history-box">
-                    <h4>🕐 السابق</h4>
-                    <div id="historyTags"></div>
-                </div>
             </aside>
 
-            <!-- عارض PDF -->
             <main class="viewer">
                 <div class="viewer-toolbar">
-                    <span id="pageInfo" class="page-info">صفحة 1</span>
-                    <a id="downloadBtn" class="download-btn" href="#" target="_blank">💾 تحميل</a>
+                    <button id="prevPage" class="tool-btn">◀</button>
+                    <span id="pageInfo">
+                        <input type="number" id="pageInput" value="1" min="1">
+                        <span>/ <span id="totalPages">0</span></span>
+                    </span>
+                    <button id="nextPage" class="tool-btn">▶</button>
+                    <button id="zoomOut" class="tool-btn">➖</button>
+                    <span id="zoomLevel">100%</span>
+                    <button id="zoomIn" class="tool-btn">➕</button>
                 </div>
-                
-                <div class="pdf-frame-wrapper">
-                    <iframe id="pdfFrame" src="" allowfullscreen></iframe>
+                <div id="pdfContainer">
+                    <canvas id="pdfCanvas"></canvas>
                 </div>
             </main>
         </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <div id="toast"></div>
     
-    <script src="script.js"></script>
+    <script>
+        // ========== الإعدادات ==========
+        var PDF_FILE = 'HS Code 2026.pdf';
+        
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // ========== المتغيرات ==========
+        var pdf = null;
+        var currentPage = 1;
+        var totalPages = 0;
+        var scale = 1.5;
+        var pdfText = [];
+        var results = [];
+        var resultIdx = -1;
+        var indexed = false;
+
+        // ========== البدء ==========
+        window.onload = function() {
+            loadPDF();
+            setupEvents();
+        };
+
+        function setupEvents() {
+            document.getElementById('searchInput').oninput = function() {
+                clearTimeout(window.searchTimer);
+                if (this.value.length >= 2) {
+                    window.searchTimer = setTimeout(doSearch, 400);
+                }
+            };
+            document.getElementById('searchInput').onkeydown = function(e) {
+                if (e.key === 'Enter') doSearch();
+            };
+            document.getElementById('searchBtn').onclick = doSearch;
+            document.getElementById('prevBtn').onclick = function() { navResult(-1); };
+            document.getElementById('nextBtn').onclick = function() { navResult(1); };
+            document.getElementById('prevPage').onclick = function() { goPage(currentPage - 1); };
+            document.getElementById('nextPage').onclick = function() { goPage(currentPage + 1); };
+            document.getElementById('pageInput').onchange = function() { goPage(parseInt(this.value)); };
+            document.getElementById('zoomIn').onclick = function() { setZoom(scale + 0.25); };
+            document.getElementById('zoomOut').onclick = function() { setZoom(scale - 0.25); };
+        }
+
+        // ========== تحميل PDF ==========
+        function loadPDF() {
+            updateStatus('جاري تحميل الملف...');
+            
+            pdfjsLib.getDocument({
+                url: PDF_FILE,
+                cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+                cMapPacked: true,
+                standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/'
+            }).promise.then(function(pdfDoc) {
+                pdf = pdfDoc;
+                totalPages = pdf.numPages;
+                document.getElementById('totalPages').textContent = totalPages;
+                document.getElementById('pageInput').max = totalPages;
+                
+                renderPage(1);
+                indexPDF();
+            }).catch(function(err) {
+                updateStatus('❌ خطأ: ' + err.message);
+                console.error(err);
+            });
+        }
+
+        function renderPage(num) {
+            if (!pdf || num < 1 || num > totalPages) return;
+            currentPage = num;
+            
+            pdf.getPage(num).then(function(page) {
+                var viewport = page.getViewport({ scale: scale });
+                var canvas = document.getElementById('pdfCanvas');
+                var ctx = canvas.getContext('2d');
+                
+                var ratio = window.devicePixelRatio || 1;
+                canvas.width = viewport.width * ratio;
+                canvas.height = viewport.height * ratio;
+                canvas.style.width = viewport.width + 'px';
+                canvas.style.height = viewport.height + 'px';
+                ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+                
+                page.render({ canvasContext: ctx, viewport: viewport });
+                
+                document.getElementById('pageInput').value = num;
+                document.getElementById('prevPage').disabled = num <= 1;
+                document.getElementById('nextPage').disabled = num >= totalPages;
+            });
+        }
+
+        function goPage(num) {
+            num = Math.max(1, Math.min(totalPages, num));
+            renderPage(num);
+        }
+
+        function setZoom(z) {
+            scale = Math.max(0.5, Math.min(3, z));
+            document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+            renderPage(currentPage);
+        }
+
+        // ========== الفهرسة ==========
+        function indexPDF() {
+            pdfText = [];
+            var done = 0;
+            
+            for (var i = 1; i <= totalPages; i++) {
+                (function(pageNum) {
+                    pdf.getPage(pageNum).then(function(page) {
+                        return page.getTextContent();
+                    }).then(function(content) {
+                        var text = content.items.map(function(item) { return item.str; }).join(' ');
+                        pdfText[pageNum - 1] = { page: pageNum, text: text };
+                        done++;
+                        updateStatus('فهرسة ' + done + '/' + totalPages + '...');
+                        if (done === totalPages) finishIndex();
+                    }).catch(function() {
+                        pdfText[pageNum - 1] = { page: pageNum, text: '' };
+                        done++;
+                        if (done === totalPages) finishIndex();
+                    });
+                })(i);
+            }
+        }
+
+        function finishIndex() {
+            pdfText.sort(function(a, b) { return a.page - b.page; });
+            indexed = true;
+            updateStatus('✅ جاهز للبحث (' + totalPages + ' صفحة)');
+            document.getElementById('searchStatus').className = 'ready';
+        }
+
+        function updateStatus(text) {
+            document.getElementById('searchStatus').textContent = text;
+        }
+
+        // ========== البحث ==========
+        function doSearch() {
+            var query = document.getElementById('searchInput').value.trim();
+            if (!query || !indexed) {
+                if (!indexed) showToast('انتظر اكتمال الفهرسة');
+                return;
+            }
+            
+            results = [];
+            var qLower = query.toLowerCase();
+            
+            pdfText.forEach(function(p) {
+                if (!p || !p.text) return;
+                var textLower = p.text.toLowerCase();
+                var count = 0;
+                var idx = 0;
+                while ((idx = textLower.indexOf(qLower, idx)) !== -1) { count++; idx++; }
+                
+                if (count > 0) {
+                    var i = textLower.indexOf(qLower);
+                    var start = Math.max(0, i - 50);
+                    var end = Math.min(p.text.length, i + query.length + 50);
+                    var ctx = p.text.substring(start, end);
+                    if (start > 0) ctx = '...' + ctx;
+                    if (end < p.text.length) ctx += '...';
+                    results.push({ page: p.page, count: count, ctx: ctx });
+                }
+            });
+            
+            results.sort(function(a, b) { return b.count - a.count; });
+            showResults(query);
+            if (results.length > 0) { resultIdx = 0; gotoResult(0); }
+        }
+
+        function showResults(query) {
+            var list = document.getElementById('resultsList');
+            var stats = document.getElementById('statsBar');
+            
+            if (results.length === 0) {
+                stats.textContent = '';
+                list.innerHTML = '<div class="placeholder"><span>😕</span><p>لا نتائج</p></div>';
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
+                document.getElementById('resultPos').textContent = '-';
+                return;
+            }
+            
+            var total = results.reduce(function(s, r) { return s + r.count; }, 0);
+            stats.textContent = '✅ ' + total + ' نتيجة في ' + results.length + ' صفحة';
+            document.getElementById('resultPos').textContent = '1/' + results.length;
+            document.getElementById('prevBtn').disabled = true;
+            document.getElementById('nextBtn').disabled = results.length <= 1;
+            
+            var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            var regex = new RegExp('(' + escaped + ')', 'gi');
+            
+            var html = '';
+            results.forEach(function(r, i) {
+                var hl = r.ctx.replace(regex, '<span class="hl">$1</span>');
+                html += '<div class="result-card' + (i === 0 ? ' active' : '') + '" onclick="gotoResult(' + i + ')">';
+                html += '<div class="result-header"><span class="page-tag">📄 ' + r.page + '</span>';
+                html += '<span class="match-count">' + r.count + ' تطابق</span></div>';
+                html += '<div class="result-text">' + hl + '</div>';
+                html += '<button class="go-btn" onclick="event.stopPropagation();gotoResult(' + i + ')">← انتقل</button>';
+                html += '</div>';
+            });
+            list.innerHTML = html;
+        }
+
+        function gotoResult(i) {
+            if (i < 0 || i >= results.length) return;
+            resultIdx = i;
+            
+            document.querySelectorAll('.result-card').forEach(function(c, j) {
+                c.classList.toggle('active', j === i);
+            });
+            
+            document.getElementById('resultPos').textContent = (i + 1) + '/' + results.length;
+            document.getElementById('prevBtn').disabled = i === 0;
+            document.getElementById('nextBtn').disabled = i === results.length - 1;
+            
+            goPage(results[i].page);
+            showToast('📄 صفحة ' + results[i].page);
+            
+            var card = document.querySelector('.result-card.active');
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function navResult(dir) {
+            var n = resultIdx + dir;
+            if (n >= 0 && n < results.length) gotoResult(n);
+        }
+
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(function() { t.classList.remove('show'); }, 2500);
+        }
+
+        // عالمي
+        window.gotoResult = gotoResult;
+    </script>
 </body>
 </html>
