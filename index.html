@@ -3,56 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 HS Code 2026</title>
+    <title>📚 HS Code 2026 - محرك البحث الذكي</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-    <!-- الهيدر -->
-    <header class="header">
-        <h1>📚 HS Code 2026</h1>
-        <p>دليل الرموز الجمركية</p>
-    </header>
-
-    <!-- شريط البحث -->
-    <div class="search-bar">
-        <div class="search-wrapper">
-            <input type="text" id="searchInput" placeholder="🔍 ابحث عن كود جمركي أو منتج...">
-            <button id="searchBtn">بحث</button>
-            <button id="clearBtn" class="btn-clear">✕</button>
-        </div>
-        <div id="indexStatus" class="index-status">
-            <div class="spinner-small"></div>
-            <span>جاري تجهيز البحث...</span>
+    <!-- شاشة التحميل -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-icon">📚</div>
+            <h2>HS Code 2026</h2>
+            <p id="loadingStatus">جاري تحميل الملف...</p>
+            <div class="loading-bar">
+                <div id="loadingProgress" class="loading-progress"></div>
+            </div>
+            <p id="loadingPercent">0%</p>
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي -->
-    <div class="main-content">
-        <!-- نتائج البحث (الجانب) -->
-        <aside id="searchPanel" class="search-panel">
-            <div class="panel-header">
-                <h3>🔍 نتائج البحث</h3>
-                <button id="togglePanel" class="toggle-btn">◀</button>
-            </div>
-            <div id="searchStats" class="search-stats"></div>
-            <div id="searchResults" class="search-results">
-                <div class="empty-state">
-                    <p>📝 ابدأ البحث للعثور على النتائج</p>
+    <!-- الحاوية الرئيسية -->
+    <div class="app-container">
+        <!-- الهيدر -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <div class="logo-text">
+                        <h1>HS Code 2026</h1>
+                        <p>دليل الرموز الجمركية</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="darkModeToggle" class="icon-btn" title="الوضع الليلي">🌙</button>
+                    <button id="fullscreenToggle" class="icon-btn" title="ملء الشاشة">⛶</button>
                 </div>
             </div>
-        </aside>
+        </header>
 
-        <!-- عارض PDF -->
-        <main class="pdf-viewer">
-            <iframe 
-                id="pdfFrame"
-                src=""
-                frameborder="0"
-                allowfullscreen>
-            </iframe>
-        </main>
+        <!-- شريط البحث الرئيسي -->
+        <div class="search-section">
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="ابحث عن كود جمركي، منتج، أو وصف..."
+                        autocomplete="off"
+                    >
+                    <button id="clearSearch" class="clear-btn" style="display:none">✕</button>
+                </div>
+                <button id="searchBtn" class="search-btn">
+                    <span>بحث</span>
+                </button>
+                <button id="advancedToggle" class="advanced-btn" title="بحث متقدم">
+                    ⚙️
+                </button>
+            </div>
+
+            <!-- اقتراحات البحث -->
+            <div id="suggestions" class="suggestions"></div>
+
+            <!-- البحث المتقدم -->
+            <div id="advancedSearch" class="advanced-search">
+                <div class="advanced-row">
+                    <div class="advanced-field">
+                        <label>من صفحة:</label>
+                        <input type="number" id="pageFrom" min="1" placeholder="1">
+                    </div>
+                    <div class="advanced-field">
+                        <label>إلى صفحة:</label>
+                        <input type="number" id="pageTo" placeholder="الأخيرة">
+                    </div>
+                    <div class="advanced-field">
+                        <label>نوع البحث:</label>
+                        <select id="searchType">
+                            <option value="contains">يحتوي على</option>
+                            <option value="exact">مطابق تماماً</option>
+                            <option value="startsWith">يبدأ بـ</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- حالة الفهرسة -->
+            <div id="indexStatus" class="index-status">
+                <div class="status-icon">⏳</div>
+                <span id="statusText">جاري تجهيز البحث...</span>
+            </div>
+        </div>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <!-- لوحة النتائج -->
+            <aside id="resultsPanel" class="results-panel">
+                <div class="panel-header">
+                    <h3>📊 نتائج البحث</h3>
+                    <button id="toggleResults" class="toggle-btn">◀</button>
+                </div>
+
+                <!-- إحصائيات البحث -->
+                <div id="searchStats" class="search-stats">
+                    <div class="stats-info">
+                        <span id="totalResults">0 نتيجة</span>
+                        <span id="currentResult" class="current-result"></span>
+                    </div>
+                    <div class="nav-buttons">
+                        <button id="prevResult" class="nav-btn" disabled>▲</button>
+                        <button id="nextResult" class="nav-btn" disabled>▼</button>
+                    </div>
+                </div>
+
+                <!-- قائمة النتائج -->
+                <div id="resultsList" class="results-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>ابدأ البحث للعثور على النتائج</p>
+                        <small>اكتب في مربع البحث أعلاه</small>
+                    </div>
+                </div>
+
+                <!-- تاريخ البحث -->
+                <div class="search-history">
+                    <h4>🕐 عمليات البحث الأخيرة</h4>
+                    <div id="historyList" class="history-list"></div>
+                </div>
+            </aside>
+
+            <!-- عارض PDF -->
+            <main class="pdf-section">
+                <!-- شريط أدوات PDF -->
+                <div class="pdf-toolbar">
+                    <div class="toolbar-group">
+                        <button id="prevPage" class="tool-btn" title="الصفحة السابقة">◀</button>
+                        <div class="page-info">
+                            <input type="number" id="currentPage" min="1" value="1">
+                            <span>/</span>
+                            <span id="totalPages">0</span>
+                        </div>
+                        <button id="nextPage" class="tool-btn" title="الصفحة التالية">▶</button>
+                    </div>
+
+                    <div class="toolbar-group">
+                        <button id="zoomOut" class="tool-btn" title="تصغير">🔍−</button>
+                        <span id="zoomLevel" class="zoom-level">100%</span>
+                        <button id="zoomIn" class="tool-btn" title="تكبير">🔍+</button>
+                        <button id="zoomFit" class="tool-btn" title="ملائمة">⊡</button>
+                    </div>
+
+                    <div class="toolbar-group">
+                        <button id="highlightToggle" class="tool-btn active" title="تظليل النتائج">🖍️</button>
+                        <button id="downloadPdf" class="tool-btn" title="تحميل">💾</button>
+                    </div>
+                </div>
+
+                <!-- حاوية PDF -->
+                <div id="pdfContainer" class="pdf-container">
+                    <div id="pdfViewer" class="pdf-viewer">
+                        <canvas id="pdfCanvas"></canvas>
+                        <div id="textLayer" class="text-layer"></div>
+                        <div id="highlightLayer" class="highlight-layer"></div>
+                    </div>
+                </div>
+
+                <!-- شريط التمرير المصغر -->
+                <div class="pdf-minibar">
+                    <input type="range" id="pageSlider" min="1" value="1">
+                </div>
+            </main>
+        </div>
+
+        <!-- شريط الاختصارات -->
+        <footer class="shortcuts-bar">
+            <span><kbd>Ctrl</kbd>+<kbd>F</kbd> بحث</span>
+            <span><kbd>Enter</kbd> بحث/انتقال</span>
+            <span><kbd>↑</kbd><kbd>↓</kbd> تنقل النتائج</span>
+            <span><kbd>←</kbd><kbd>→</kbd> تنقل الصفحات</span>
+            <span><kbd>Esc</kbd> إغلاق</span>
+        </footer>
     </div>
+
+    <!-- Toast للإشعارات -->
+    <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>
 </body>
