@@ -9,16 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-    <!-- شاشة التحميل -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="loader-content">
-            <div class="loader-icon">📚</div>
-            <h2>HS Code 2026</h2>
-            <div class="loader-bar"><div id="loaderProgress"></div></div>
-            <p id="loaderText">جاري التحميل...</p>
-        </div>
-    </div>
-
     <div class="app">
         <!-- الهيدر -->
         <header class="header">
@@ -39,7 +29,7 @@
                 <input type="text" id="searchInput" placeholder="ابحث هنا... (كود، منتج، وصف)">
                 <button id="clearBtn" class="clear-btn">✕</button>
             </div>
-            <div id="searchStatus" class="search-status"></div>
+            <div id="searchStatus" class="search-status">جاري تجهيز البحث...</div>
         </div>
 
         <!-- المحتوى -->
@@ -54,9 +44,9 @@
                 <div id="statsBar" class="stats-bar"></div>
                 
                 <div class="results-nav">
-                    <button id="prevBtn">▲ السابق</button>
+                    <button id="prevBtn" disabled>▲ السابق</button>
                     <span id="resultPos">-</span>
-                    <button id="nextBtn">▼ التالي</button>
+                    <button id="nextBtn" disabled>▼ التالي</button>
                 </div>
                 
                 <div id="resultsList" class="results-list">
@@ -75,28 +65,12 @@
             <!-- عارض PDF -->
             <main class="viewer">
                 <div class="viewer-toolbar">
-                    <div class="tool-group">
-                        <button id="pagePrev" class="tool-btn">◀</button>
-                        <span class="page-num">
-                            <input type="number" id="pageNum" value="1" min="1">
-                            <span>/ <b id="pageTotal">0</b></span>
-                        </span>
-                        <button id="pageNext" class="tool-btn">▶</button>
-                    </div>
-                    
-                    <input type="range" id="pageRange" class="page-range" min="1" value="1">
-                    
-                    <div class="tool-group">
-                        <button id="zoomOut" class="tool-btn">➖</button>
-                        <span id="zoomVal" class="zoom-val">100%</span>
-                        <button id="zoomIn" class="tool-btn">➕</button>
-                        <button id="zoomFit" class="tool-btn">⊡</button>
-                    </div>
+                    <span id="pageInfo" class="page-info">صفحة 1</span>
+                    <a id="downloadBtn" class="download-btn" href="#" target="_blank">💾 تحميل</a>
                 </div>
                 
-                <div id="pdfContainer" class="pdf-container">
-                    <canvas id="pdfCanvas"></canvas>
-                    <div id="textLayer" class="text-layer"></div>
+                <div class="pdf-frame-wrapper">
+                    <iframe id="pdfFrame" src="" allowfullscreen></iframe>
                 </div>
             </main>
         </div>
