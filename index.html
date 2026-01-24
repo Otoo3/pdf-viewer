@@ -4,24 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 HS Code 2026 - دليل الرموز الجمركية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Fuse.js للبحث الذكي -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
     <style>
         :root {
             --primary: #6366f1;
+            --primary-light: #818cf8;
             --primary-dark: #4f46e5;
-            --success: #22c55e;
+            --success: #10b981;
             --warning: #f59e0b;
-            --bg: #0a0a0f;
-            --surface: #12121a;
-            --surface2: #1e1e2e;
-            --surface3: #2a2a3e;
+            --danger: #ef4444;
+            --bg: #0a0a12;
+            --bg-light: #f8fafc;
+            --surface: #13131d;
+            --surface-light: #ffffff;
+            --surface2: #1c1c2d;
+            --surface2-light: #f1f5f9;
+            --surface3: #252538;
+            --surface3-light: #e2e8f0;
             --text: #f1f5f9;
+            --text-light: #1e293b;
             --text2: #94a3b8;
-            --border: #2e2e42;
+            --text2-light: #64748b;
+            --border: #2a2a40;
+            --border-light: #e2e8f0;
             --highlight: #fbbf24;
-            --glow: rgba(99, 102, 241, 0.4);
+            --glow: rgba(99, 102, 241, 0.3);
+        }
+        
+        [data-theme="light"] {
+            --bg: var(--bg-light);
+            --surface: var(--surface-light);
+            --surface2: var(--surface2-light);
+            --surface3: var(--surface3-light);
+            --text: var(--text-light);
+            --text2: var(--text2-light);
+            --border: var(--border-light);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,68 +51,100 @@
             font-family: 'Tajawal', sans-serif; 
             background: var(--bg); 
             color: var(--text);
-            overflow: hidden;
+            transition: background 0.3s, color 0.3s;
         }
         
         .app {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            grid-template-rows: auto 1fr;
+            display: flex;
+            flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
         
-        /* Header */
+        /* ========== Header ========== */
         .header {
-            grid-column: 1 / -1;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 25px;
-            background: linear-gradient(180deg, var(--surface) 0%, var(--surface2) 100%);
+            padding: 12px 20px;
+            background: var(--surface);
             border-bottom: 1px solid var(--border);
+            z-index: 100;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         
         .logo-icon {
-            font-size: 2.5rem;
-            filter: drop-shadow(0 0 10px var(--glow));
+            font-size: 2.2rem;
+            filter: drop-shadow(0 0 8px var(--glow));
         }
         
         .logo h1 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             background: linear-gradient(135deg, #818cf8, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
         
         .logo p {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text2);
         }
         
-        /* Search Panel */
-        .search-panel {
-            background: var(--surface);
-            border-left: 1px solid var(--border);
+        .header-actions {
             display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            gap: 10px;
         }
         
-        .search-header {
-            padding: 20px;
+        .theme-btn, .menu-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 12px;
             background: var(--surface2);
+            color: var(--text);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .theme-btn:hover, .menu-btn:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .menu-btn { display: none; }
+        
+        /* ========== Search Bar (Top) ========== */
+        .search-bar {
+            padding: 15px 20px;
+            background: var(--surface);
             border-bottom: 1px solid var(--border);
         }
         
-        .search-box {
+        .search-container {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+            align-items: center;
+        }
+        
+        .search-icon-box {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            border-radius: 14px;
+            font-size: 1.4rem;
+            flex-shrink: 0;
         }
         
         .search-input-wrapper {
@@ -101,10 +154,10 @@
         
         #searchInput {
             width: 100%;
-            padding: 14px 20px 14px 45px;
-            background: var(--surface3);
+            padding: 14px 20px;
+            background: var(--surface2);
             border: 2px solid var(--border);
-            border-radius: 12px;
+            border-radius: 14px;
             color: var(--text);
             font-size: 1rem;
             font-family: inherit;
@@ -117,30 +170,40 @@
             box-shadow: 0 0 0 4px var(--glow);
         }
         
-        #searchInput::placeholder {
-            color: var(--text2);
-        }
+        #searchInput::placeholder { color: var(--text2); }
         
-        .search-icon {
+        .clear-btn {
             position: absolute;
-            right: 15px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.2rem;
-            color: var(--text2);
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: var(--danger);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: none;
+            transition: all 0.2s;
         }
         
+        .clear-btn.show { display: flex; align-items: center; justify-content: center; }
+        .clear-btn:hover { transform: translateY(-50%) scale(1.1); }
+        
         #searchBtn {
-            padding: 14px 24px;
+            padding: 14px 28px;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             color: white;
             font-size: 1rem;
             font-family: inherit;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         
         #searchBtn:hover {
@@ -150,23 +213,25 @@
         
         /* Status */
         #searchStatus {
-            margin-top: 12px;
-            padding: 10px 15px;
-            background: var(--surface3);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            display: flex;
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
+            background: var(--surface2);
         }
         
         #searchStatus.loading { color: var(--warning); }
-        #searchStatus.ready { color: var(--success); }
+        #searchStatus.ready { color: var(--success); background: rgba(16, 185, 129, 0.1); }
         #searchStatus.hidden { display: none; }
         
         .spinner {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border: 2px solid currentColor;
             border-top-color: transparent;
             border-radius: 50%;
@@ -175,17 +240,36 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* Results */
-        .results-header {
+        /* ========== Main Content ========== */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* ========== Results Sidebar ========== */
+        .sidebar {
+            width: 380px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+            z-index: 50;
+        }
+        
+        .sidebar.collapsed { margin-right: -380px; }
+        
+        .sidebar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 14px 18px;
             background: var(--surface2);
             border-bottom: 1px solid var(--border);
         }
         
-        .results-header h3 {
+        .sidebar-header h3 {
             font-size: 1rem;
             display: flex;
             align-items: center;
@@ -193,45 +277,59 @@
         }
         
         #resultsCount {
-            padding: 4px 12px;
+            padding: 3px 10px;
             background: var(--primary);
-            border-radius: 20px;
-            font-size: 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            color: white;
         }
         
-        .nav-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .nav-btn {
-            padding: 8px 16px;
-            background: var(--surface3);
-            border: 1px solid var(--border);
+        .collapse-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
             border-radius: 8px;
+            background: var(--surface3);
             color: var(--text);
             cursor: pointer;
-            font-family: inherit;
             transition: all 0.2s;
         }
         
-        .nav-btn:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
+        .collapse-btn:hover { background: var(--primary); }
+        
+        /* Navigation */
+        .results-nav {
+            display: flex;
+            gap: 8px;
+            padding: 12px 18px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            align-items: center;
         }
         
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
+        .nav-btn {
+            padding: 10px 18px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
         }
+        
+        .nav-btn:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         
         #resultPos {
-            padding: 8px 12px;
-            background: var(--bg);
-            border-radius: 8px;
-            font-size: 0.85rem;
-            min-width: 70px;
+            flex: 1;
             text-align: center;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
         
         /* Results List */
@@ -247,35 +345,33 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            color: var(--text2);
             text-align: center;
+            color: var(--text2);
+            padding: 20px;
         }
         
-        .placeholder-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
+        .placeholder-icon { font-size: 4rem; margin-bottom: 15px; opacity: 0.3; }
+        .placeholder p { line-height: 1.8; }
         
         .result-card {
             background: var(--surface2);
             border: 2px solid var(--border);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 16px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s;
         }
         
         .result-card:hover {
             border-color: var(--primary);
-            transform: translateX(-5px);
-            box-shadow: 5px 0 20px var(--glow);
+            transform: translateX(-6px);
+            box-shadow: 6px 0 25px var(--glow);
         }
         
         .result-card.active {
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(99, 102, 241, 0.15);
         }
         
         .result-top {
@@ -290,22 +386,34 @@
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
             border-radius: 20px;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: white;
         }
         
-        .match-count {
-            font-size: 0.8rem;
-            color: var(--text2);
+        .match-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        
+        .match-count { font-size: 0.8rem; color: var(--text2); }
+        .match-score {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            background: var(--success);
+            color: white;
+            border-radius: 10px;
         }
         
         .result-text {
             font-size: 0.9rem;
             color: var(--text2);
             line-height: 1.8;
-            padding: 12px;
+            padding: 14px;
             background: var(--bg);
-            border-radius: 10px;
-            max-height: 80px;
+            border-radius: 12px;
+            max-height: 90px;
             overflow: hidden;
         }
         
@@ -314,35 +422,35 @@
             color: #000;
             padding: 2px 6px;
             border-radius: 4px;
-            font-weight: 600;
+            font-weight: 700;
         }
         
         .go-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             width: 100%;
-            margin-top: 12px;
-            padding: 10px;
-            background: var(--primary);
+            margin-top: 14px;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             font-family: inherit;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .go-btn:hover {
-            filter: brightness(1.15);
-        }
+        .go-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
         
-        /* PDF Viewer */
+        /* ========== PDF Section ========== */
         .pdf-section {
+            flex: 1;
             position: relative;
-            background: #1a1a1a;
+            background: #1e1e1e;
             overflow: hidden;
         }
         
@@ -351,17 +459,38 @@
             height: 100%;
         }
         
-        /* Hide Adobe branding with CSS */
-        #pdf-container [class*="spectrum-Button"],
-        #pdf-container [data-testid*="adobe"],
-        #pdf-container .spectrum-Heading--sizeXXS,
+        /* Hide Adobe branding */
+        #pdf-container [class*="spectrum"],
         #pdf-container [aria-label*="Adobe"],
-        #pdf-container img[src*="adobe"] {
-            opacity: 0 !important;
-            pointer-events: none !important;
+        #pdf-container [data-testid*="adobe"] {
+            visibility: hidden !important;
         }
         
-        /* Loading */
+        /* Page indicator overlay */
+        .page-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            background: rgba(99, 102, 241, 0.95);
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .page-indicator.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ========== Loading ========== */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -374,38 +503,34 @@
             transition: all 0.5s;
         }
         
-        .loading-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
         
         .loading-logo {
-            font-size: 6rem;
-            margin-bottom: 25px;
-            animation: pulse 2s ease-in-out infinite;
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out infinite;
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
         
         .loading-overlay h2 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
+            font-size: 2rem;
+            margin-bottom: 8px;
             background: linear-gradient(135deg, #c7d2fe, #e9d5ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        .loading-overlay p {
+        .loading-overlay > p {
             color: rgba(255,255,255,0.7);
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         
         .loading-bar {
-            width: 320px;
+            width: 300px;
             height: 6px;
             background: rgba(255,255,255,0.2);
             border-radius: 3px;
@@ -417,7 +542,6 @@
             background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
-            border-radius: 3px;
         }
         
         @keyframes shimmer {
@@ -425,79 +549,92 @@
             100% { background-position: 200% 0; }
         }
         
-        #loadingPercent {
-            margin-top: 15px;
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-        }
+        #loadingPercent { margin-top: 12px; font-size: 1.1rem; color: white; }
         
-        /* Toast */
+        /* ========== Toast ========== */
         #toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--surface2);
+            background: var(--surface);
             border: 1px solid var(--border);
-            padding: 15px 30px;
-            border-radius: 14px;
+            padding: 14px 28px;
+            border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             opacity: 0;
             transition: all 0.3s;
             z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: 600;
         }
         
-        #toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         #toast.success { border-color: var(--success); }
         
-        /* Scrollbar */
+        /* ========== Scrollbar ========== */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .app {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto 1fr;
+        /* ========== Mobile Responsive ========== */
+        @media (max-width: 900px) {
+            .main-content { flex-direction: column-reverse; }
+            
+            .sidebar {
+                width: 100%;
+                height: 45vh;
+                border-left: none;
+                border-top: 1px solid var(--border);
             }
             
-            .search-panel {
-                max-height: 50vh;
-                border-left: none;
-                border-bottom: 1px solid var(--border);
+            .sidebar.collapsed {
+                margin-right: 0;
+                height: 50px;
+                min-height: 50px;
             }
+            
+            .sidebar.collapsed #resultsList,
+            .sidebar.collapsed .results-nav { display: none; }
+            
+            .pdf-section { height: 55vh; }
+            
+            .menu-btn { display: flex; align-items: center; justify-content: center; }
+            
+            .search-container { flex-wrap: wrap; }
+            .search-icon-box { display: none; }
+            .search-input-wrapper { width: 100%; flex: none; }
+            #searchBtn { width: 100%; margin-top: 10px; }
         }
         
-        @media (max-width: 600px) {
-            .logo h1 { font-size: 1.2rem; }
+        @media (max-width: 500px) {
+            .header { padding: 10px 15px; }
+            .logo h1 { font-size: 1.1rem; }
             .logo p { display: none; }
-            .search-box { flex-direction: column; }
-            #searchBtn { width: 100%; }
+            .logo-icon { font-size: 1.8rem; }
+            
+            .search-bar { padding: 12px 15px; }
+            #searchInput { padding: 12px 16px; font-size: 0.95rem; }
+            
+            .sidebar-header { padding: 12px 15px; }
+            #resultsList { padding: 12px; }
+            .result-card { padding: 14px; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
+    <!-- Loading -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-logo">📚</div>
         <h2>HS Code 2026</h2>
-        <p id="loadingText">جاري تحميل دليل الرموز الجمركية...</p>
+        <p id="loadingText">جاري التحميل...</p>
         <div class="loading-bar">
             <div id="loadingFill" class="loading-fill" style="width: 0%"></div>
         </div>
         <div id="loadingPercent">0%</div>
     </div>
 
-    <!-- Main App -->
+    <!-- App -->
     <div class="app">
         <!-- Header -->
         <header class="header">
@@ -508,51 +645,68 @@
                     <p>دليل الرموز الجمركية - سلطنة عمان</p>
                 </div>
             </div>
+            <div class="header-actions">
+                <button id="themeBtn" class="theme-btn" title="تبديل الوضع">🌙</button>
+                <button id="menuBtn" class="menu-btn" title="القائمة">☰</button>
+            </div>
         </header>
 
-        <!-- Search Panel -->
-        <aside class="search-panel">
-            <div class="search-header">
-                <div class="search-box">
-                    <div class="search-input-wrapper">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="ابحث عن كود أو منتج...">
-                    </div>
-                    <button id="searchBtn">بحث</button>
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <div class="search-container">
+                <div class="search-icon-box">🔍</div>
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" placeholder="ابحث عن كود جمركي، منتج، وصف... (يدعم التصحيح التلقائي)">
+                    <button id="clearBtn" class="clear-btn">✕</button>
                 </div>
-                <div id="searchStatus" class="loading">
-                    <div class="spinner"></div>
-                    <span>جاري تجهيز البحث...</span>
-                </div>
+                <button id="searchBtn">بحث</button>
             </div>
-            
-            <div class="results-header">
-                <h3>
-                    <span>📊</span>
-                    النتائج
-                    <span id="resultsCount" style="display:none">0</span>
-                </h3>
-                <div class="nav-buttons">
-                    <button id="prevBtn" class="nav-btn" disabled>▲</button>
-                    <span id="resultPos">-</span>
-                    <button id="nextBtn" class="nav-btn" disabled>▼</button>
-                </div>
+            <div style="text-align: center; margin-top: 8px;">
+                <span id="searchStatus" class="loading">
+                    <span class="spinner"></span>
+                    <span>جاري تجهيز البحث الذكي...</span>
+                </span>
             </div>
-            
-            <div id="resultsList">
-                <div class="placeholder">
-                    <div class="placeholder-icon">🔍</div>
-                    <p>اكتب في مربع البحث أعلاه<br>للعثور على الأكواد والمنتجات</p>
-                </div>
-            </div>
-        </aside>
+        </div>
 
-        <!-- PDF Viewer -->
-        <main class="pdf-section">
-            <div id="pdf-container"></div>
-        </main>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- PDF Viewer -->
+            <main class="pdf-section">
+                <div id="pdf-container"></div>
+            </main>
+
+            <!-- Results Sidebar -->
+            <aside id="sidebar" class="sidebar">
+                <div class="sidebar-header">
+                    <h3>
+                        <span>📊</span>
+                        <span>النتائج</span>
+                        <span id="resultsCount" style="display:none">0</span>
+                    </h3>
+                    <button id="collapseBtn" class="collapse-btn" title="طي/فتح">◀</button>
+                </div>
+                
+                <div class="results-nav">
+                    <button id="prevBtn" class="nav-btn" disabled>▲ السابق</button>
+                    <span id="resultPos">-</span>
+                    <button id="nextBtn" class="nav-btn" disabled>▼ التالي</button>
+                </div>
+                
+                <div id="resultsList">
+                    <div class="placeholder">
+                        <div class="placeholder-icon">🔍</div>
+                        <p>اكتب في مربع البحث أعلاه<br>للبحث عن الأكواد والمنتجات<br><br>
+                        <small style="color: var(--primary)">✨ يدعم التصحيح التلقائي للأخطاء الإملائية</small></p>
+                    </div>
+                </div>
+            </aside>
+        </div>
     </div>
 
+    <!-- Page Indicator -->
+    <div id="pageIndicator" class="page-indicator"></div>
+    
     <!-- Toast -->
     <div id="toast"></div>
 
@@ -560,61 +714,90 @@
         // ========== Configuration ==========
         const CONFIG = {
             ADOBE_CLIENT_ID: '5edf16250afa446aa490af6313d351b2',
-            PDF_FILE: 'HS Code 2026.pdf'
+            PDF_FILE: 'HS Code 2026.pdf',
+            FUSE_OPTIONS: {
+                includeScore: true,
+                threshold: 0.4,          // مستوى التشابه (0 = تطابق تام، 1 = أي شيء)
+                ignoreLocation: true,
+                minMatchCharLength: 2,
+                keys: ['text']
+            }
         };
         
         pdfjsLib.GlobalWorkerOptions.workerSrc = 
             'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         // ========== State ==========
-        let adobeViewer = null;
         let pdfText = [];
+        let fuseIndex = null;
         let results = [];
         let resultIdx = -1;
         let totalPages = 0;
         let indexed = false;
+        let isDarkMode = true;
 
-        // ========== Initialize ==========
+        // ========== Init ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            setupEvents();
+        });
+        
         document.addEventListener('adobe_dc_view_sdk.ready', initApp);
 
         async function initApp() {
-            setupEvents();
             await Promise.all([
                 initAdobeViewer(),
-                indexPDFForSearch()
+                indexPDFWithFuse()
             ]);
         }
 
         function setupEvents() {
             const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
+            const clearBtn = document.getElementById('clearBtn');
             
+            // البحث التلقائي
             searchInput.addEventListener('input', function() {
+                clearBtn.classList.toggle('show', this.value.length > 0);
                 clearTimeout(window.searchTimer);
                 if (this.value.length >= 2) {
-                    window.searchTimer = setTimeout(doSearch, 400);
+                    window.searchTimer = setTimeout(doSmartSearch, 300);
+                } else if (this.value.length === 0) {
+                    clearResults();
                 }
             });
             
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') doSearch();
+            searchInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') doSmartSearch();
             });
             
-            searchBtn.addEventListener('click', doSearch);
+            document.getElementById('searchBtn').addEventListener('click', doSmartSearch);
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                searchInput.value = '';
+                clearBtn.classList.remove('show');
+                clearResults();
+            });
+            
             document.getElementById('prevBtn').addEventListener('click', () => navResult(-1));
             document.getElementById('nextBtn').addEventListener('click', () => navResult(1));
+            document.getElementById('collapseBtn').addEventListener('click', toggleSidebar);
+            document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
+            document.getElementById('themeBtn').addEventListener('click', toggleTheme);
             
             // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', e => {
                 if (e.target.tagName === 'INPUT') return;
                 if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
                 if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
+                if (e.key === '/' || (e.ctrlKey && e.key === 'f')) {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
             });
         }
 
         // ========== Adobe Viewer ==========
         async function initAdobeViewer() {
-            updateLoading('جاري تحميل العارض...', 20);
+            updateLoading('جاري تحميل العارض...', 15);
             
             try {
                 const adobeDCView = new AdobeDC.View({
@@ -622,7 +805,7 @@
                     divId: 'pdf-container'
                 });
                 
-                adobeViewer = await adobeDCView.previewFile({
+                const viewer = await adobeDCView.previewFile({
                     content: { location: { url: CONFIG.PDF_FILE } },
                     metaData: { fileName: CONFIG.PDF_FILE }
                 }, {
@@ -632,24 +815,21 @@
                     showLeftHandPanel: true,
                     showPageControls: true,
                     showDownloadPDF: true,
-                    showPrintPDF: false
+                    showPrintPDF: false,
+                    showBookmarks: false
                 });
                 
-                updateLoading('تم تحميل العارض', 50);
-                
-                // Get PDF APIs for navigation
-                const apis = await adobeViewer.getAPIs();
-                window.pdfAPIs = apis;
+                window.pdfAPIs = await viewer.getAPIs();
+                updateLoading('تم تحميل العارض', 40);
                 
             } catch (error) {
                 console.error('Adobe Error:', error);
-                showToast('⚠️ خطأ في تحميل العارض', 'error');
             }
         }
 
-        // ========== PDF Indexing for Search ==========
-        async function indexPDFForSearch() {
-            updateLoading('جاري فهرسة الملف للبحث...', 30);
+        // ========== Smart Indexing with Fuse.js ==========
+        async function indexPDFWithFuse() {
+            updateLoading('جاري فهرسة الملف للبحث الذكي...', 25);
             
             try {
                 const pdf = await pdfjsLib.getDocument({
@@ -662,39 +842,76 @@
                 pdfText = [];
                 
                 for (let i = 1; i <= totalPages; i++) {
-                    const percent = 50 + Math.round((i / totalPages) * 45);
+                    const percent = 40 + Math.round((i / totalPages) * 50);
                     updateLoading(`فهرسة الصفحة ${i} من ${totalPages}...`, percent);
                     
                     try {
                         const page = await pdf.getPage(i);
                         const content = await page.getTextContent();
-                        const text = content.items.map(item => item.str).join(' ');
-                        pdfText.push({ page: i, text: text });
+                        let text = content.items.map(item => item.str).join(' ');
+                        
+                        // تنظيف النص
+                        text = normalizeText(text);
+                        
+                        pdfText.push({ 
+                            page: i, 
+                            text: text,
+                            originalText: content.items.map(item => item.str).join(' ')
+                        });
                     } catch (e) {
-                        pdfText.push({ page: i, text: '' });
+                        pdfText.push({ page: i, text: '', originalText: '' });
                     }
                 }
+                
+                // إنشاء فهرس Fuse.js للبحث الذكي
+                updateLoading('جاري بناء محرك البحث الذكي...', 95);
+                fuseIndex = new Fuse(pdfText, CONFIG.FUSE_OPTIONS);
                 
                 indexed = true;
                 updateLoading('جاهز!', 100);
                 
-                // Update status
                 const status = document.getElementById('searchStatus');
                 status.className = 'ready';
-                status.innerHTML = `<span>✅</span><span>جاهز للبحث (${totalPages} صفحة)</span>`;
+                status.innerHTML = `<span>✅</span><span>جاهز للبحث الذكي (${totalPages} صفحة)</span>`;
                 
-                // Hide loading after delay
                 setTimeout(() => {
                     document.getElementById('loadingOverlay').classList.add('hidden');
-                    status.classList.add('hidden');
-                }, 1000);
+                    setTimeout(() => status.classList.add('hidden'), 2000);
+                }, 500);
                 
             } catch (error) {
                 console.error('Indexing Error:', error);
-                document.getElementById('searchStatus').innerHTML = 
-                    `<span>⚠️</span><span>خطأ في الفهرسة</span>`;
+                document.getElementById('searchStatus').innerHTML = '⚠️ خطأ في الفهرسة';
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }
+        }
+
+        // ========== Text Normalization ==========
+        function normalizeText(text) {
+            return text
+                // إزالة المسافات الزائدة
+                .replace(/\s+/g, ' ')
+                // توحيد الأحرف العربية
+                .replace(/[أإآا]/g, 'ا')
+                .replace(/[ىي]/g, 'ي')
+                .replace(/ة/g, 'ه')
+                .replace(/ؤ/g, 'و')
+                .replace(/ئ/g, 'ي')
+                // إزالة التشكيل
+                .replace(/[\u064B-\u065F]/g, '')
+                .trim();
+        }
+
+        function normalizeQuery(query) {
+            return query
+                .trim()
+                .replace(/\s+/g, ' ')
+                .replace(/[أإآا]/g, 'ا')
+                .replace(/[ىي]/g, 'ي')
+                .replace(/ة/g, 'ه')
+                .replace(/ؤ/g, 'و')
+                .replace(/ئ/g, 'ي')
+                .replace(/[\u064B-\u065F]/g, '');
         }
 
         function updateLoading(text, percent) {
@@ -703,9 +920,9 @@
             document.getElementById('loadingFill').style.width = percent + '%';
         }
 
-        // ========== Search ==========
-        function doSearch() {
-            const query = document.getElementById('searchInput').value.trim();
+        // ========== Smart Search ==========
+        function doSmartSearch() {
+            let query = document.getElementById('searchInput').value.trim();
             if (!query) return;
             
             if (!indexed) {
@@ -713,8 +930,15 @@
                 return;
             }
             
-            results = [];
-            const qLower = query.toLowerCase();
+            // تطبيع الاستعلام
+            const normalizedQuery = normalizeQuery(query);
+            
+            // البحث باستخدام Fuse.js (بحث ذكي مع تصحيح الأخطاء)
+            const fuseResults = fuseIndex.search(normalizedQuery);
+            
+            // أيضاً بحث تقليدي للنتائج الدقيقة
+            const exactResults = [];
+            const qLower = normalizedQuery.toLowerCase();
             const qArabic = toArabicNums(query);
             const qEnglish = toEnglishNums(query);
             
@@ -729,19 +953,47 @@
                 });
                 
                 if (count > 0) {
-                    let i = textLower.indexOf(qLower);
-                    if (i === -1) i = 0;
-                    const start = Math.max(0, i - 50);
-                    const end = Math.min(p.text.length, i + query.length + 50);
-                    let ctx = p.text.substring(start, end);
-                    if (start > 0) ctx = '...' + ctx;
-                    if (end < p.text.length) ctx += '...';
-                    
-                    results.push({ page: p.page, count, ctx });
+                    exactResults.push({ page: p.page, count, score: 0 });
                 }
             });
             
-            results.sort((a, b) => b.count - a.count);
+            // دمج النتائج
+            results = [];
+            const seenPages = new Set();
+            
+            // أولاً النتائج الدقيقة
+            exactResults.forEach(r => {
+                if (!seenPages.has(r.page)) {
+                    seenPages.add(r.page);
+                    const pageData = pdfText.find(p => p.page === r.page);
+                    results.push({
+                        page: r.page,
+                        count: r.count,
+                        score: 100,
+                        text: pageData ? pageData.originalText : ''
+                    });
+                }
+            });
+            
+            // ثم نتائج Fuse.js (البحث الذكي)
+            fuseResults.forEach(r => {
+                if (!seenPages.has(r.item.page)) {
+                    seenPages.add(r.item.page);
+                    results.push({
+                        page: r.item.page,
+                        count: 1,
+                        score: Math.round((1 - r.score) * 100),
+                        text: r.item.originalText
+                    });
+                }
+            });
+            
+            // ترتيب حسب النتيجة
+            results.sort((a, b) => b.score - a.score || b.count - a.count);
+            
+            // عرض أول 50 نتيجة فقط
+            results = results.slice(0, 50);
+            
             showResults(query);
             
             if (results.length > 0) {
@@ -757,6 +1009,9 @@
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             
+            // فتح الشريط الجانبي على الموبايل
+            document.getElementById('sidebar').classList.remove('collapsed');
+            
             if (results.length === 0) {
                 countEl.style.display = 'none';
                 posEl.textContent = '-';
@@ -765,35 +1020,54 @@
                 list.innerHTML = `
                     <div class="placeholder">
                         <div class="placeholder-icon">😕</div>
-                        <p>لا توجد نتائج لـ "${query}"</p>
+                        <p>لا توجد نتائج لـ "${query}"<br><br>
+                        <small>جرب كلمات مختلفة أو تحقق من الإملاء</small></p>
                     </div>
                 `;
                 return;
             }
             
-            const total = results.reduce((s, r) => s + r.count, 0);
-            countEl.textContent = total;
+            countEl.textContent = results.length;
             countEl.style.display = 'inline';
-            posEl.textContent = `1/${results.length}`;
+            posEl.textContent = `1 / ${results.length}`;
             prevBtn.disabled = true;
             nextBtn.disabled = results.length <= 1;
             
             const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const regex = new RegExp(`(${escaped})`, 'gi');
             
-            list.innerHTML = results.map((r, i) => `
-                <div class="result-card ${i === 0 ? 'active' : ''}" onclick="gotoResult(${i})">
-                    <div class="result-top">
-                        <span class="page-badge">📄 صفحة ${r.page}</span>
-                        <span class="match-count">${r.count} تطابق</span>
+            list.innerHTML = results.map((r, i) => {
+                // استخراج سياق النص
+                let ctx = r.text || '';
+                const idx = ctx.toLowerCase().indexOf(query.toLowerCase());
+                if (idx !== -1) {
+                    const start = Math.max(0, idx - 40);
+                    const end = Math.min(ctx.length, idx + query.length + 40);
+                    ctx = ctx.substring(start, end);
+                    if (start > 0) ctx = '...' + ctx;
+                    if (end < r.text.length) ctx += '...';
+                } else {
+                    ctx = ctx.substring(0, 100) + '...';
+                }
+                
+                const scoreClass = r.score >= 80 ? 'success' : (r.score >= 50 ? 'warning' : 'danger');
+                
+                return `
+                    <div class="result-card ${i === 0 ? 'active' : ''}" onclick="gotoResult(${i})">
+                        <div class="result-top">
+                            <span class="page-badge">📄 صفحة ${r.page}</span>
+                            <div class="match-info">
+                                <span class="match-count">${r.count} تطابق</span>
+                                <span class="match-score" style="background: var(--${scoreClass})">${r.score}% تشابه</span>
+                            </div>
+                        </div>
+                        <div class="result-text">${ctx.replace(regex, '<span class="hl">$1</span>')}</div>
+                        <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
+                            ← انتقال للصفحة ${r.page}
+                        </button>
                     </div>
-                    <div class="result-text">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
-                    <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
-                        <span>←</span>
-                        <span>انتقال للصفحة</span>
-                    </button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         async function gotoResult(i) {
@@ -805,31 +1079,76 @@
                 c.classList.toggle('active', j === i);
             });
             
-            document.getElementById('resultPos').textContent = `${i + 1}/${results.length}`;
+            document.getElementById('resultPos').textContent = `${i + 1} / ${results.length}`;
             document.getElementById('prevBtn').disabled = i === 0;
             document.getElementById('nextBtn').disabled = i === results.length - 1;
             
-            // Navigate to page in Adobe viewer
             const pageNum = results[i].page;
             
+            // Show page indicator
+            showPageIndicator(pageNum);
+            
+            // Navigate in Adobe viewer
             if (window.pdfAPIs) {
                 try {
                     await window.pdfAPIs.gotoLocation(pageNum);
                 } catch (e) {
-                    console.log('Navigation via API failed, trying alternative');
+                    console.log('Navigation error:', e);
                 }
             }
             
-            showToast(`📄 الصفحة ${pageNum}`, 'success');
-            
-            // Scroll result into view
+            // Scroll card into view
             const card = document.querySelector('.result-card.active');
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showPageIndicator(pageNum) {
+            const indicator = document.getElementById('pageIndicator');
+            indicator.textContent = `📄 صفحة ${pageNum}`;
+            indicator.classList.add('show');
+            setTimeout(() => indicator.classList.remove('show'), 1500);
         }
 
         function navResult(dir) {
             const n = resultIdx + dir;
             if (n >= 0 && n < results.length) gotoResult(n);
+        }
+
+        function clearResults() {
+            results = [];
+            resultIdx = -1;
+            document.getElementById('resultsCount').style.display = 'none';
+            document.getElementById('resultPos').textContent = '-';
+            document.getElementById('prevBtn').disabled = true;
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('resultsList').innerHTML = `
+                <div class="placeholder">
+                    <div class="placeholder-icon">🔍</div>
+                    <p>اكتب في مربع البحث أعلاه<br>للبحث عن الأكواد والمنتجات<br><br>
+                    <small style="color: var(--primary)">✨ يدعم التصحيح التلقائي للأخطاء الإملائية</small></p>
+                </div>
+            `;
+        }
+
+        // ========== UI Functions ==========
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            document.getElementById('themeBtn').textContent = isDarkMode ? '🌙' : '☀️';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'light') {
+                isDarkMode = false;
+                document.body.setAttribute('data-theme', 'light');
+                document.getElementById('themeBtn').textContent = '☀️';
+            }
         }
 
         // ========== Helpers ==========
