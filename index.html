@@ -3,837 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 HS Code 2026 - دليل الرموز الجمركية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <title>📚 HS Code 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <!-- Fuse.js للبحث الذكي -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
     <style>
         :root {
             --primary: #6366f1;
-            --primary-light: #818cf8;
-            --primary-dark: #4f46e5;
             --success: #10b981;
             --warning: #f59e0b;
-            --danger: #ef4444;
             --bg: #0a0a12;
-            --bg-light: #f8fafc;
             --surface: #13131d;
-            --surface-light: #ffffff;
             --surface2: #1c1c2d;
-            --surface2-light: #f1f5f9;
-            --surface3: #252538;
-            --surface3-light: #e2e8f0;
             --text: #f1f5f9;
-            --text-light: #1e293b;
             --text2: #94a3b8;
-            --text2-light: #64748b;
             --border: #2a2a40;
-            --border-light: #e2e8f0;
             --highlight: #fbbf24;
-            --glow: rgba(99, 102, 241, 0.3);
         }
         
         [data-theme="light"] {
-            --bg: var(--bg-light);
-            --surface: var(--surface-light);
-            --surface2: var(--surface2-light);
-            --surface3: var(--surface3-light);
-            --text: var(--text-light);
-            --text2: var(--text2-light);
-            --border: var(--border-light);
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface2: #f1f5f9;
+            --text: #1e293b;
+            --text2: #64748b;
+            --border: #e2e8f0;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); }
         
-        body { 
-            font-family: 'Tajawal', sans-serif; 
-            background: var(--bg); 
-            color: var(--text);
-            transition: background 0.3s, color 0.3s;
-        }
+        .app { display: flex; flex-direction: column; height: 100vh; }
         
-        .app {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
-        /* ========== Header ========== */
+        /* Header */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
         }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo span { font-size: 2rem; }
+        .logo h1 { font-size: 1.3rem; color: var(--primary); }
+        .header-btns { display: flex; gap: 8px; }
+        .icon-btn {
+            width: 40px; height: 40px; border: none; border-radius: 10px;
+            background: var(--surface2); color: var(--text); font-size: 1.2rem; cursor: pointer;
         }
+        .icon-btn:hover { background: var(--primary); }
         
-        .logo-icon {
-            font-size: 2.2rem;
-            filter: drop-shadow(0 0 8px var(--glow));
-        }
-        
-        .logo h1 {
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-        
-        .logo p {
-            font-size: 0.75rem;
-            color: var(--text2);
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .theme-btn, .menu-btn {
-            width: 42px;
-            height: 42px;
-            border: none;
-            border-radius: 12px;
-            background: var(--surface2);
-            color: var(--text);
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .theme-btn:hover, .menu-btn:hover {
-            background: var(--primary);
-            transform: scale(1.05);
-        }
-        
-        .menu-btn { display: none; }
-        
-        /* ========== Search Bar (Top) ========== */
-        .search-bar {
-            padding: 15px 20px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .search-container {
-            display: flex;
-            gap: 12px;
-            max-width: 800px;
-            margin: 0 auto;
-            align-items: center;
-        }
-        
-        .search-icon-box {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border-radius: 14px;
-            font-size: 1.4rem;
-            flex-shrink: 0;
-        }
-        
-        .search-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-        
+        /* Search */
+        .search-section { padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+        .search-row { display: flex; gap: 10px; max-width: 700px; margin: 0 auto; }
         #searchInput {
-            width: 100%;
-            padding: 14px 20px;
-            background: var(--surface2);
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            color: var(--text);
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s;
+            flex: 1; padding: 12px 18px; background: var(--surface2); border: 2px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 1rem; font-family: inherit;
         }
-        
-        #searchInput:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--glow);
-        }
-        
-        #searchInput::placeholder { color: var(--text2); }
-        
-        .clear-btn {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 28px;
-            height: 28px;
-            border: none;
-            border-radius: 50%;
-            background: var(--danger);
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            display: none;
-            transition: all 0.2s;
-        }
-        
-        .clear-btn.show { display: flex; align-items: center; justify-content: center; }
-        .clear-btn:hover { transform: translateY(-50%) scale(1.1); }
-        
+        #searchInput:focus { outline: none; border-color: var(--primary); }
         #searchBtn {
-            padding: 14px 28px;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border: none;
-            border-radius: 14px;
-            color: white;
-            font-size: 1rem;
-            font-family: inherit;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            white-space: nowrap;
+            padding: 12px 24px; background: var(--primary); border: none; border-radius: 12px;
+            color: #fff; font-size: 1rem; font-family: inherit; font-weight: 600; cursor: pointer;
         }
+        #searchBtn:hover { filter: brightness(1.1); }
+        #searchBtn:disabled { opacity: 0.6; cursor: wait; }
+        #status { text-align: center; margin-top: 8px; font-size: 0.85rem; color: var(--warning); }
+        #status.ready { color: var(--success); }
         
-        #searchBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px var(--glow);
-        }
+        /* Main */
+        .main { display: flex; flex: 1; overflow: hidden; }
         
-        /* Status */
-        #searchStatus {
-            text-align: center;
-            margin-top: 10px;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: var(--surface2);
-        }
-        
-        #searchStatus.loading { color: var(--warning); }
-        #searchStatus.ready { color: var(--success); background: rgba(16, 185, 129, 0.1); }
-        #searchStatus.hidden { display: none; }
-        
-        .spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid currentColor;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* ========== Main Content ========== */
-        .main-content {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-        
-        /* ========== Results Sidebar ========== */
+        /* Sidebar */
         .sidebar {
-            width: 380px;
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s;
-            z-index: 50;
+            width: 350px; background: var(--surface); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column;
         }
-        
-        .sidebar.collapsed { margin-right: -380px; }
-        
         .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            background: var(--surface2);
-            border-bottom: 1px solid var(--border);
+            padding: 12px 15px; background: var(--surface2); border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .sidebar-header h3 { font-size: 0.95rem; }
+        #resultsCount { padding: 3px 10px; background: var(--primary); border-radius: 12px; font-size: 0.75rem; }
         
-        .sidebar-header h3 {
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        #resultsCount {
-            padding: 3px 10px;
-            background: var(--primary);
-            border-radius: 15px;
-            font-size: 0.75rem;
-            color: white;
-        }
-        
-        .collapse-btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 8px;
-            background: var(--surface3);
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .collapse-btn:hover { background: var(--primary); }
-        
-        /* Navigation */
-        .results-nav {
-            display: flex;
-            gap: 8px;
-            padding: 12px 18px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            align-items: center;
-        }
-        
+        .nav-row { display: flex; gap: 8px; padding: 10px 15px; border-bottom: 1px solid var(--border); }
         .nav-btn {
-            padding: 10px 18px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            flex: 1; padding: 8px; background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); cursor: pointer; font-family: inherit;
         }
+        .nav-btn:hover:not(:disabled) { background: var(--primary); }
+        .nav-btn:disabled { opacity: 0.4; }
+        #resultPos { padding: 8px 12px; background: var(--bg); border-radius: 8px; text-align: center; min-width: 60px; }
         
-        .nav-btn:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
-        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        
-        #resultPos {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            background: var(--bg);
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        /* Results List */
-        #resultsList {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-        }
-        
-        .placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-            color: var(--text2);
-            padding: 20px;
-        }
-        
-        .placeholder-icon { font-size: 4rem; margin-bottom: 15px; opacity: 0.3; }
-        .placeholder p { line-height: 1.8; }
+        #resultsList { flex: 1; overflow-y: auto; padding: 12px; }
+        .placeholder { text-align: center; padding: 40px 15px; color: var(--text2); }
+        .placeholder span { font-size: 3rem; display: block; margin-bottom: 10px; opacity: 0.4; }
         
         .result-card {
-            background: var(--surface2);
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 14px;
-            cursor: pointer;
-            transition: all 0.25s;
+            background: var(--surface2); border: 2px solid var(--border); border-radius: 12px;
+            padding: 12px; margin-bottom: 10px; cursor: pointer;
         }
-        
-        .result-card:hover {
-            border-color: var(--primary);
-            transform: translateX(-6px);
-            box-shadow: 6px 0 25px var(--glow);
-        }
-        
-        .result-card.active {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.15);
-        }
-        
-        .result-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .page-badge {
-            padding: 6px 14px;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .match-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-        }
-        
-        .match-count { font-size: 0.8rem; color: var(--text2); }
-        .match-score {
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            background: var(--success);
-            color: white;
-            border-radius: 10px;
-        }
-        
+        .result-card:hover { border-color: var(--primary); }
+        .result-card.active { border-color: var(--primary); background: rgba(99,102,241,0.1); }
+        .result-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .page-badge { padding: 4px 12px; background: var(--primary); border-radius: 12px; font-size: 0.8rem; }
         .result-text {
-            font-size: 0.9rem;
-            color: var(--text2);
-            line-height: 1.8;
-            padding: 14px;
-            background: var(--bg);
-            border-radius: 12px;
-            max-height: 90px;
-            overflow: hidden;
+            font-size: 0.85rem; color: var(--text2); line-height: 1.6;
+            padding: 10px; background: var(--bg); border-radius: 8px; max-height: 70px; overflow: hidden;
         }
-        
-        .result-text .hl {
-            background: var(--highlight);
-            color: #000;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-        
+        .result-text .hl { background: var(--highlight); color: #000; padding: 1px 4px; border-radius: 3px; }
         .go-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            margin-top: 14px;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            display: block; width: 100%; margin-top: 10px; padding: 10px;
+            background: var(--primary); border: none; border-radius: 8px;
+            color: #fff; font-family: inherit; font-weight: 600; cursor: pointer;
         }
         
-        .go-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
+        /* PDF */
+        .pdf-area { flex: 1; background: #1a1a1a; }
+        #pdf-container { width: 100%; height: 100%; }
         
-        /* ========== PDF Section ========== */
-        .pdf-section {
-            flex: 1;
-            position: relative;
-            background: #1e1e1e;
-            overflow: hidden;
+        /* Page indicator */
+        #pageIndicator {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            padding: 15px 30px; background: var(--primary); border-radius: 15px;
+            font-size: 1.3rem; font-weight: 700; color: #fff; z-index: 1000;
+            opacity: 0; transition: opacity 0.3s;
         }
+        #pageIndicator.show { opacity: 1; }
         
-        #pdf-container {
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* Hide Adobe branding */
-        #pdf-container [class*="spectrum"],
-        #pdf-container [aria-label*="Adobe"],
-        #pdf-container [data-testid*="adobe"] {
-            visibility: hidden !important;
-        }
-        
-        /* Page indicator overlay */
-        .page-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px 40px;
-            background: rgba(99, 102, 241, 0.95);
-            border-radius: 20px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        
-        .page-indicator.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* ========== Loading ========== */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: all 0.5s;
-        }
-        
-        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
-        
-        .loading-logo {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            animation: bounce 1s ease-in-out infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        .loading-overlay h2 {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #c7d2fe, #e9d5ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .loading-overlay > p {
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 25px;
-        }
-        
-        .loading-bar {
-            width: 300px;
-            height: 6px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .loading-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        #loadingPercent { margin-top: 12px; font-size: 1.1rem; color: white; }
-        
-        /* ========== Toast ========== */
+        /* Toast */
         #toast {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 14px 28px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 9999;
-            font-weight: 600;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
+            background: var(--surface); padding: 12px 25px; border-radius: 12px;
+            border: 1px solid var(--border); opacity: 0; transition: all 0.3s; z-index: 999;
         }
-        
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        #toast.success { border-color: var(--success); }
         
-        /* ========== Scrollbar ========== */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-        
-        /* ========== Mobile Responsive ========== */
-        @media (max-width: 900px) {
-            .main-content { flex-direction: column-reverse; }
-            
-            .sidebar {
-                width: 100%;
-                height: 45vh;
-                border-left: none;
-                border-top: 1px solid var(--border);
-            }
-            
-            .sidebar.collapsed {
-                margin-right: 0;
-                height: 50px;
-                min-height: 50px;
-            }
-            
-            .sidebar.collapsed #resultsList,
-            .sidebar.collapsed .results-nav { display: none; }
-            
-            .pdf-section { height: 55vh; }
-            
-            .menu-btn { display: flex; align-items: center; justify-content: center; }
-            
-            .search-container { flex-wrap: wrap; }
-            .search-icon-box { display: none; }
-            .search-input-wrapper { width: 100%; flex: none; }
-            #searchBtn { width: 100%; margin-top: 10px; }
-        }
-        
-        @media (max-width: 500px) {
-            .header { padding: 10px 15px; }
-            .logo h1 { font-size: 1.1rem; }
-            .logo p { display: none; }
-            .logo-icon { font-size: 1.8rem; }
-            
-            .search-bar { padding: 12px 15px; }
-            #searchInput { padding: 12px 16px; font-size: 0.95rem; }
-            
-            .sidebar-header { padding: 12px 15px; }
-            #resultsList { padding: 12px; }
-            .result-card { padding: 14px; }
+        /* Responsive */
+        @media (max-width: 800px) {
+            .main { flex-direction: column-reverse; }
+            .sidebar { width: 100%; max-height: 40vh; border-left: none; border-top: 1px solid var(--border); }
+            .search-row { flex-wrap: wrap; }
+            #searchInput { width: 100%; }
+            #searchBtn { width: 100%; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-logo">📚</div>
-        <h2>HS Code 2026</h2>
-        <p id="loadingText">جاري التحميل...</p>
-        <div class="loading-bar">
-            <div id="loadingFill" class="loading-fill" style="width: 0%"></div>
-        </div>
-        <div id="loadingPercent">0%</div>
-    </div>
-
-    <!-- App -->
     <div class="app">
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <span class="logo-icon">📚</span>
-                <div>
-                    <h1>HS Code 2026</h1>
-                    <p>دليل الرموز الجمركية - سلطنة عمان</p>
-                </div>
+                <span>📚</span>
+                <h1>HS Code 2026</h1>
             </div>
-            <div class="header-actions">
-                <button id="themeBtn" class="theme-btn" title="تبديل الوضع">🌙</button>
-                <button id="menuBtn" class="menu-btn" title="القائمة">☰</button>
+            <div class="header-btns">
+                <button id="themeBtn" class="icon-btn" title="تبديل الوضع">🌙</button>
             </div>
         </header>
 
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <div class="search-container">
-                <div class="search-icon-box">🔍</div>
-                <div class="search-input-wrapper">
-                    <input type="text" id="searchInput" placeholder="ابحث عن كود جمركي، منتج، وصف... (يدعم التصحيح التلقائي)">
-                    <button id="clearBtn" class="clear-btn">✕</button>
-                </div>
-                <button id="searchBtn">بحث</button>
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-row">
+                <input type="text" id="searchInput" placeholder="🔍 ابحث عن كود أو منتج...">
+                <button id="searchBtn" disabled>بحث</button>
             </div>
-            <div style="text-align: center; margin-top: 8px;">
-                <span id="searchStatus" class="loading">
-                    <span class="spinner"></span>
-                    <span>جاري تجهيز البحث الذكي...</span>
-                </span>
-            </div>
+            <div id="status">⏳ جاري تجهيز البحث...</div>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- PDF Viewer -->
-            <main class="pdf-section">
+        <!-- Main -->
+        <div class="main">
+            <!-- PDF -->
+            <main class="pdf-area">
                 <div id="pdf-container"></div>
             </main>
 
-            <!-- Results Sidebar -->
-            <aside id="sidebar" class="sidebar">
+            <!-- Sidebar -->
+            <aside class="sidebar">
                 <div class="sidebar-header">
-                    <h3>
-                        <span>📊</span>
-                        <span>النتائج</span>
-                        <span id="resultsCount" style="display:none">0</span>
-                    </h3>
-                    <button id="collapseBtn" class="collapse-btn" title="طي/فتح">◀</button>
+                    <h3>📊 النتائج <span id="resultsCount" style="display:none">0</span></h3>
                 </div>
-                
-                <div class="results-nav">
-                    <button id="prevBtn" class="nav-btn" disabled>▲ السابق</button>
+                <div class="nav-row">
+                    <button id="prevBtn" class="nav-btn" disabled>▲</button>
                     <span id="resultPos">-</span>
-                    <button id="nextBtn" class="nav-btn" disabled>▼ التالي</button>
+                    <button id="nextBtn" class="nav-btn" disabled>▼</button>
                 </div>
-                
                 <div id="resultsList">
                     <div class="placeholder">
-                        <div class="placeholder-icon">🔍</div>
-                        <p>اكتب في مربع البحث أعلاه<br>للبحث عن الأكواد والمنتجات<br><br>
-                        <small style="color: var(--primary)">✨ يدعم التصحيح التلقائي للأخطاء الإملائية</small></p>
+                        <span>🔍</span>
+                        <p>اكتب للبحث</p>
                     </div>
                 </div>
             </aside>
         </div>
     </div>
 
-    <!-- Page Indicator -->
-    <div id="pageIndicator" class="page-indicator"></div>
-    
-    <!-- Toast -->
+    <div id="pageIndicator"></div>
     <div id="toast"></div>
 
     <script>
-        // ========== Configuration ==========
-        const CONFIG = {
-            ADOBE_CLIENT_ID: '5edf16250afa446aa490af6313d351b2',
-            PDF_FILE: 'HS Code 2026.pdf',
-            FUSE_OPTIONS: {
-                includeScore: true,
-                threshold: 0.4,          // مستوى التشابه (0 = تطابق تام، 1 = أي شيء)
-                ignoreLocation: true,
-                minMatchCharLength: 2,
-                keys: ['text']
-            }
-        };
+        // Config
+        const CLIENT_ID = '5edf16250afa446aa490af6313d351b2';
+        const PDF_FILE = 'HS Code 2026.pdf';
         
         pdfjsLib.GlobalWorkerOptions.workerSrc = 
             'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        // ========== State ==========
+        
+        // State
         let pdfText = [];
         let fuseIndex = null;
         let results = [];
         let resultIdx = -1;
         let totalPages = 0;
         let indexed = false;
-        let isDarkMode = true;
-
-        // ========== Init ==========
-        document.addEventListener('DOMContentLoaded', () => {
-            loadTheme();
-            setupEvents();
-        });
         
-        document.addEventListener('adobe_dc_view_sdk.ready', initApp);
-
-        async function initApp() {
-            await Promise.all([
-                initAdobeViewer(),
-                indexPDFWithFuse()
-            ]);
-        }
-
-        function setupEvents() {
-            const searchInput = document.getElementById('searchInput');
-            const clearBtn = document.getElementById('clearBtn');
+        // Init
+        document.addEventListener('adobe_dc_view_sdk.ready', startApp);
+        
+        // Timeout fallback
+        setTimeout(() => {
+            if (!window.AdobeDC) {
+                document.getElementById('status').textContent = '⚠️ جاري التحميل... انتظر قليلاً';
+            }
+        }, 5000);
+        
+        async function startApp() {
+            setupEvents();
+            loadTheme();
             
-            // البحث التلقائي
-            searchInput.addEventListener('input', function() {
-                clearBtn.classList.toggle('show', this.value.length > 0);
-                clearTimeout(window.searchTimer);
-                if (this.value.length >= 2) {
-                    window.searchTimer = setTimeout(doSmartSearch, 300);
-                } else if (this.value.length === 0) {
-                    clearResults();
+            // تحميل العارض أولاً (أهم شيء)
+            await initViewer();
+            
+            // الفهرسة في الخلفية بعد تحميل العارض
+            indexInBackground();
+        }
+        
+        function setupEvents() {
+            document.getElementById('searchInput').addEventListener('input', function() {
+                clearTimeout(window.timer);
+                if (this.value.length >= 2 && indexed) {
+                    window.timer = setTimeout(doSearch, 400);
                 }
             });
-            
-            searchInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') doSmartSearch();
+            document.getElementById('searchInput').addEventListener('keydown', e => {
+                if (e.key === 'Enter' && indexed) doSearch();
             });
-            
-            document.getElementById('searchBtn').addEventListener('click', doSmartSearch);
-            document.getElementById('clearBtn').addEventListener('click', () => {
-                searchInput.value = '';
-                clearBtn.classList.remove('show');
-                clearResults();
-            });
-            
+            document.getElementById('searchBtn').addEventListener('click', doSearch);
             document.getElementById('prevBtn').addEventListener('click', () => navResult(-1));
             document.getElementById('nextBtn').addEventListener('click', () => navResult(1));
-            document.getElementById('collapseBtn').addEventListener('click', toggleSidebar);
-            document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
             document.getElementById('themeBtn').addEventListener('click', toggleTheme);
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', e => {
-                if (e.target.tagName === 'INPUT') return;
-                if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
-                if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
-                if (e.key === '/' || (e.ctrlKey && e.key === 'f')) {
-                    e.preventDefault();
-                    searchInput.focus();
-                }
-            });
         }
-
-        // ========== Adobe Viewer ==========
-        async function initAdobeViewer() {
-            updateLoading('جاري تحميل العارض...', 15);
-            
+        
+        // Adobe Viewer
+        async function initViewer() {
             try {
-                const adobeDCView = new AdobeDC.View({
-                    clientId: CONFIG.ADOBE_CLIENT_ID,
-                    divId: 'pdf-container'
-                });
+                const view = new AdobeDC.View({ clientId: CLIENT_ID, divId: 'pdf-container' });
                 
-                const viewer = await adobeDCView.previewFile({
-                    content: { location: { url: CONFIG.PDF_FILE } },
-                    metaData: { fileName: CONFIG.PDF_FILE }
+                const viewer = await view.previewFile({
+                    content: { location: { url: PDF_FILE } },
+                    metaData: { fileName: PDF_FILE }
                 }, {
                     embedMode: 'FULL_WINDOW',
                     defaultViewMode: 'FIT_WIDTH',
                     showAnnotationTools: false,
                     showLeftHandPanel: true,
                     showPageControls: true,
-                    showDownloadPDF: true,
-                    showPrintPDF: false,
-                    showBookmarks: false
+                    showDownloadPDF: true
                 });
                 
                 window.pdfAPIs = await viewer.getAPIs();
-                updateLoading('تم تحميل العارض', 40);
                 
-            } catch (error) {
-                console.error('Adobe Error:', error);
+            } catch (e) {
+                console.error('Viewer error:', e);
+                document.getElementById('status').textContent = '⚠️ خطأ في تحميل العارض';
             }
         }
-
-        // ========== Smart Indexing with Fuse.js ==========
-        async function indexPDFWithFuse() {
-            updateLoading('جاري فهرسة الملف للبحث الذكي...', 25);
+        
+        // Background indexing
+        async function indexInBackground() {
+            const status = document.getElementById('status');
+            const searchBtn = document.getElementById('searchBtn');
             
             try {
+                status.textContent = '⏳ جاري تجهيز البحث...';
+                
                 const pdf = await pdfjsLib.getDocument({
-                    url: CONFIG.PDF_FILE,
+                    url: PDF_FILE,
                     cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
                     cMapPacked: true
                 }).promise;
@@ -841,336 +293,181 @@
                 totalPages = pdf.numPages;
                 pdfText = [];
                 
+                // فهرسة صفحة صفحة مع تأخير لمنع التجميد
                 for (let i = 1; i <= totalPages; i++) {
-                    const percent = 40 + Math.round((i / totalPages) * 50);
-                    updateLoading(`فهرسة الصفحة ${i} من ${totalPages}...`, percent);
+                    status.textContent = `⏳ فهرسة ${i}/${totalPages}...`;
                     
                     try {
                         const page = await pdf.getPage(i);
                         const content = await page.getTextContent();
-                        let text = content.items.map(item => item.str).join(' ');
-                        
-                        // تنظيف النص
-                        text = normalizeText(text);
-                        
-                        pdfText.push({ 
-                            page: i, 
-                            text: text,
-                            originalText: content.items.map(item => item.str).join(' ')
-                        });
+                        const text = content.items.map(item => item.str).join(' ');
+                        pdfText.push({ page: i, text: normalize(text), original: text });
                     } catch (e) {
-                        pdfText.push({ page: i, text: '', originalText: '' });
+                        pdfText.push({ page: i, text: '', original: '' });
+                    }
+                    
+                    // تأخير صغير كل 10 صفحات لمنع التجميد
+                    if (i % 10 === 0) {
+                        await new Promise(r => setTimeout(r, 10));
                     }
                 }
                 
-                // إنشاء فهرس Fuse.js للبحث الذكي
-                updateLoading('جاري بناء محرك البحث الذكي...', 95);
-                fuseIndex = new Fuse(pdfText, CONFIG.FUSE_OPTIONS);
-                
-                indexed = true;
-                updateLoading('جاهز!', 100);
-                
-                const status = document.getElementById('searchStatus');
-                status.className = 'ready';
-                status.innerHTML = `<span>✅</span><span>جاهز للبحث الذكي (${totalPages} صفحة)</span>`;
-                
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').classList.add('hidden');
-                    setTimeout(() => status.classList.add('hidden'), 2000);
-                }, 500);
-                
-            } catch (error) {
-                console.error('Indexing Error:', error);
-                document.getElementById('searchStatus').innerHTML = '⚠️ خطأ في الفهرسة';
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }
-        }
-
-        // ========== Text Normalization ==========
-        function normalizeText(text) {
-            return text
-                // إزالة المسافات الزائدة
-                .replace(/\s+/g, ' ')
-                // توحيد الأحرف العربية
-                .replace(/[أإآا]/g, 'ا')
-                .replace(/[ىي]/g, 'ي')
-                .replace(/ة/g, 'ه')
-                .replace(/ؤ/g, 'و')
-                .replace(/ئ/g, 'ي')
-                // إزالة التشكيل
-                .replace(/[\u064B-\u065F]/g, '')
-                .trim();
-        }
-
-        function normalizeQuery(query) {
-            return query
-                .trim()
-                .replace(/\s+/g, ' ')
-                .replace(/[أإآا]/g, 'ا')
-                .replace(/[ىي]/g, 'ي')
-                .replace(/ة/g, 'ه')
-                .replace(/ؤ/g, 'و')
-                .replace(/ئ/g, 'ي')
-                .replace(/[\u064B-\u065F]/g, '');
-        }
-
-        function updateLoading(text, percent) {
-            document.getElementById('loadingText').textContent = text;
-            document.getElementById('loadingPercent').textContent = percent + '%';
-            document.getElementById('loadingFill').style.width = percent + '%';
-        }
-
-        // ========== Smart Search ==========
-        function doSmartSearch() {
-            let query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
-            
-            if (!indexed) {
-                showToast('⏳ انتظر اكتمال الفهرسة', 'warning');
-                return;
-            }
-            
-            // تطبيع الاستعلام
-            const normalizedQuery = normalizeQuery(query);
-            
-            // البحث باستخدام Fuse.js (بحث ذكي مع تصحيح الأخطاء)
-            const fuseResults = fuseIndex.search(normalizedQuery);
-            
-            // أيضاً بحث تقليدي للنتائج الدقيقة
-            const exactResults = [];
-            const qLower = normalizedQuery.toLowerCase();
-            const qArabic = toArabicNums(query);
-            const qEnglish = toEnglishNums(query);
-            
-            pdfText.forEach(p => {
-                if (!p || !p.text) return;
-                const textLower = p.text.toLowerCase();
-                
-                let count = 0;
-                [qLower, qArabic.toLowerCase(), qEnglish.toLowerCase()].forEach(q => {
-                    let idx = 0;
-                    while ((idx = textLower.indexOf(q, idx)) !== -1) { count++; idx++; }
+                // بناء فهرس Fuse
+                fuseIndex = new Fuse(pdfText, {
+                    keys: ['text'],
+                    threshold: 0.4,
+                    includeScore: true,
+                    ignoreLocation: true
                 });
                 
-                if (count > 0) {
-                    exactResults.push({ page: p.page, count, score: 0 });
-                }
-            });
+                indexed = true;
+                searchBtn.disabled = false;
+                status.textContent = `✅ جاهز (${totalPages} صفحة)`;
+                status.className = 'ready';
+                
+                setTimeout(() => status.style.display = 'none', 3000);
+                
+            } catch (e) {
+                console.error('Index error:', e);
+                status.textContent = '⚠️ خطأ في الفهرسة - حاول تحديث الصفحة';
+            }
+        }
+        
+        function normalize(text) {
+            return text
+                .replace(/\s+/g, ' ')
+                .replace(/[أإآا]/g, 'ا')
+                .replace(/[ىي]/g, 'ي')
+                .replace(/ة/g, 'ه')
+                .trim();
+        }
+        
+        // Search
+        function doSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query || !indexed) return;
             
-            // دمج النتائج
+            const q = normalize(query).toLowerCase();
             results = [];
-            const seenPages = new Set();
+            const seen = new Set();
             
-            // أولاً النتائج الدقيقة
-            exactResults.forEach(r => {
-                if (!seenPages.has(r.page)) {
-                    seenPages.add(r.page);
-                    const pageData = pdfText.find(p => p.page === r.page);
-                    results.push({
-                        page: r.page,
-                        count: r.count,
-                        score: 100,
-                        text: pageData ? pageData.originalText : ''
-                    });
+            // بحث تقليدي أولاً
+            pdfText.forEach(p => {
+                if (!p.text) return;
+                let count = 0, idx = 0;
+                const t = p.text.toLowerCase();
+                while ((idx = t.indexOf(q, idx)) !== -1) { count++; idx++; }
+                if (count > 0 && !seen.has(p.page)) {
+                    seen.add(p.page);
+                    results.push({ page: p.page, count, score: 100, text: p.original });
                 }
             });
             
-            // ثم نتائج Fuse.js (البحث الذكي)
-            fuseResults.forEach(r => {
-                if (!seenPages.has(r.item.page)) {
-                    seenPages.add(r.item.page);
+            // بحث Fuse للنتائج المشابهة
+            const fuseResults = fuseIndex.search(q);
+            fuseResults.slice(0, 30).forEach(r => {
+                if (!seen.has(r.item.page)) {
+                    seen.add(r.item.page);
                     results.push({
                         page: r.item.page,
                         count: 1,
                         score: Math.round((1 - r.score) * 100),
-                        text: r.item.originalText
+                        text: r.item.original
                     });
                 }
             });
             
-            // ترتيب حسب النتيجة
-            results.sort((a, b) => b.score - a.score || b.count - a.count);
-            
-            // عرض أول 50 نتيجة فقط
-            results = results.slice(0, 50);
+            results.sort((a, b) => b.score - a.score);
+            results = results.slice(0, 40);
             
             showResults(query);
-            
-            if (results.length > 0) {
-                resultIdx = 0;
-                gotoResult(0);
-            }
+            if (results.length > 0) gotoResult(0);
         }
-
+        
         function showResults(query) {
             const list = document.getElementById('resultsList');
-            const countEl = document.getElementById('resultsCount');
-            const posEl = document.getElementById('resultPos');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            
-            // فتح الشريط الجانبي على الموبايل
-            document.getElementById('sidebar').classList.remove('collapsed');
+            const count = document.getElementById('resultsCount');
             
             if (results.length === 0) {
-                countEl.style.display = 'none';
-                posEl.textContent = '-';
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-                list.innerHTML = `
-                    <div class="placeholder">
-                        <div class="placeholder-icon">😕</div>
-                        <p>لا توجد نتائج لـ "${query}"<br><br>
-                        <small>جرب كلمات مختلفة أو تحقق من الإملاء</small></p>
-                    </div>
-                `;
+                count.style.display = 'none';
+                list.innerHTML = `<div class="placeholder"><span>😕</span><p>لا نتائج لـ "${query}"</p></div>`;
+                document.getElementById('resultPos').textContent = '-';
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
                 return;
             }
             
-            countEl.textContent = results.length;
-            countEl.style.display = 'inline';
-            posEl.textContent = `1 / ${results.length}`;
-            prevBtn.disabled = true;
-            nextBtn.disabled = results.length <= 1;
+            count.textContent = results.length;
+            count.style.display = 'inline';
+            document.getElementById('resultPos').textContent = `1/${results.length}`;
+            document.getElementById('prevBtn').disabled = true;
+            document.getElementById('nextBtn').disabled = results.length <= 1;
             
             const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const regex = new RegExp(`(${escaped})`, 'gi');
             
             list.innerHTML = results.map((r, i) => {
-                // استخراج سياق النص
-                let ctx = r.text || '';
-                const idx = ctx.toLowerCase().indexOf(query.toLowerCase());
-                if (idx !== -1) {
-                    const start = Math.max(0, idx - 40);
-                    const end = Math.min(ctx.length, idx + query.length + 40);
-                    ctx = ctx.substring(start, end);
-                    if (start > 0) ctx = '...' + ctx;
-                    if (end < r.text.length) ctx += '...';
-                } else {
-                    ctx = ctx.substring(0, 100) + '...';
-                }
-                
-                const scoreClass = r.score >= 80 ? 'success' : (r.score >= 50 ? 'warning' : 'danger');
+                let ctx = r.text.substring(0, 120);
+                if (r.text.length > 120) ctx += '...';
                 
                 return `
                     <div class="result-card ${i === 0 ? 'active' : ''}" onclick="gotoResult(${i})">
                         <div class="result-top">
                             <span class="page-badge">📄 صفحة ${r.page}</span>
-                            <div class="match-info">
-                                <span class="match-count">${r.count} تطابق</span>
-                                <span class="match-score" style="background: var(--${scoreClass})">${r.score}% تشابه</span>
-                            </div>
+                            <span style="font-size:0.75rem;color:var(--text2)">${r.score}%</span>
                         </div>
                         <div class="result-text">${ctx.replace(regex, '<span class="hl">$1</span>')}</div>
-                        <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
-                            ← انتقال للصفحة ${r.page}
-                        </button>
+                        <button class="go-btn" onclick="event.stopPropagation();gotoResult(${i})">← انتقال</button>
                     </div>
                 `;
             }).join('');
         }
-
+        
         async function gotoResult(i) {
             if (i < 0 || i >= results.length) return;
             resultIdx = i;
             
-            // Update UI
-            document.querySelectorAll('.result-card').forEach((c, j) => {
-                c.classList.toggle('active', j === i);
-            });
-            
-            document.getElementById('resultPos').textContent = `${i + 1} / ${results.length}`;
+            document.querySelectorAll('.result-card').forEach((c, j) => c.classList.toggle('active', j === i));
+            document.getElementById('resultPos').textContent = `${i + 1}/${results.length}`;
             document.getElementById('prevBtn').disabled = i === 0;
             document.getElementById('nextBtn').disabled = i === results.length - 1;
             
-            const pageNum = results[i].page;
+            const page = results[i].page;
             
-            // Show page indicator
-            showPageIndicator(pageNum);
+            // Show indicator
+            const ind = document.getElementById('pageIndicator');
+            ind.textContent = `📄 صفحة ${page}`;
+            ind.classList.add('show');
+            setTimeout(() => ind.classList.remove('show'), 1500);
             
-            // Navigate in Adobe viewer
+            // Navigate
             if (window.pdfAPIs) {
-                try {
-                    await window.pdfAPIs.gotoLocation(pageNum);
-                } catch (e) {
-                    console.log('Navigation error:', e);
-                }
+                try { await window.pdfAPIs.gotoLocation(page); } catch (e) {}
             }
             
-            // Scroll card into view
-            const card = document.querySelector('.result-card.active');
-            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            document.querySelector('.result-card.active')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-
-        function showPageIndicator(pageNum) {
-            const indicator = document.getElementById('pageIndicator');
-            indicator.textContent = `📄 صفحة ${pageNum}`;
-            indicator.classList.add('show');
-            setTimeout(() => indicator.classList.remove('show'), 1500);
-        }
-
-        function navResult(dir) {
-            const n = resultIdx + dir;
+        
+        function navResult(d) {
+            const n = resultIdx + d;
             if (n >= 0 && n < results.length) gotoResult(n);
         }
-
-        function clearResults() {
-            results = [];
-            resultIdx = -1;
-            document.getElementById('resultsCount').style.display = 'none';
-            document.getElementById('resultPos').textContent = '-';
-            document.getElementById('prevBtn').disabled = true;
-            document.getElementById('nextBtn').disabled = true;
-            document.getElementById('resultsList').innerHTML = `
-                <div class="placeholder">
-                    <div class="placeholder-icon">🔍</div>
-                    <p>اكتب في مربع البحث أعلاه<br>للبحث عن الأكواد والمنتجات<br><br>
-                    <small style="color: var(--primary)">✨ يدعم التصحيح التلقائي للأخطاء الإملائية</small></p>
-                </div>
-            `;
-        }
-
-        // ========== UI Functions ==========
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
+        
+        // Theme
         function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-            document.getElementById('themeBtn').textContent = isDarkMode ? '🌙' : '☀️';
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            const isDark = document.body.getAttribute('data-theme') !== 'light';
+            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
         }
-
+        
         function loadTheme() {
-            const saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                isDarkMode = false;
+            if (localStorage.getItem('theme') === 'light') {
                 document.body.setAttribute('data-theme', 'light');
                 document.getElementById('themeBtn').textContent = '☀️';
             }
         }
-
-        // ========== Helpers ==========
-        function toArabicNums(str) {
-            const ar = '٠١٢٣٤٥٦٧٨٩';
-            return str.replace(/[0-9]/g, d => ar[d]);
-        }
-
-        function toEnglishNums(str) {
-            const en = '0123456789';
-            const ar = '٠١٢٣٤٥٦٧٨٩';
-            return str.replace(/[٠-٩]/g, d => en[ar.indexOf(d)]);
-        }
-
-        function showToast(msg, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = `show ${type}`;
-            setTimeout(() => toast.className = '', 3000);
-        }
-
-        // Global
+        
         window.gotoResult = gotoResult;
     </script>
 </body>
