@@ -12,7 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <style>
-        /* ========== Theme Variables ========== */
         :root {
             --primary: #6366f1;
             --primary-dark: #4f46e5;
@@ -36,8 +35,7 @@
             --glow: rgba(99, 102, 241, 0.4);
             --shadow: rgba(0, 0, 0, 0.3);
             --pdf-bg: #1a1a1a;
-            --panel-width: 400px;
-            --scrollbar-width: 8px;
+            --panel-width: 420px;
         }
         
         [data-theme="light"] {
@@ -65,41 +63,14 @@
             transition: background 0.3s, color 0.3s;
         }
         
-        /* ========== Custom Scrollbar ========== */
-        ::-webkit-scrollbar {
-            width: var(--scrollbar-width);
-            height: var(--scrollbar-width);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--surface2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+        * { scrollbar-width: thin; scrollbar-color: var(--primary) var(--surface2); }
         
-        ::-webkit-scrollbar-track {
-            background: var(--surface2);
-            border-radius: 4px;
-        }
+        .app { display: grid; grid-template-rows: auto auto 1fr; height: 100vh; }
         
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-            border: 2px solid var(--surface2);
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-light);
-        }
-        
-        /* Firefox scrollbar */
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) var(--surface2);
-        }
-        
-        /* ========== App Layout ========== */
-        .app {
-            display: grid;
-            grid-template-rows: auto auto 1fr;
-            height: 100vh;
-        }
-        
-        /* ========== Header ========== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -111,17 +82,8 @@
             flex-wrap: wrap;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .logo-icon {
-            font-size: 2rem;
-            filter: drop-shadow(0 0 10px var(--glow));
-        }
-        
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { font-size: 2rem; filter: drop-shadow(0 0 10px var(--glow)); }
         .logo h1 {
             font-size: 1.3rem;
             background: linear-gradient(135deg, var(--primary-light), #c084fc);
@@ -129,22 +91,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        .logo p { font-size: 0.75rem; color: var(--text2); }
         
-        .logo p {
-            font-size: 0.75rem;
-            color: var(--text2);
-        }
+        .header-controls { display: flex; align-items: center; gap: 10px; }
         
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        /* Theme Toggle */
         .theme-toggle {
-            width: 56px;
-            height: 28px;
+            width: 56px; height: 28px;
             background: var(--surface3);
             border-radius: 14px;
             border: 2px solid var(--border);
@@ -156,28 +108,22 @@
             padding: 0 5px;
             position: relative;
         }
-        
         .theme-toggle:hover { border-color: var(--primary); }
-        
         .theme-toggle-icon { font-size: 0.9rem; z-index: 1; transition: opacity 0.3s; }
         .theme-toggle .sun { opacity: 0.4; }
         .theme-toggle .moon { opacity: 1; }
         [data-theme="light"] .theme-toggle .sun { opacity: 1; }
         [data-theme="light"] .theme-toggle .moon { opacity: 0.4; }
-        
         .theme-toggle-slider {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             background: var(--primary);
             border-radius: 50%;
             right: 4px;
             transition: all 0.3s;
         }
-        
         [data-theme="light"] .theme-toggle-slider { right: calc(100% - 24px); }
         
-        /* Toggle Panel Button */
         .toggle-panel-btn {
             padding: 8px 14px;
             background: var(--surface3);
@@ -192,14 +138,8 @@
             gap: 6px;
             transition: all 0.3s;
         }
+        .toggle-panel-btn:hover { border-color: var(--primary); background: var(--primary); color: white; }
         
-        .toggle-panel-btn:hover {
-            border-color: var(--primary);
-            background: var(--primary);
-            color: white;
-        }
-        
-        /* ========== Search Bar ========== */
         .search-bar {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -231,16 +171,10 @@
             font-size: 1rem;
             font-family: inherit;
             transition: all 0.3s;
-            direction: ltr;
+            direction: rtl;
             text-align: right;
         }
-        
-        #searchInput:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--glow);
-        }
-        
+        #searchInput:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--glow); }
         #searchInput::placeholder { color: var(--text3); }
         
         .search-icon {
@@ -252,21 +186,6 @@
             color: var(--text3);
             pointer-events: none;
         }
-        
-        .text-fixed-indicator {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.7rem;
-            color: var(--success);
-            background: var(--surface3);
-            padding: 2px 8px;
-            border-radius: 10px;
-            display: none;
-        }
-        
-        .text-fixed-indicator.show { display: block; }
         
         #searchBtn {
             padding: 12px 24px;
@@ -281,13 +200,8 @@
             transition: all 0.3s;
             white-space: nowrap;
         }
+        #searchBtn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--glow); }
         
-        #searchBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px var(--glow);
-        }
-        
-        /* ========== Mini Navigation (في شريط البحث) ========== */
         .mini-nav {
             display: flex;
             align-items: center;
@@ -297,27 +211,12 @@
             border-radius: 10px;
             border: 1px solid var(--border);
         }
-        
         .mini-nav.hidden { display: none; }
-        
-        .mini-nav-count {
-            font-size: 0.85rem;
-            color: var(--text);
-            font-weight: 600;
-            min-width: 80px;
-            text-align: center;
-        }
-        
-        .mini-nav-count .highlight {
-            color: var(--primary-light);
-        }
-        
+        .mini-nav-count { font-size: 0.85rem; color: var(--text); font-weight: 600; min-width: 80px; text-align: center; }
+        .mini-nav-count .highlight { color: var(--primary-light); }
         .mini-nav-btn {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
             background: var(--surface3);
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -326,17 +225,8 @@
             font-size: 0.9rem;
             transition: all 0.2s;
         }
-        
-        .mini-nav-btn:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        
-        .mini-nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .mini-nav-btn:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); color: white; }
+        .mini-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         
         .search-status {
             display: flex;
@@ -349,23 +239,19 @@
             color: var(--text2);
             white-space: nowrap;
         }
-        
         .search-status.loading { color: var(--warning); }
         .search-status.ready { color: var(--success); }
         .search-status.hidden { display: none; }
         
         .spinner {
-            width: 12px;
-            height: 12px;
+            width: 12px; height: 12px;
             border: 2px solid currentColor;
             border-top-color: transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* Search Tips */
         .search-tips {
             width: 100%;
             display: flex;
@@ -375,7 +261,6 @@
             font-size: 0.75rem;
             color: var(--text3);
         }
-        
         .search-tip {
             padding: 4px 10px;
             background: var(--surface2);
@@ -385,19 +270,14 @@
             gap: 4px;
         }
         
-        /* ========== Main Content ========== */
         .main-content {
             display: grid;
             grid-template-columns: var(--panel-width) 1fr;
             overflow: hidden;
             transition: grid-template-columns 0.3s;
         }
+        .main-content.panel-hidden { grid-template-columns: 0 1fr; }
         
-        .main-content.panel-hidden {
-            grid-template-columns: 0 1fr;
-        }
-        
-        /* ========== Results Panel ========== */
         .results-panel {
             background: var(--surface);
             border-left: 1px solid var(--border);
@@ -406,11 +286,7 @@
             overflow: hidden;
             transition: all 0.3s;
         }
-        
-        .main-content.panel-hidden .results-panel {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .main-content.panel-hidden .results-panel { opacity: 0; pointer-events: none; }
         
         .results-header {
             display: flex;
@@ -421,34 +297,13 @@
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
         }
+        .results-header h3 { font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+        #resultsCount { padding: 3px 8px; background: var(--primary); border-radius: 12px; font-size: 0.7rem; color: white; }
         
-        .results-header h3 {
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        #resultsCount {
-            padding: 3px 8px;
-            background: var(--primary);
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: white;
-        }
-        
-        .results-actions {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-        
+        .results-actions { display: flex; gap: 5px; align-items: center; }
         .action-btn {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
             background: var(--surface3);
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -457,14 +312,8 @@
             font-size: 0.8rem;
             transition: all 0.2s;
         }
+        .action-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
         
-        .action-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        
-        /* Nav Controls */
         .nav-controls {
             display: flex;
             gap: 4px;
@@ -474,13 +323,9 @@
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
         }
-        
         .nav-btn {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 30px; height: 30px;
+            display: flex; align-items: center; justify-content: center;
             background: var(--surface3);
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -489,24 +334,10 @@
             font-size: 0.75rem;
             transition: all 0.2s;
         }
-        
-        .nav-btn:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        
+        .nav-btn:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); color: white; }
         .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        #resultPos { flex: 1; text-align: center; font-size: 0.8rem; color: var(--text2); padding: 0 8px; }
         
-        #resultPos {
-            flex: 1;
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text2);
-            padding: 0 8px;
-        }
-        
-        /* Pinned Results Section */
         .pinned-section {
             background: var(--pinned-bg);
             border-bottom: 2px solid var(--pinned-border);
@@ -515,9 +346,7 @@
             display: none;
             flex-shrink: 0;
         }
-        
         .pinned-section.has-items { display: block; }
-        
         .pinned-header {
             display: flex;
             justify-content: space-between;
@@ -531,7 +360,6 @@
             top: 0;
             z-index: 1;
         }
-        
         .clear-pinned {
             font-size: 0.7rem;
             padding: 3px 8px;
@@ -541,41 +369,20 @@
             color: var(--text2);
             cursor: pointer;
         }
-        
         .clear-pinned:hover { background: var(--error); color: white; }
-        
         #pinnedList { padding: 8px; }
         
-        /* Results List - شريط تمرير واضح */
         #resultsList {
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
             padding: 10px;
             scroll-behavior: smooth;
-            min-height: 0; /* مهم للـ flexbox */
+            min-height: 0;
         }
-        
-        /* تحسين شريط التمرير للنتائج */
-        #resultsList::-webkit-scrollbar {
-            width: 10px;
-        }
-        
-        #resultsList::-webkit-scrollbar-track {
-            background: var(--bg);
-            border-radius: 5px;
-            margin: 5px 0;
-        }
-        
-        #resultsList::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--primary), #8b5cf6);
-            border-radius: 5px;
-            border: 2px solid var(--bg);
-        }
-        
-        #resultsList::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, var(--primary-light), #a78bfa);
-        }
+        #resultsList::-webkit-scrollbar { width: 10px; }
+        #resultsList::-webkit-scrollbar-track { background: var(--bg); border-radius: 5px; margin: 5px 0; }
+        #resultsList::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), #8b5cf6); border-radius: 5px; border: 2px solid var(--bg); }
         
         .placeholder {
             display: flex;
@@ -587,14 +394,8 @@
             text-align: center;
             padding: 20px;
         }
+        .placeholder-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
         
-        .placeholder-icon {
-            font-size: 3rem;
-            margin-bottom: 12px;
-            opacity: 0.4;
-        }
-        
-        /* Result Card */
         .result-card {
             background: var(--surface2);
             border: 2px solid var(--border);
@@ -605,30 +406,11 @@
             transition: all 0.2s;
             position: relative;
         }
+        .result-card:hover { border-color: var(--primary); transform: translateX(-3px); box-shadow: 3px 0 12px var(--glow); }
+        .result-card.active { border-color: var(--primary); background: var(--highlight-bg); }
+        .result-card.pinned { border-color: var(--pinned-border); background: var(--pinned-bg); }
         
-        .result-card:hover {
-            border-color: var(--primary);
-            transform: translateX(-3px);
-            box-shadow: 3px 0 12px var(--glow);
-        }
-        
-        .result-card.active {
-            border-color: var(--primary);
-            background: var(--highlight-bg);
-        }
-        
-        .result-card.pinned {
-            border-color: var(--pinned-border);
-            background: var(--pinned-bg);
-        }
-        
-        .result-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
+        .result-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .page-badge {
             padding: 4px 10px;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
@@ -637,18 +419,10 @@
             font-weight: 600;
             color: white;
         }
-        
-        .result-actions {
-            display: flex;
-            gap: 4px;
-        }
-        
+        .result-actions { display: flex; gap: 4px; }
         .result-action-btn {
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 26px; height: 26px;
+            display: flex; align-items: center; justify-content: center;
             background: var(--surface3);
             border: none;
             border-radius: 5px;
@@ -657,17 +431,11 @@
             font-size: 0.75rem;
             transition: all 0.2s;
         }
-        
         .result-action-btn:hover { background: var(--primary); color: white; }
         .result-action-btn.copy-btn:hover { background: var(--info); }
         .result-action-btn.pin-btn:hover { background: var(--success); }
         .result-action-btn.delete-btn:hover { background: var(--error); }
         .result-action-btn.pinned { background: var(--success); color: white; }
-        
-        .match-count {
-            font-size: 0.7rem;
-            color: var(--text3);
-        }
         
         .result-text {
             font-size: 0.8rem;
@@ -676,31 +444,17 @@
             padding: 8px;
             background: var(--bg);
             border-radius: 6px;
-            max-height: 60px;
+            max-height: 70px;
             overflow: hidden;
             user-select: text;
+            direction: rtl;
         }
+        .result-text .hl { background: var(--highlight); color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
         
-        .result-text .hl {
-            background: var(--highlight);
-            color: #000;
-            padding: 1px 4px;
-            border-radius: 3px;
-            font-weight: 600;
-        }
-        
-        .result-buttons {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-        }
-        
+        .result-buttons { display: flex; gap: 6px; margin-top: 8px; }
         .go-btn {
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
             padding: 8px;
             background: var(--primary);
             border: none;
@@ -712,7 +466,6 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
         .go-btn:hover { filter: brightness(1.15); }
         
         .copy-result-btn {
@@ -729,23 +482,11 @@
             align-items: center;
             gap: 4px;
         }
+        .copy-result-btn:hover { background: var(--info); border-color: var(--info); color: white; }
         
-        .copy-result-btn:hover {
-            background: var(--info);
-            border-color: var(--info);
-            color: white;
-        }
-        
-        /* ========== PDF Viewer ========== */
-        .pdf-section {
-            position: relative;
-            background: var(--pdf-bg);
-            overflow: hidden;
-        }
-        
+        .pdf-section { position: relative; background: var(--pdf-bg); overflow: hidden; }
         #pdf-container { width: 100%; height: 100%; }
         
-        /* ========== Loading Overlay ========== */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -757,20 +498,9 @@
             z-index: 9999;
             transition: opacity 0.5s, visibility 0.5s;
         }
-        
         .loading-overlay.hidden { opacity: 0; visibility: hidden; }
-        
-        .loading-logo {
-            font-size: 4.5rem;
-            margin-bottom: 18px;
-            animation: bounce 2s ease-in-out infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
-        
+        .loading-logo { font-size: 4.5rem; margin-bottom: 18px; animation: bounce 2s ease-in-out infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         .loading-overlay h2 {
             font-size: 1.8rem;
             margin-bottom: 6px;
@@ -778,21 +508,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
-        .loading-overlay p {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.95rem;
-            margin-bottom: 22px;
-        }
-        
-        .loading-bar {
-            width: 260px;
-            height: 5px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
+        .loading-overlay p { color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 22px; }
+        .loading-bar { width: 260px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
         .loading-fill {
             height: 100%;
             background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
@@ -800,19 +517,9 @@
             animation: shimmer 1.5s infinite;
             border-radius: 3px;
         }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        #loadingPercent { margin-top: 10px; font-size: 1rem; color: rgba(255,255,255,0.9); }
         
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        #loadingPercent {
-            margin-top: 10px;
-            font-size: 1rem;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        /* ========== Toast ========== */
         #toast {
             position: fixed;
             bottom: 25px;
@@ -829,35 +536,18 @@
             color: var(--text);
             font-size: 0.9rem;
         }
-        
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         #toast.success { border-color: var(--success); }
         #toast.error { border-color: var(--error); }
         #toast.warning { border-color: var(--warning); }
         #toast.info { border-color: var(--info); }
         
-        /* ========== Responsive ========== */
         @media (max-width: 1024px) {
             :root { --panel-width: 320px; }
-            
-            .main-content {
-                grid-template-columns: 1fr;
-                grid-template-rows: 1fr 45vh;
-            }
-            
-            .main-content.panel-hidden {
-                grid-template-rows: 1fr 0;
-            }
-            
-            .results-panel {
-                border-left: none;
-                border-top: 1px solid var(--border);
-                order: 2;
-            }
-            
+            .main-content { grid-template-columns: 1fr; grid-template-rows: 1fr 45vh; }
+            .main-content.panel-hidden { grid-template-rows: 1fr 0; }
+            .results-panel { border-left: none; border-top: 1px solid var(--border); order: 2; }
             .pdf-section { order: 1; }
-            
-            .search-container { justify-content: center; }
         }
         
         @media (max-width: 600px) {
@@ -875,7 +565,6 @@
     </style>
 </head>
 <body data-theme="dark">
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-logo">📚</div>
         <h2>HS Code 2026</h2>
@@ -886,9 +575,7 @@
         <div id="loadingPercent">0%</div>
     </div>
 
-    <!-- Main App -->
     <div class="app">
-        <!-- Header -->
         <header class="header">
             <div class="logo">
                 <span class="logo-icon">📚</span>
@@ -899,11 +586,11 @@
             </div>
             
             <div class="header-controls">
-                <button class="toggle-panel-btn" onclick="togglePanel()" title="إخفاء/إظهار النتائج">
+                <button class="toggle-panel-btn" onclick="togglePanel()">
                     <span id="panelToggleIcon">◀</span>
                     <span>النتائج</span>
                 </button>
-                <div class="theme-toggle" onclick="toggleTheme()" title="الوضع الليلي/النهاري">
+                <div class="theme-toggle" onclick="toggleTheme()">
                     <span class="theme-toggle-icon sun">☀️</span>
                     <span class="theme-toggle-icon moon">🌙</span>
                     <div class="theme-toggle-slider"></div>
@@ -911,25 +598,20 @@
             </div>
         </header>
         
-        <!-- Search Bar -->
         <div class="search-bar">
             <div class="search-container">
                 <div class="search-input-wrapper">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="searchInput" placeholder="ابحث عن كود جمركي أو منتج..." autocomplete="off">
-                    <span id="textFixedIndicator" class="text-fixed-indicator">✓ تم الإصلاح</span>
                 </div>
                 <button id="searchBtn">🔎 بحث</button>
                 
-                <!-- Mini Navigation - يظهر دائماً عند وجود نتائج -->
                 <div id="miniNav" class="mini-nav hidden">
-                    <button class="mini-nav-btn" id="miniPrevBtn" disabled onclick="navResult(-1)" title="السابق">◀</button>
+                    <button class="mini-nav-btn" id="miniPrevBtn" disabled onclick="navResult(-1)">◀</button>
                     <span class="mini-nav-count">
-                        <span id="miniCurrentPos" class="highlight">0</span>
-                        /
-                        <span id="miniTotalResults">0</span>
+                        <span id="miniCurrentPos" class="highlight">0</span>/<span id="miniTotalResults">0</span>
                     </span>
-                    <button class="mini-nav-btn" id="miniNextBtn" disabled onclick="navResult(1)" title="التالي">▶</button>
+                    <button class="mini-nav-btn" id="miniNextBtn" disabled onclick="navResult(1)">▶</button>
                 </div>
                 
                 <div id="searchStatus" class="search-status loading">
@@ -938,73 +620,133 @@
                 </div>
             </div>
             <div class="search-tips">
-                <span class="search-tip">💡 يمكنك لصق الكود بدون مسافات</span>
-                <span class="search-tip">🔄 يتم إصلاح النص المعكوس تلقائياً</span>
-                <span class="search-tip">📋 اضغط على زر النسخ لنسخ النتيجة</span>
+                <span class="search-tip">💡 يمكنك نسخ النص من PDF ولصقه مباشرة</span>
+                <span class="search-tip">🔄 يتم إصلاح النص العربي تلقائياً</span>
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content" id="mainContent">
-            <!-- Results Panel -->
             <aside class="results-panel">
                 <div class="results-header">
                     <h3>
-                        <span>📊</span>
-                        النتائج
+                        <span>📊</span> النتائج
                         <span id="resultsCount" style="display:none">0</span>
                     </h3>
                     <div class="results-actions">
-                        <button class="action-btn" onclick="clearAllResults()" title="مسح الكل">🗑️</button>
-                        <button class="action-btn" onclick="exportResults()" title="تصدير الكل">📋</button>
+                        <button class="action-btn" onclick="clearAllResults()" title="مسح">🗑️</button>
+                        <button class="action-btn" onclick="exportResults()" title="تصدير">📋</button>
                     </div>
                 </div>
                 
                 <div class="nav-controls">
-                    <button id="prevBtn" class="nav-btn" disabled title="السابق">▲</button>
+                    <button id="prevBtn" class="nav-btn" disabled>▲</button>
                     <span id="resultPos">-</span>
-                    <button id="nextBtn" class="nav-btn" disabled title="التالي">▼</button>
+                    <button id="nextBtn" class="nav-btn" disabled>▼</button>
                 </div>
                 
-                <!-- Pinned Results -->
                 <div id="pinnedSection" class="pinned-section">
                     <div class="pinned-header">
-                        <span>📌 النتائج المثبتة</span>
-                        <button class="clear-pinned" onclick="clearPinned()">مسح الكل</button>
+                        <span>📌 المثبتة</span>
+                        <button class="clear-pinned" onclick="clearPinned()">مسح</button>
                     </div>
                     <div id="pinnedList"></div>
                 </div>
                 
-                <!-- Results List with visible scrollbar -->
                 <div id="resultsList">
                     <div class="placeholder">
                         <div class="placeholder-icon">🔍</div>
-                        <p>اكتب في مربع البحث أعلاه<br>للعثور على الأكواد والمنتجات</p>
+                        <p>ابحث عن كود أو منتج</p>
                     </div>
                 </div>
             </aside>
 
-            <!-- PDF Viewer -->
             <main class="pdf-section">
                 <div id="pdf-container"></div>
             </main>
         </div>
     </div>
 
-    <!-- Toast -->
     <div id="toast"></div>
 
     <script>
         (function() {
-            const script = document.createElement('script');
-            script.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
-            script.async = true;
-            document.head.appendChild(script);
+            const s = document.createElement('script');
+            s.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
+            s.async = true;
+            document.head.appendChild(s);
         })();
     </script>
 
     <script>
-        // ========== Configuration ==========
+        // ========== إصلاح النص العربي ==========
+        const ArabicFixer = {
+            arabic: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/,
+            startWords: ['ال','من','في','على','إلى','عن','مع','أن','إن','كان','هذا','هذه','ذلك','تلك','التي','الذي','ما','لا','لم','لن','قد','غير','بعض','كل','رسوم','بند','سلع','مواد','أجهزة','آلات','معدات','قطع','أجزاء'],
+            
+            hasArabic(t) { return this.arabic.test(t); },
+            
+            reverse(s) { return s.split('').reverse().join(''); },
+            
+            isReversed(text) {
+                if (!this.hasArabic(text)) return false;
+                const words = text.trim().split(/\s+/).filter(w => this.hasArabic(w));
+                if (!words.length) return false;
+                
+                const first = words[0], last = words[words.length - 1];
+                
+                // إذا الكلمة الأخيرة تبدأ بـ "ال" والأولى لا
+                for (let sw of this.startWords) {
+                    if (last.startsWith(sw) && !first.startsWith(sw)) return true;
+                }
+                
+                // إذا الكلمة الأولى تنتهي بـ "لا" (ال معكوسة)
+                if (first.endsWith('لا') && first.length > 3) return true;
+                
+                return false;
+            },
+            
+            fix(text) {
+                if (!text || !this.hasArabic(text) || !this.isReversed(text)) return text;
+                
+                // تقسيم لأجزاء
+                const parts = [];
+                let current = '', type = null;
+                
+                for (let c of text) {
+                    let t = this.arabic.test(c) ? 'ar' : /\s/.test(c) ? 'sp' : 'other';
+                    if (type === null || t === type || t === 'sp') {
+                        current += c;
+                        if (type === null || type === 'sp') type = t;
+                    } else {
+                        parts.push({type, text: current});
+                        current = c;
+                        type = t;
+                    }
+                }
+                if (current) parts.push({type, text: current});
+                
+                // إصلاح الأجزاء العربية
+                return parts.map(p => {
+                    if (p.type !== 'ar') return p.text;
+                    const words = p.text.split(/(\s+)/);
+                    const fixed = words.map(w => /^\s+$/.test(w) ? w : this.hasArabic(w) ? this.reverse(w) : w);
+                    const nonSpace = [];
+                    fixed.forEach((w,i) => { if (!/^\s+$/.test(w)) nonSpace.push(i); });
+                    const reversed = nonSpace.map(i => fixed[i]).reverse();
+                    nonSpace.forEach((idx,i) => { fixed[idx] = reversed[i]; });
+                    return fixed.join('');
+                }).join('');
+            },
+            
+            normalize(text) {
+                const ar = '٠١٢٣٤٥٦٧٨٩', en = '0123456789';
+                let r = text;
+                for (let i = 0; i < 10; i++) r = r.replace(new RegExp(ar[i], 'g'), en[i]);
+                return r;
+            }
+        };
+
+        // ========== الإعدادات ==========
         const CONFIG = {
             ADOBE_CLIENT_ID: '5edf16250afa446aa490af6313d351b2',
             PDF_FILE: 'HS Code 2026.pdf',
@@ -1012,137 +754,13 @@
             MIN_SEARCH_LENGTH: 2
         };
         
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // ========== State ==========
-        let adobeViewer = null;
-        let pdfText = [];
-        let results = [];
-        let pinnedResults = [];
-        let resultIdx = -1;
-        let totalPages = 0;
-        let indexed = false;
-        let currentSearchTerm = '';
-        let panelVisible = true;
+        // ========== الحالة ==========
+        let adobeViewer = null, pdfText = [], results = [], pinnedResults = [];
+        let resultIdx = -1, totalPages = 0, indexed = false, currentSearchTerm = '', panelVisible = true;
 
-        // ========== Text Processing Utilities ==========
-        function fixReversedText(text) {
-            if (!text) return { text: text, wasFixed: false };
-            
-            let fixed = text;
-            let wasFixed = false;
-            
-            fixed = fixed.replace(/\s+/g, ' ').trim();
-            
-            const codePattern = /(\d{2}\s*){3,6}/g;
-            const matches = fixed.match(codePattern);
-            
-            if (matches) {
-                matches.forEach(match => {
-                    const cleanCode = match.replace(/\s/g, '');
-                    if (isLikelyReversed(cleanCode)) {
-                        const reversedCode = reverseString(cleanCode);
-                        fixed = fixed.replace(match, reversedCode);
-                        wasFixed = true;
-                    } else {
-                        fixed = fixed.replace(match, cleanCode);
-                    }
-                });
-            }
-            
-            if (containsArabic(fixed) && isLikelyReversedArabic(fixed)) {
-                fixed = reverseArabicText(fixed);
-                wasFixed = true;
-            }
-            
-            fixed = normalizeNumbers(fixed);
-            
-            return { text: fixed, wasFixed: wasFixed };
-        }
-        
-        function isLikelyReversed(code) {
-            if (code.length >= 6) {
-                const firstTwo = parseInt(code.substring(0, 2));
-                const lastTwo = parseInt(code.substring(code.length - 2));
-                if (firstTwo < 10 && lastTwo > 50) return true;
-            }
-            return false;
-        }
-        
-        function reverseString(str) {
-            return str.split('').reverse().join('');
-        }
-        
-        function containsArabic(text) {
-            return /[\u0600-\u06FF]/.test(text);
-        }
-        
-        function isLikelyReversedArabic(text) {
-            const endWords = ['ال', 'من', 'في', 'على'];
-            for (let word of endWords) {
-                if (text.endsWith(word) && !text.startsWith(word)) return true;
-            }
-            return false;
-        }
-        
-        function reverseArabicText(text) {
-            return text.split(' ').reverse().join(' ');
-        }
-        
-        function normalizeNumbers(text) {
-            const arabicNums = '٠١٢٣٤٥٦٧٨٩';
-            const englishNums = '0123456789';
-            let result = text;
-            for (let i = 0; i < 10; i++) {
-                result = result.replace(new RegExp(arabicNums[i], 'g'), englishNums[i]);
-            }
-            return result;
-        }
-        
-        function smartSearch(text, query) {
-            const textLower = text.toLowerCase();
-            const textNoSpaces = text.replace(/\s/g, '').toLowerCase();
-            const textNormalized = normalizeNumbers(textNoSpaces);
-            
-            const queryClean = query.trim().toLowerCase();
-            const queryNoSpaces = query.replace(/\s/g, '').toLowerCase();
-            const queryNormalized = normalizeNumbers(queryNoSpaces);
-            
-            const searchVariants = [
-                queryClean,
-                queryNoSpaces,
-                queryNormalized,
-                toArabicNums(queryNoSpaces).toLowerCase()
-            ];
-            
-            let totalMatches = 0;
-            let firstIndex = -1;
-            
-            for (let variant of searchVariants) {
-                if (!variant) continue;
-                
-                let idx = textLower.indexOf(variant);
-                if (idx !== -1 && firstIndex === -1) firstIndex = idx;
-                while (idx !== -1) {
-                    totalMatches++;
-                    idx = textLower.indexOf(variant, idx + 1);
-                }
-                
-                idx = textNoSpaces.indexOf(variant);
-                while (idx !== -1) {
-                    totalMatches++;
-                    idx = textNoSpaces.indexOf(variant, idx + 1);
-                }
-            }
-            
-            return {
-                matches: Math.ceil(totalMatches / 2),
-                firstIndex: firstIndex
-            };
-        }
-
-        // ========== Theme Management ==========
+        // ========== الثيم ==========
         function initTheme() {
             const saved = localStorage.getItem('hs-code-theme');
             if (saved) document.body.setAttribute('data-theme', saved);
@@ -1153,102 +771,75 @@
             const newTheme = current === 'dark' ? 'light' : 'dark';
             document.body.setAttribute('data-theme', newTheme);
             localStorage.setItem('hs-code-theme', newTheme);
-            showToast(newTheme === 'dark' ? '🌙 الوضع الليلي' : '☀️ الوضع النهاري', 'success');
         }
         
         initTheme();
 
-        // ========== Panel Toggle ==========
         function togglePanel() {
             panelVisible = !panelVisible;
             document.getElementById('mainContent').classList.toggle('panel-hidden', !panelVisible);
             document.getElementById('panelToggleIcon').textContent = panelVisible ? '◀' : '▶';
-            showToast(panelVisible ? '📊 إظهار النتائج' : '📄 عرض PDF كامل', 'info');
         }
 
-        // ========== Initialize ==========
+        // ========== التهيئة ==========
         document.addEventListener('adobe_dc_view_sdk.ready', initApp);
-        
-        setTimeout(() => {
-            if (!window.AdobeDC) indexPDFForSearch();
-        }, 5000);
+        setTimeout(() => { if (!window.AdobeDC) indexPDFForSearch(); }, 5000);
 
         async function initApp() {
             setupEvents();
-            await Promise.all([
-                initAdobeViewer(),
-                indexPDFForSearch()
-            ]);
+            await Promise.all([initAdobeViewer(), indexPDFForSearch()]);
         }
 
         function setupEvents() {
             const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
             
+            // ★ اللصق مع الإصلاح التلقائي ★
             searchInput.addEventListener('paste', function(e) {
                 e.preventDefault();
-                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                const fixResult = fixReversedText(pastedText);
+                const pasted = (e.clipboardData || window.clipboardData).getData('text');
                 
+                // إصلاح وتطبيع
+                let fixed = ArabicFixer.fix(pasted);
+                fixed = ArabicFixer.normalize(fixed);
+                
+                // إدراج النص
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
-                const text = this.value;
-                this.value = text.substring(0, start) + fixResult.text + text.substring(end);
-                this.selectionStart = this.selectionEnd = start + fixResult.text.length;
+                this.value = this.value.substring(0, start) + fixed + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + fixed.length;
                 
-                if (fixResult.wasFixed) {
-                    const indicator = document.getElementById('textFixedIndicator');
-                    indicator.classList.add('show');
-                    setTimeout(() => indicator.classList.remove('show'), 2000);
-                    showToast('✨ تم إصلاح النص تلقائياً', 'success');
-                }
-                
-                if (fixResult.text.length >= CONFIG.MIN_SEARCH_LENGTH) {
-                    setTimeout(doSearch, 100);
+                // بحث تلقائي
+                if (fixed.length >= CONFIG.MIN_SEARCH_LENGTH) {
+                    setTimeout(doSearch, 150);
                 }
             });
             
-            let searchTimer;
+            // البحث أثناء الكتابة
+            let timer;
             searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimer);
+                clearTimeout(timer);
                 if (this.value.length >= CONFIG.MIN_SEARCH_LENGTH) {
-                    searchTimer = setTimeout(doSearch, CONFIG.SEARCH_DELAY);
+                    timer = setTimeout(doSearch, CONFIG.SEARCH_DELAY);
                 } else if (this.value.length === 0) {
                     clearSearchResults();
                 }
             });
             
             searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    clearTimeout(searchTimer);
-                    doSearch();
-                }
-                if (e.key === 'ArrowDown' && results.length > 0) {
-                    e.preventDefault();
-                    navResult(1);
-                }
-                if (e.key === 'ArrowUp' && results.length > 0) {
-                    e.preventDefault();
-                    navResult(-1);
-                }
+                if (e.key === 'Enter') { clearTimeout(timer); doSearch(); }
+                if (e.key === 'ArrowDown' && results.length) { e.preventDefault(); navResult(1); }
+                if (e.key === 'ArrowUp' && results.length) { e.preventDefault(); navResult(-1); }
             });
             
-            searchBtn.addEventListener('click', doSearch);
+            document.getElementById('searchBtn').addEventListener('click', doSearch);
             document.getElementById('prevBtn').addEventListener('click', () => navResult(-1));
             document.getElementById('nextBtn').addEventListener('click', () => navResult(1));
             
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT') return;
-                
-                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                    e.preventDefault();
-                    searchInput.focus();
-                    searchInput.select();
-                }
-                
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); searchInput.focus(); searchInput.select(); }
                 if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
                 if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
-                if (e.key === 'Escape') searchInput.blur();
             });
             
             loadPinnedResults();
@@ -1257,43 +848,21 @@
         // ========== Adobe Viewer ==========
         async function initAdobeViewer() {
             if (!window.AdobeDC) return;
-            
             updateLoading('جاري تحميل العارض...', 20);
             
             try {
-                const adobeDCView = new AdobeDC.View({
-                    clientId: CONFIG.ADOBE_CLIENT_ID,
-                    divId: 'pdf-container'
-                });
-                
-                adobeViewer = await adobeDCView.previewFile({
-                    content: { location: { url: CONFIG.PDF_FILE } },
-                    metaData: { fileName: CONFIG.PDF_FILE }
-                }, {
-                    embedMode: 'FULL_WINDOW',
-                    defaultViewMode: 'FIT_WIDTH',
-                    showAnnotationTools: false,
-                    showLeftHandPanel: false,
-                    showPageControls: true,
-                    showDownloadPDF: true,
-                    showPrintPDF: false,
-                    enableSearchAPIs: true
-                });
-                
-                updateLoading('تم تحميل العارض', 50);
-                
-                const apis = await adobeViewer.getAPIs();
-                window.pdfAPIs = apis;
-                
-            } catch (error) {
-                console.error('Adobe Error:', error);
-                showToast('⚠️ خطأ في تحميل العارض', 'error');
-            }
+                const view = new AdobeDC.View({ clientId: CONFIG.ADOBE_CLIENT_ID, divId: 'pdf-container' });
+                adobeViewer = await view.previewFile(
+                    { content: { location: { url: CONFIG.PDF_FILE } }, metaData: { fileName: CONFIG.PDF_FILE } },
+                    { embedMode: 'FULL_WINDOW', defaultViewMode: 'FIT_WIDTH', showAnnotationTools: false, showLeftHandPanel: false, showPageControls: true, showDownloadPDF: true, showPrintPDF: false }
+                );
+                window.pdfAPIs = await adobeViewer.getAPIs();
+            } catch (e) {}
         }
 
-        // ========== PDF Indexing ==========
+        // ========== فهرسة PDF ==========
         async function indexPDFForSearch() {
-            updateLoading('جاري فهرسة الملف للبحث...', 30);
+            updateLoading('جاري فهرسة الملف...', 30);
             
             try {
                 const pdf = await pdfjsLib.getDocument({
@@ -1305,16 +874,11 @@
                 totalPages = pdf.numPages;
                 pdfText = new Array(totalPages);
                 
-                const batchSize = 10;
-                for (let i = 0; i < totalPages; i += batchSize) {
+                for (let i = 0; i < totalPages; i += 10) {
                     const batch = [];
-                    for (let j = i; j < Math.min(i + batchSize, totalPages); j++) {
-                        batch.push(indexPage(pdf, j + 1));
-                    }
+                    for (let j = i; j < Math.min(i + 10, totalPages); j++) batch.push(indexPage(pdf, j + 1));
                     await Promise.all(batch);
-                    
-                    const percent = 50 + Math.round(((i + batchSize) / totalPages) * 45);
-                    updateLoading(`فهرسة الصفحات... ${Math.min(i + batchSize, totalPages)}/${totalPages}`, Math.min(percent, 95));
+                    updateLoading(`فهرسة... ${Math.min(i + 10, totalPages)}/${totalPages}`, 50 + (i / totalPages) * 45);
                 }
                 
                 indexed = true;
@@ -1328,40 +892,18 @@
                     document.getElementById('loadingOverlay').classList.add('hidden');
                     setTimeout(() => status.classList.add('hidden'), 2000);
                 }, 800);
-                
-            } catch (error) {
-                console.error('Indexing Error:', error);
-                document.getElementById('searchStatus').innerHTML = `<span>⚠️</span><span>خطأ</span>`;
+            } catch (e) {
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }
         }
         
-        async function indexPage(pdf, pageNum) {
+        async function indexPage(pdf, num) {
             try {
-                const page = await pdf.getPage(pageNum);
+                const page = await pdf.getPage(num);
                 const content = await page.getTextContent();
-                
-                // حفظ معلومات موقع النص لاستخدامها لاحقاً
-                const items = content.items;
-                let text = '';
-                let textPositions = [];
-                
-                items.forEach((item, idx) => {
-                    text += item.str + ' ';
-                    textPositions.push({
-                        str: item.str,
-                        transform: item.transform,
-                        y: item.transform[5] // الموقع العمودي
-                    });
-                });
-                
-                pdfText[pageNum - 1] = { 
-                    page: pageNum, 
-                    text: text,
-                    textPositions: textPositions
-                };
+                pdfText[num - 1] = { page: num, text: content.items.map(i => i.str).join(' ') };
             } catch (e) {
-                pdfText[pageNum - 1] = { page: pageNum, text: '', textPositions: [] };
+                pdfText[num - 1] = { page: num, text: '' };
             }
         }
 
@@ -1371,294 +913,131 @@
             document.getElementById('loadingFill').style.width = percent + '%';
         }
 
-        // ========== Search ==========
+        // ========== البحث ==========
         function doSearch() {
             const query = document.getElementById('searchInput').value.trim();
-            if (!query || query.length < CONFIG.MIN_SEARCH_LENGTH) {
-                if (query.length > 0) {
-                    showToast(`⚠️ أدخل ${CONFIG.MIN_SEARCH_LENGTH} أحرف على الأقل`, 'warning');
-                }
-                return;
-            }
-            
-            if (!indexed) {
-                showToast('⏳ انتظر اكتمال الفهرسة', 'warning');
-                return;
-            }
+            if (!query || query.length < CONFIG.MIN_SEARCH_LENGTH || !indexed) return;
             
             currentSearchTerm = query;
             results = [];
             
+            const qLower = query.toLowerCase();
+            const qNoSpace = query.replace(/\s/g, '').toLowerCase();
+            
             pdfText.forEach(p => {
                 if (!p || !p.text) return;
+                const tLower = p.text.toLowerCase();
+                const tNoSpace = p.text.replace(/\s/g, '').toLowerCase();
                 
-                const searchResult = smartSearch(p.text, query);
-                
-                if (searchResult.matches > 0) {
-                    const i = searchResult.firstIndex !== -1 ? searchResult.firstIndex : 0;
-                    const start = Math.max(0, i - 35);
-                    const end = Math.min(p.text.length, i + query.length + 55);
+                if (tLower.includes(qLower) || tNoSpace.includes(qNoSpace)) {
+                    const i = tLower.indexOf(qLower);
+                    const start = Math.max(0, i - 40);
+                    const end = Math.min(p.text.length, i + query.length + 60);
                     let ctx = p.text.substring(start, end).trim();
                     if (start > 0) ctx = '...' + ctx;
                     if (end < p.text.length) ctx += '...';
-                    
-                    // حساب الموقع التقريبي في الصفحة
-                    let matchPosition = 0.5; // افتراضي في المنتصف
-                    if (p.textPositions && p.textPositions.length > 0) {
-                        const searchLower = query.toLowerCase();
-                        for (let pos of p.textPositions) {
-                            if (pos.str.toLowerCase().includes(searchLower)) {
-                                // تحويل Y position لنسبة (0 = أعلى، 1 = أسفل)
-                                const pageHeight = 842; // A4 height تقريباً
-                                matchPosition = 1 - (pos.y / pageHeight);
-                                matchPosition = Math.max(0, Math.min(1, matchPosition));
-                                break;
-                            }
-                        }
-                    }
-                    
-                    results.push({ 
-                        page: p.page, 
-                        count: searchResult.matches, 
-                        ctx,
-                        matchIndex: searchResult.firstIndex,
-                        matchPosition: matchPosition,
-                        searchTerm: query,
-                        id: `result-${p.page}-${Date.now()}`
-                    });
+                    results.push({ page: p.page, ctx, searchTerm: query });
                 }
             });
             
-            results.sort((a, b) => b.count - a.count);
             showResults(query);
             updateMiniNav();
             
             if (results.length > 0) {
                 resultIdx = 0;
                 gotoResult(0);
-                showToast(`✅ تم العثور على ${results.length} نتيجة`, 'success');
+                showToast(`✅ ${results.length} نتيجة`, 'success');
             } else {
-                showToast(`😕 لا توجد نتائج لـ "${query}"`, 'warning');
+                showToast(`لا توجد نتائج`, 'warning');
             }
         }
         
         function clearSearchResults() {
-            results = [];
-            resultIdx = -1;
-            currentSearchTerm = '';
+            results = []; resultIdx = -1;
             document.getElementById('resultsCount').style.display = 'none';
             document.getElementById('resultPos').textContent = '-';
             document.getElementById('prevBtn').disabled = true;
             document.getElementById('nextBtn').disabled = true;
-            document.getElementById('resultsList').innerHTML = `
-                <div class="placeholder">
-                    <div class="placeholder-icon">🔍</div>
-                    <p>اكتب في مربع البحث<br>للعثور على الأكواد</p>
-                </div>
-            `;
+            document.getElementById('resultsList').innerHTML = `<div class="placeholder"><div class="placeholder-icon">🔍</div><p>ابحث عن كود أو منتج</p></div>`;
             updateMiniNav();
         }
         
         function clearAllResults() {
             clearSearchResults();
             document.getElementById('searchInput').value = '';
-            showToast('🗑️ تم مسح جميع النتائج', 'info');
         }
         
-        // ========== Mini Navigation ==========
         function updateMiniNav() {
-            const miniNav = document.getElementById('miniNav');
-            const miniCurrentPos = document.getElementById('miniCurrentPos');
-            const miniTotalResults = document.getElementById('miniTotalResults');
-            const miniPrevBtn = document.getElementById('miniPrevBtn');
-            const miniNextBtn = document.getElementById('miniNextBtn');
-            
-            if (results.length === 0) {
-                miniNav.classList.add('hidden');
-                return;
-            }
-            
-            miniNav.classList.remove('hidden');
-            miniCurrentPos.textContent = resultIdx + 1;
-            miniTotalResults.textContent = results.length;
-            miniPrevBtn.disabled = resultIdx <= 0;
-            miniNextBtn.disabled = resultIdx >= results.length - 1;
+            const nav = document.getElementById('miniNav');
+            if (!results.length) { nav.classList.add('hidden'); return; }
+            nav.classList.remove('hidden');
+            document.getElementById('miniCurrentPos').textContent = resultIdx + 1;
+            document.getElementById('miniTotalResults').textContent = results.length;
+            document.getElementById('miniPrevBtn').disabled = resultIdx <= 0;
+            document.getElementById('miniNextBtn').disabled = resultIdx >= results.length - 1;
         }
 
         function showResults(query) {
             const list = document.getElementById('resultsList');
-            const countEl = document.getElementById('resultsCount');
-            const posEl = document.getElementById('resultPos');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
+            const count = document.getElementById('resultsCount');
             
-            if (results.length === 0) {
-                countEl.style.display = 'none';
-                posEl.textContent = '-';
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-                list.innerHTML = `
-                    <div class="placeholder">
-                        <div class="placeholder-icon">😕</div>
-                        <p>لا توجد نتائج لـ<br>"${query}"</p>
-                    </div>
-                `;
+            if (!results.length) {
+                count.style.display = 'none';
+                list.innerHTML = `<div class="placeholder"><div class="placeholder-icon">😕</div><p>لا توجد نتائج</p></div>`;
                 return;
             }
             
-            const total = results.reduce((s, r) => s + r.count, 0);
-            countEl.textContent = total;
-            countEl.style.display = 'inline';
-            posEl.textContent = `1/${results.length}`;
-            prevBtn.disabled = true;
-            nextBtn.disabled = results.length <= 1;
+            count.textContent = results.length;
+            count.style.display = 'inline';
+            document.getElementById('resultPos').textContent = `1/${results.length}`;
+            document.getElementById('prevBtn').disabled = true;
+            document.getElementById('nextBtn').disabled = results.length <= 1;
             
-            const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`(${escaped})`, 'gi');
+            const esc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(${esc})`, 'gi');
             
             list.innerHTML = results.map((r, i) => {
-                const isPinned = pinnedResults.some(p => p.page === r.page && p.searchTerm === r.searchTerm);
+                const pinned = pinnedResults.some(p => p.page === r.page);
                 return `
-                <div class="result-card ${i === 0 ? 'active' : ''} ${isPinned ? 'pinned' : ''}" 
-                     data-index="${i}" onclick="gotoResult(${i})">
+                <div class="result-card ${i === 0 ? 'active' : ''} ${pinned ? 'pinned' : ''}" onclick="gotoResult(${i})">
                     <div class="result-top">
                         <span class="page-badge">📄 صفحة ${r.page}</span>
                         <div class="result-actions">
-                            <button class="result-action-btn copy-btn" 
-                                    onclick="event.stopPropagation(); copyResult(${i})" title="نسخ">
-                                📋
-                            </button>
-                            <button class="result-action-btn pin-btn ${isPinned ? 'pinned' : ''}" 
-                                    onclick="event.stopPropagation(); togglePin(${i})" title="تثبيت">
-                                📌
-                            </button>
-                            <button class="result-action-btn delete-btn" 
-                                    onclick="event.stopPropagation(); deleteResult(${i})" title="حذف">
-                                ✕
-                            </button>
+                            <button class="result-action-btn copy-btn" onclick="event.stopPropagation();copyResult(${i})">📋</button>
+                            <button class="result-action-btn pin-btn ${pinned ? 'pinned' : ''}" onclick="event.stopPropagation();togglePin(${i})">📌</button>
+                            <button class="result-action-btn delete-btn" onclick="event.stopPropagation();deleteResult(${i})">✕</button>
                         </div>
                     </div>
-                    <div class="result-text" id="resultText${i}">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
+                    <div class="result-text">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
                     <div class="result-buttons">
-                        <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
-                            ← انتقال للصفحة
-                        </button>
-                        <button class="copy-result-btn" onclick="event.stopPropagation(); copyResult(${i})">
-                            📋 نسخ
-                        </button>
+                        <button class="go-btn" onclick="event.stopPropagation();gotoResult(${i})">← انتقال</button>
+                        <button class="copy-result-btn" onclick="event.stopPropagation();copyResult(${i})">📋 نسخ</button>
                     </div>
-                </div>
-            `}).join('');
+                </div>`;
+            }).join('');
         }
 
-        // ========== Copy Single Result ==========
-        function copyResult(index) {
-            if (index < 0 || index >= results.length) return;
-            
-            const result = results[index];
-            const textToCopy = `صفحة ${result.page}: ${result.ctx.replace(/\.\.\./g, '')}`;
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                showToast('📋 تم نسخ النتيجة', 'success');
-            }).catch(() => {
-                // Fallback for older browsers
-                const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                showToast('📋 تم نسخ النتيجة', 'success');
-            });
+        function copyResult(i) {
+            if (i < 0 || i >= results.length) return;
+            const r = results[i];
+            navigator.clipboard.writeText(`صفحة ${r.page}: ${r.ctx.replace(/\.\.\./g, '')}`);
+            showToast('📋 تم النسخ', 'success');
         }
 
-        // ========== Result Navigation ==========
         async function gotoResult(i) {
             if (i < 0 || i >= results.length) return;
             resultIdx = i;
             
-            // تحديث واجهة النتائج
-            document.querySelectorAll('.result-card').forEach((c, j) => {
-                c.classList.toggle('active', j === i);
-            });
-            
+            document.querySelectorAll('.result-card').forEach((c, j) => c.classList.toggle('active', j === i));
             document.getElementById('resultPos').textContent = `${i + 1}/${results.length}`;
             document.getElementById('prevBtn').disabled = i === 0;
             document.getElementById('nextBtn').disabled = i === results.length - 1;
-            
-            // تحديث Mini Nav
             updateMiniNav();
             
-            const result = results[i];
-            const pageNum = result.page;
+            if (window.pdfAPIs) await window.pdfAPIs.gotoLocation(results[i].page);
             
-            if (window.pdfAPIs) {
-                try {
-                    // 1. الانتقال للصفحة
-                    await window.pdfAPIs.gotoLocation(pageNum);
-                    
-                    // 2. تفعيل البحث للتظليل والتمرير لموقع النص
-                    setTimeout(async () => {
-                        try {
-                            // استخدام Search API للتظليل والتمرير
-                            if (adobeViewer) {
-                                const searchPromise = new Promise((resolve) => {
-                                    // محاولة البحث باستخدام Adobe API
-                                    try {
-                                        adobeViewer.getAPIs().then(apis => {
-                                            if (apis.search) {
-                                                apis.search(currentSearchTerm, {
-                                                    caseSensitive: false,
-                                                    wholeWord: false
-                                                }).then(searchResult => {
-                                                    console.log('Search completed:', searchResult);
-                                                    resolve(true);
-                                                }).catch(e => {
-                                                    console.log('Search API error:', e);
-                                                    resolve(false);
-                                                });
-                                            } else {
-                                                resolve(false);
-                                            }
-                                        });
-                                    } catch (e) {
-                                        resolve(false);
-                                    }
-                                });
-                                
-                                await searchPromise;
-                            }
-                        } catch (e) {
-                            console.log('Search highlighting:', e);
-                        }
-                        
-                        // 3. محاولة التمرير للموقع التقريبي
-                        // بناءً على موقع النص في الصفحة
-                        if (result.matchPosition !== undefined) {
-                            try {
-                                // Adobe API قد يدعم zoom to specific area
-                                const zoomLevel = await window.pdfAPIs.getZoomLevel();
-                                
-                                // يمكن محاولة استخدام gotoLocation مع zoom
-                                // للتقريب على منطقة معينة
-                            } catch (e) {
-                                console.log('Zoom adjustment:', e);
-                            }
-                        }
-                    }, 300);
-                    
-                } catch (e) {
-                    console.log('Navigation:', e);
-                }
-            }
-            
-            showToast(`📄 صفحة ${pageNum} - "${currentSearchTerm}"`, 'success');
-            
-            // تمرير البطاقة للعرض في لوحة النتائج
             const card = document.querySelector('.result-card.active');
-            if (card) {
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function navResult(dir) {
@@ -1666,45 +1045,24 @@
             if (n >= 0 && n < results.length) gotoResult(n);
         }
         
-        // ========== Pin/Delete Results ==========
-        function togglePin(index) {
-            const result = results[index];
-            if (!result) return;
-            
-            const existingIndex = pinnedResults.findIndex(p => 
-                p.page === result.page && p.searchTerm === result.searchTerm
-            );
-            
-            if (existingIndex >= 0) {
-                pinnedResults.splice(existingIndex, 1);
-                showToast('📌 تم إلغاء التثبيت', 'info');
-            } else {
-                pinnedResults.push({...result, pinnedAt: Date.now()});
-                showToast('📌 تم تثبيت النتيجة', 'success');
-            }
-            
+        function togglePin(i) {
+            const r = results[i];
+            const idx = pinnedResults.findIndex(p => p.page === r.page);
+            if (idx >= 0) pinnedResults.splice(idx, 1);
+            else pinnedResults.push({...r});
             savePinnedResults();
             updatePinnedSection();
             showResults(currentSearchTerm);
         }
         
-        function deleteResult(index) {
-            if (index < 0 || index >= results.length) return;
-            
-            results.splice(index, 1);
-            
-            if (results.length === 0) {
-                clearSearchResults();
-            } else {
+        function deleteResult(i) {
+            results.splice(i, 1);
+            if (!results.length) clearSearchResults();
+            else {
                 if (resultIdx >= results.length) resultIdx = results.length - 1;
                 showResults(currentSearchTerm);
                 updateMiniNav();
-                if (results.length > 0) {
-                    gotoResult(Math.min(index, results.length - 1));
-                }
             }
-            
-            showToast('🗑️ تم حذف النتيجة', 'info');
         }
         
         function clearPinned() {
@@ -1712,148 +1070,59 @@
             savePinnedResults();
             updatePinnedSection();
             showResults(currentSearchTerm);
-            showToast('📌 تم مسح النتائج المثبتة', 'info');
         }
         
         function updatePinnedSection() {
-            const section = document.getElementById('pinnedSection');
+            const sec = document.getElementById('pinnedSection');
             const list = document.getElementById('pinnedList');
-            
-            if (pinnedResults.length === 0) {
-                section.classList.remove('has-items');
-                return;
-            }
-            
-            section.classList.add('has-items');
-            
+            if (!pinnedResults.length) { sec.classList.remove('has-items'); return; }
+            sec.classList.add('has-items');
             list.innerHTML = pinnedResults.map((r, i) => `
-                <div class="result-card pinned" onclick="gotoPinnedResult(${i})" style="margin-bottom: 6px; padding: 10px;">
-                    <div class="result-top" style="margin-bottom: 4px;">
+                <div class="result-card pinned" onclick="gotoPinnedResult(${i})" style="margin-bottom:6px;padding:10px;">
+                    <div class="result-top">
                         <span class="page-badge">📄 ${r.page}</span>
-                        <div class="result-actions">
-                            <button class="result-action-btn copy-btn" 
-                                    onclick="event.stopPropagation(); copyPinnedResult(${i})" title="نسخ">
-                                📋
-                            </button>
-                            <button class="result-action-btn delete-btn" 
-                                    onclick="event.stopPropagation(); removePinned(${i})" title="إزالة">
-                                ✕
-                            </button>
-                        </div>
+                        <button class="result-action-btn delete-btn" onclick="event.stopPropagation();removePinned(${i})">✕</button>
                     </div>
-                    <div style="font-size: 0.75rem; color: var(--text3);">"${r.searchTerm}"</div>
                 </div>
             `).join('');
         }
         
-        function copyPinnedResult(index) {
-            if (index < 0 || index >= pinnedResults.length) return;
-            const result = pinnedResults[index];
-            const textToCopy = `صفحة ${result.page}: ${result.ctx.replace(/\.\.\./g, '')}`;
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                showToast('📋 تم نسخ النتيجة المثبتة', 'success');
-            });
-        }
-        
-        function removePinned(index) {
-            if (index < 0 || index >= pinnedResults.length) return;
-            pinnedResults.splice(index, 1);
+        function removePinned(i) {
+            pinnedResults.splice(i, 1);
             savePinnedResults();
             updatePinnedSection();
             showResults(currentSearchTerm);
-            showToast('📌 تم إزالة النتيجة المثبتة', 'info');
         }
         
-        async function gotoPinnedResult(index) {
-            const result = pinnedResults[index];
-            if (!result) return;
-            
-            if (window.pdfAPIs) {
-                await window.pdfAPIs.gotoLocation(result.page);
-                
-                // محاولة البحث للتظليل
-                setTimeout(async () => {
-                    try {
-                        if (adobeViewer) {
-                            const apis = await adobeViewer.getAPIs();
-                            if (apis.search) {
-                                await apis.search(result.searchTerm);
-                            }
-                        }
-                    } catch (e) {
-                        console.log('Search:', e);
-                    }
-                }, 300);
-            }
-            showToast(`📌 صفحة ${result.page}`, 'success');
+        async function gotoPinnedResult(i) {
+            if (window.pdfAPIs) await window.pdfAPIs.gotoLocation(pinnedResults[i].page);
         }
         
-        function savePinnedResults() {
-            localStorage.setItem('hs-code-pinned', JSON.stringify(pinnedResults));
-        }
+        function savePinnedResults() { localStorage.setItem('hs-code-pinned', JSON.stringify(pinnedResults)); }
         
         function loadPinnedResults() {
             try {
                 const saved = localStorage.getItem('hs-code-pinned');
-                if (saved) {
-                    pinnedResults = JSON.parse(saved);
-                    updatePinnedSection();
-                }
-            } catch (e) {
-                pinnedResults = [];
-            }
+                if (saved) { pinnedResults = JSON.parse(saved); updatePinnedSection(); }
+            } catch (e) { pinnedResults = []; }
         }
         
         function exportResults() {
-            if (results.length === 0 && pinnedResults.length === 0) {
-                showToast('⚠️ لا توجد نتائج للتصدير', 'warning');
-                return;
-            }
-            
-            let text = `نتائج البحث - HS Code 2026\n`;
-            text += `${'='.repeat(40)}\n\n`;
-            
-            if (pinnedResults.length > 0) {
-                text += `📌 النتائج المثبتة (${pinnedResults.length}):\n`;
-                text += `${'-'.repeat(30)}\n`;
-                pinnedResults.forEach((r, i) => {
-                    text += `${i + 1}. صفحة ${r.page} - "${r.searchTerm}"\n`;
-                    text += `   ${r.ctx}\n\n`;
-                });
-            }
-            
-            if (results.length > 0) {
-                text += `🔍 نتائج البحث "${currentSearchTerm}" (${results.length}):\n`;
-                text += `${'-'.repeat(30)}\n`;
-                results.forEach((r, i) => {
-                    text += `${i + 1}. صفحة ${r.page} (${r.count} تطابق)\n`;
-                    text += `   ${r.ctx}\n\n`;
-                });
-            }
-            
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('📋 تم نسخ جميع النتائج', 'success');
-            }).catch(() => {
-                showToast('⚠️ فشل النسخ', 'error');
-            });
-        }
-
-        // ========== Helpers ==========
-        function toArabicNums(str) {
-            const ar = '٠١٢٣٤٥٦٧٨٩';
-            return str.replace(/[0-9]/g, d => ar[d]);
+            if (!results.length) return;
+            let text = `نتائج البحث - HS Code 2026\n${'='.repeat(40)}\n\n`;
+            results.forEach((r, i) => { text += `${i+1}. صفحة ${r.page}\n   ${r.ctx}\n\n`; });
+            navigator.clipboard.writeText(text);
+            showToast('📋 تم نسخ النتائج', 'success');
         }
 
         function showToast(msg, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = `show ${type}`;
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `show ${type}`;
             clearTimeout(window.toastTimer);
-            window.toastTimer = setTimeout(() => toast.className = '', 3000);
+            window.toastTimer = setTimeout(() => t.className = '', 2500);
         }
 
-        // Global
         window.gotoResult = gotoResult;
         window.gotoPinnedResult = gotoPinnedResult;
         window.toggleTheme = toggleTheme;
@@ -1865,7 +1134,6 @@
         window.exportResults = exportResults;
         window.navResult = navResult;
         window.copyResult = copyResult;
-        window.copyPinnedResult = copyPinnedResult;
         window.removePinned = removePinned;
     </script>
 </body>
