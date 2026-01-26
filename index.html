@@ -4,24 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 HS Code 2026 - دليل الرموز الجمركية</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
     <style>
+        /* ========== Theme Variables ========== */
         :root {
             --primary: #6366f1;
             --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
             --success: #22c55e;
             --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
             --bg: #0a0a0f;
             --surface: #12121a;
             --surface2: #1e1e2e;
             --surface3: #2a2a3e;
             --text: #f1f5f9;
             --text2: #94a3b8;
+            --text3: #64748b;
             --border: #2e2e42;
             --highlight: #fbbf24;
+            --highlight-bg: rgba(251, 191, 36, 0.2);
+            --pinned-bg: rgba(34, 197, 94, 0.15);
+            --pinned-border: #22c55e;
             --glow: rgba(99, 102, 241, 0.4);
+            --shadow: rgba(0, 0, 0, 0.3);
+            --pdf-bg: #1a1a1a;
+            --panel-width: 400px;
+            --scrollbar-width: 8px;
+        }
+        
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface2: #f1f5f9;
+            --surface3: #e2e8f0;
+            --text: #1e293b;
+            --text2: #475569;
+            --text3: #64748b;
+            --border: #cbd5e1;
+            --glow: rgba(99, 102, 241, 0.2);
+            --shadow: rgba(0, 0, 0, 0.1);
+            --pdf-bg: #e5e5e5;
+            --pinned-bg: rgba(34, 197, 94, 0.1);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,116 +62,177 @@
             background: var(--bg); 
             color: var(--text);
             overflow: hidden;
+            transition: background 0.3s, color 0.3s;
         }
         
+        /* ========== Custom Scrollbar ========== */
+        ::-webkit-scrollbar {
+            width: var(--scrollbar-width);
+            height: var(--scrollbar-width);
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--surface2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+            border: 2px solid var(--surface2);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+        
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--surface2);
+        }
+        
+        /* ========== App Layout ========== */
         .app {
             display: grid;
-            grid-template-columns: 400px 1fr;
-            grid-template-rows: auto 1fr;
+            grid-template-rows: auto auto 1fr;
             height: 100vh;
         }
         
-        /* Header */
+        /* ========== Header ========== */
         .header {
-            grid-column: 1 / -1;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 25px;
+            padding: 10px 20px;
             background: linear-gradient(180deg, var(--surface) 0%, var(--surface2) 100%);
             border-bottom: 1px solid var(--border);
+            gap: 15px;
+            flex-wrap: wrap;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
         
         .logo-icon {
-            font-size: 2.5rem;
+            font-size: 2rem;
             filter: drop-shadow(0 0 10px var(--glow));
         }
         
         .logo h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, #818cf8, #c084fc);
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--primary-light), #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .logo p {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text2);
         }
-
-        /* Header Tools */
-        .header-tools {
-            display: flex;
-            gap: 10px;
-        }
-
-        .header-btn {
-            padding: 10px 18px;
-            background: var(--surface3);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.9rem;
-            cursor: pointer;
+        
+        .header-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 56px;
+            height: 28px;
+            background: var(--surface3);
+            border-radius: 14px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+            position: relative;
+        }
+        
+        .theme-toggle:hover { border-color: var(--primary); }
+        
+        .theme-toggle-icon { font-size: 0.9rem; z-index: 1; transition: opacity 0.3s; }
+        .theme-toggle .sun { opacity: 0.4; }
+        .theme-toggle .moon { opacity: 1; }
+        [data-theme="light"] .theme-toggle .sun { opacity: 1; }
+        [data-theme="light"] .theme-toggle .moon { opacity: 0.4; }
+        
+        .theme-toggle-slider {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            right: 4px;
             transition: all 0.3s;
         }
-
-        .header-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .header-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
         
-        /* Search Panel */
-        .search-panel {
-            background: var(--surface);
-            border-left: 1px solid var(--border);
+        [data-theme="light"] .theme-toggle-slider { right: calc(100% - 24px); }
+        
+        /* Toggle Panel Button */
+        .toggle-panel-btn {
+            padding: 8px 14px;
+            background: var(--surface3);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
             display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
         }
         
-        .search-header {
-            padding: 20px;
-            background: var(--surface2);
+        .toggle-panel-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* ========== Search Bar ========== */
+        .search-bar {
+            background: var(--surface);
             border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
         }
         
-        .search-box {
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
         }
         
         .search-input-wrapper {
             flex: 1;
+            min-width: 200px;
             position: relative;
         }
         
         #searchInput {
             width: 100%;
-            padding: 14px 20px 14px 45px;
-            background: var(--surface3);
+            padding: 12px 18px 12px 45px;
+            background: var(--surface2);
             border: 2px solid var(--border);
             border-radius: 12px;
             color: var(--text);
             font-size: 1rem;
             font-family: inherit;
             transition: all 0.3s;
+            direction: ltr;
+            text-align: right;
         }
         
         #searchInput:focus {
@@ -149,30 +241,45 @@
             box-shadow: 0 0 0 4px var(--glow);
         }
         
-        #searchInput::placeholder {
-            color: var(--text2);
-        }
+        #searchInput::placeholder { color: var(--text3); }
         
         .search-icon {
             position: absolute;
-            right: 15px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.2rem;
-            color: var(--text2);
+            font-size: 1.1rem;
+            color: var(--text3);
+            pointer-events: none;
         }
         
+        .text-fixed-indicator {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: var(--success);
+            background: var(--surface3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .text-fixed-indicator.show { display: block; }
+        
         #searchBtn {
-            padding: 14px 24px;
+            padding: 12px 24px;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
             border: none;
             border-radius: 12px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-family: inherit;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         
         #searchBtn:hover {
@@ -180,25 +287,76 @@
             box-shadow: 0 8px 25px var(--glow);
         }
         
-        /* Status */
-        #searchStatus {
-            margin-top: 12px;
-            padding: 10px 15px;
-            background: var(--surface3);
-            border-radius: 8px;
-            font-size: 0.9rem;
+        /* ========== Mini Navigation (في شريط البحث) ========== */
+        .mini-nav {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--surface2);
+            border-radius: 10px;
+            border: 1px solid var(--border);
         }
         
-        #searchStatus.loading { color: var(--warning); }
-        #searchStatus.ready { color: var(--success); }
-        #searchStatus.hidden { display: none; }
+        .mini-nav.hidden { display: none; }
+        
+        .mini-nav-count {
+            font-size: 0.85rem;
+            color: var(--text);
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .mini-nav-count .highlight {
+            color: var(--primary-light);
+        }
+        
+        .mini-nav-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .mini-nav-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .mini-nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .search-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--surface2);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: var(--text2);
+            white-space: nowrap;
+        }
+        
+        .search-status.loading { color: var(--warning); }
+        .search-status.ready { color: var(--success); }
+        .search-status.hidden { display: none; }
         
         .spinner {
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
             border: 2px solid currentColor;
             border-top-color: transparent;
             border-radius: 50%;
@@ -207,70 +365,216 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* Results */
+        /* Search Tips */
+        .search-tips {
+            width: 100%;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--text3);
+        }
+        
+        .search-tip {
+            padding: 4px 10px;
+            background: var(--surface2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* ========== Main Content ========== */
+        .main-content {
+            display: grid;
+            grid-template-columns: var(--panel-width) 1fr;
+            overflow: hidden;
+            transition: grid-template-columns 0.3s;
+        }
+        
+        .main-content.panel-hidden {
+            grid-template-columns: 0 1fr;
+        }
+        
+        /* ========== Results Panel ========== */
+        .results-panel {
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .main-content.panel-hidden .results-panel {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 12px 15px;
             background: var(--surface2);
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
         
         .results-header h3 {
-            font-size: 1rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         #resultsCount {
-            padding: 4px 12px;
+            padding: 3px 8px;
             background: var(--primary);
-            border-radius: 20px;
-            font-size: 0.8rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: white;
         }
         
-        .nav-buttons {
+        .results-actions {
             display: flex;
-            gap: 8px;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        /* Nav Controls */
+        .nav-controls {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
         
         .nav-btn {
-            padding: 8px 16px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: var(--surface3);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 6px;
             color: var(--text);
             cursor: pointer;
-            font-family: inherit;
+            font-size: 0.75rem;
             transition: all 0.2s;
         }
         
         .nav-btn:hover:not(:disabled) {
             background: var(--primary);
             border-color: var(--primary);
+            color: white;
         }
         
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         
         #resultPos {
-            padding: 8px 12px;
-            background: var(--bg);
-            border-radius: 8px;
-            font-size: 0.85rem;
-            min-width: 70px;
+            flex: 1;
             text-align: center;
+            font-size: 0.8rem;
+            color: var(--text2);
+            padding: 0 8px;
         }
         
-        /* Results List */
+        /* Pinned Results Section */
+        .pinned-section {
+            background: var(--pinned-bg);
+            border-bottom: 2px solid var(--pinned-border);
+            max-height: 180px;
+            overflow-y: auto;
+            display: none;
+            flex-shrink: 0;
+        }
+        
+        .pinned-section.has-items { display: block; }
+        
+        .pinned-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(34, 197, 94, 0.1);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--pinned-border);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .clear-pinned {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            background: var(--surface3);
+            border: none;
+            border-radius: 10px;
+            color: var(--text2);
+            cursor: pointer;
+        }
+        
+        .clear-pinned:hover { background: var(--error); color: white; }
+        
+        #pinnedList { padding: 8px; }
+        
+        /* Results List - شريط تمرير واضح */
         #resultsList {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
+            overflow-x: hidden;
+            padding: 10px;
+            scroll-behavior: smooth;
+            min-height: 0; /* مهم للـ flexbox */
+        }
+        
+        /* تحسين شريط التمرير للنتائج */
+        #resultsList::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        #resultsList::-webkit-scrollbar-track {
+            background: var(--bg);
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        
+        #resultsList::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), #8b5cf6);
+            border-radius: 5px;
+            border: 2px solid var(--bg);
+        }
+        
+        #resultsList::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--primary-light), #a78bfa);
         }
         
         .placeholder {
@@ -279,111 +583,169 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            color: var(--text2);
+            color: var(--text3);
             text-align: center;
+            padding: 20px;
         }
         
         .placeholder-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.3;
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.4;
         }
         
+        /* Result Card */
         .result-card {
             background: var(--surface2);
             border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 12px;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
         
         .result-card:hover {
             border-color: var(--primary);
-            transform: translateX(-5px);
-            box-shadow: 5px 0 20px var(--glow);
+            transform: translateX(-3px);
+            box-shadow: 3px 0 12px var(--glow);
         }
         
         .result-card.active {
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
+            background: var(--highlight-bg);
+        }
+        
+        .result-card.pinned {
+            border-color: var(--pinned-border);
+            background: var(--pinned-bg);
         }
         
         .result-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         
         .page-badge {
-            padding: 6px 14px;
+            padding: 4px 10px;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            border-radius: 20px;
-            font-size: 0.85rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
             font-weight: 600;
+            color: white;
         }
         
-        .match-count {
-            font-size: 0.8rem;
+        .result-actions {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .result-action-btn {
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface3);
+            border: none;
+            border-radius: 5px;
             color: var(--text2);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .result-action-btn:hover { background: var(--primary); color: white; }
+        .result-action-btn.copy-btn:hover { background: var(--info); }
+        .result-action-btn.pin-btn:hover { background: var(--success); }
+        .result-action-btn.delete-btn:hover { background: var(--error); }
+        .result-action-btn.pinned { background: var(--success); color: white; }
+        
+        .match-count {
+            font-size: 0.7rem;
+            color: var(--text3);
         }
         
         .result-text {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text2);
-            line-height: 1.8;
-            padding: 12px;
+            line-height: 1.6;
+            padding: 8px;
             background: var(--bg);
-            border-radius: 10px;
-            max-height: 80px;
+            border-radius: 6px;
+            max-height: 60px;
             overflow: hidden;
+            user-select: text;
         }
         
         .result-text .hl {
             background: var(--highlight);
             color: #000;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 1px 4px;
+            border-radius: 3px;
             font-weight: 600;
         }
         
+        .result-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
         .go-btn {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            width: 100%;
-            margin-top: 12px;
-            padding: 10px;
+            gap: 6px;
+            padding: 8px;
             background: var(--primary);
             border: none;
-            border-radius: 10px;
+            border-radius: 6px;
             color: white;
             font-family: inherit;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .go-btn:hover {
-            filter: brightness(1.15);
+        .go-btn:hover { filter: brightness(1.15); }
+        
+        .copy-result-btn {
+            padding: 8px 12px;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         
-        /* PDF Viewer */
+        .copy-result-btn:hover {
+            background: var(--info);
+            border-color: var(--info);
+            color: white;
+        }
+        
+        /* ========== PDF Viewer ========== */
         .pdf-section {
             position: relative;
-            background: #1a1a1a;
+            background: var(--pdf-bg);
             overflow: hidden;
         }
         
-        #pdf-container {
-            width: 100%;
-            height: 100%;
-        }
+        #pdf-container { width: 100%; height: 100%; }
         
-        /* Loading */
+        /* ========== Loading Overlay ========== */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -393,28 +755,25 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: all 0.5s;
+            transition: opacity 0.5s, visibility 0.5s;
         }
         
-        .loading-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
         
         .loading-logo {
-            font-size: 6rem;
-            margin-bottom: 25px;
-            animation: pulse 2s ease-in-out infinite;
+            font-size: 4.5rem;
+            margin-bottom: 18px;
+            animation: bounce 2s ease-in-out infinite;
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
         }
         
         .loading-overlay h2 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
             background: linear-gradient(135deg, #c7d2fe, #e9d5ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -422,13 +781,13 @@
         
         .loading-overlay p {
             color: rgba(255,255,255,0.7);
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            font-size: 0.95rem;
+            margin-bottom: 22px;
         }
         
         .loading-bar {
-            width: 320px;
-            height: 6px;
+            width: 260px;
+            height: 5px;
             background: rgba(255,255,255,0.2);
             border-radius: 3px;
             overflow: hidden;
@@ -448,401 +807,74 @@
         }
         
         #loadingPercent {
-            margin-top: 15px;
-            font-size: 1.2rem;
+            margin-top: 10px;
+            font-size: 1rem;
             color: rgba(255,255,255,0.9);
         }
         
-        /* Toast */
+        /* ========== Toast ========== */
         #toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--surface2);
             border: 1px solid var(--border);
-            padding: 15px 30px;
-            border-radius: 14px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px var(--shadow);
             opacity: 0;
             transition: all 0.3s;
             z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        #toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        
-        #toast.success { border-color: var(--success); }
-
-        /* ========== Text Extractor Modal ========== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.9) translateY(20px);
-            transition: all 0.3s;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-overlay.show .modal {
-            transform: scale(1) translateY(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            background: var(--surface2);
-            border-bottom: 1px solid var(--border);
-            border-radius: 20px 20px 0 0;
-        }
-
-        .modal-header h2 {
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-close {
-            width: 40px;
-            height: 40px;
-            background: var(--surface3);
-            border: 1px solid var(--border);
-            border-radius: 10px;
             color: var(--text);
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-close:hover {
-            background: #ef4444;
-            border-color: #ef4444;
-        }
-
-        .modal-toolbar {
-            display: flex;
-            gap: 10px;
-            padding: 15px 25px;
-            background: var(--surface2);
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-        }
-
-        .modal-toolbar .page-nav {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-toolbar input {
-            width: 70px;
-            padding: 8px 12px;
-            background: var(--surface3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            text-align: center;
-            font-family: inherit;
-        }
-
-        .modal-toolbar button {
-            padding: 8px 16px;
-            background: var(--surface3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .modal-toolbar button:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .modal-toolbar button.primary {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .modal-body {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .text-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 25px;
-            background: var(--bg);
-            margin: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .text-content p {
-            font-size: 1.05rem;
-            line-height: 2;
-            color: var(--text);
-            direction: rtl;
-            text-align: right;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            user-select: text;
-            cursor: text;
-        }
-
-        .text-content .loading-text {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            color: var(--text2);
-        }
-
-        .text-content .loading-text .spinner {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 15px;
-        }
-
-        .text-content .hl {
-            background: var(--highlight);
-            color: #000;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: var(--surface2);
-            border-top: 1px solid var(--border);
-            border-radius: 0 0 20px 20px;
-        }
-
-        .modal-footer .info {
-            color: var(--text2);
             font-size: 0.9rem;
         }
-
-        .modal-footer .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-footer button {
-            padding: 10px 20px;
-            background: var(--primary);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-footer button:hover {
-            filter: brightness(1.15);
-            transform: translateY(-2px);
-        }
-
-        .modal-footer button.secondary {
-            background: var(--surface3);
-            border: 1px solid var(--border);
-        }
-
-        /* Copy notification */
-        .copy-notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: var(--success);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 15px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.4);
-            z-index: 20000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .copy-notification.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        /* Quick Copy Panel */
-        .quick-copy-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 15px;
-            z-index: 9998;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 350px;
-        }
-
-        .quick-copy-panel.show {
-            display: flex;
-        }
-
-        .quick-copy-panel h4 {
-            font-size: 0.95rem;
-            color: var(--text2);
-            margin-bottom: 5px;
-        }
-
-        .quick-copy-panel textarea {
-            width: 100%;
-            height: 120px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            padding: 12px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            resize: none;
-            direction: rtl;
-        }
-
-        .quick-copy-panel .btn-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .quick-copy-panel button {
-            flex: 1;
-            padding: 10px;
-            background: var(--primary);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .quick-copy-panel button:hover {
-            filter: brightness(1.15);
-        }
-
-        .quick-copy-panel button.close-btn {
-            background: var(--surface3);
-            flex: none;
-            width: 40px;
-        }
         
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        #toast.success { border-color: var(--success); }
+        #toast.error { border-color: var(--error); }
+        #toast.warning { border-color: var(--warning); }
+        #toast.info { border-color: var(--info); }
         
-        /* Responsive */
+        /* ========== Responsive ========== */
         @media (max-width: 1024px) {
-            .app {
+            :root { --panel-width: 320px; }
+            
+            .main-content {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto auto 1fr;
+                grid-template-rows: 1fr 45vh;
             }
             
-            .search-panel {
-                max-height: 50vh;
+            .main-content.panel-hidden {
+                grid-template-rows: 1fr 0;
+            }
+            
+            .results-panel {
                 border-left: none;
-                border-bottom: 1px solid var(--border);
+                border-top: 1px solid var(--border);
+                order: 2;
             }
-
-            .header-tools {
-                gap: 5px;
-            }
-
-            .header-btn span:last-child {
-                display: none;
-            }
+            
+            .pdf-section { order: 1; }
+            
+            .search-container { justify-content: center; }
         }
         
         @media (max-width: 600px) {
-            .logo h1 { font-size: 1.2rem; }
+            .header { padding: 8px 12px; }
+            .logo h1 { font-size: 1.1rem; }
             .logo p { display: none; }
-            .search-box { flex-direction: column; }
+            .logo-icon { font-size: 1.6rem; }
+            .search-bar { padding: 10px 12px; }
+            .search-container { flex-direction: column; }
             #searchBtn { width: 100%; }
-
-            .modal {
-                width: 95%;
-                max-height: 90vh;
-            }
-
-            .modal-toolbar {
-                flex-direction: column;
-            }
+            .search-tips { display: none; }
+            .toggle-panel-btn span:last-child { display: none; }
+            .mini-nav { width: 100%; justify-content: center; }
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-logo">📚</div>
@@ -865,133 +897,119 @@
                     <p>دليل الرموز الجمركية - سلطنة عمان</p>
                 </div>
             </div>
-            <div class="header-tools">
-                <button class="header-btn" id="extractTextBtn" title="استخراج نص الصفحة">
-                    <span>📄</span>
-                    <span>استخراج النص</span>
+            
+            <div class="header-controls">
+                <button class="toggle-panel-btn" onclick="togglePanel()" title="إخفاء/إظهار النتائج">
+                    <span id="panelToggleIcon">◀</span>
+                    <span>النتائج</span>
                 </button>
-                <button class="header-btn" id="quickCopyBtn" title="نسخ سريع">
-                    <span>📋</span>
-                    <span>نسخ سريع</span>
-                </button>
+                <div class="theme-toggle" onclick="toggleTheme()" title="الوضع الليلي/النهاري">
+                    <span class="theme-toggle-icon sun">☀️</span>
+                    <span class="theme-toggle-icon moon">🌙</span>
+                    <div class="theme-toggle-slider"></div>
+                </div>
             </div>
         </header>
-
-        <!-- Search Panel -->
-        <aside class="search-panel">
-            <div class="search-header">
-                <div class="search-box">
-                    <div class="search-input-wrapper">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="ابحث عن كود أو منتج...">
-                    </div>
-                    <button id="searchBtn">بحث</button>
+        
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="ابحث عن كود جمركي أو منتج..." autocomplete="off">
+                    <span id="textFixedIndicator" class="text-fixed-indicator">✓ تم الإصلاح</span>
                 </div>
-                <div id="searchStatus" class="loading">
+                <button id="searchBtn">🔎 بحث</button>
+                
+                <!-- Mini Navigation - يظهر دائماً عند وجود نتائج -->
+                <div id="miniNav" class="mini-nav hidden">
+                    <button class="mini-nav-btn" id="miniPrevBtn" disabled onclick="navResult(-1)" title="السابق">◀</button>
+                    <span class="mini-nav-count">
+                        <span id="miniCurrentPos" class="highlight">0</span>
+                        /
+                        <span id="miniTotalResults">0</span>
+                    </span>
+                    <button class="mini-nav-btn" id="miniNextBtn" disabled onclick="navResult(1)" title="التالي">▶</button>
+                </div>
+                
+                <div id="searchStatus" class="search-status loading">
                     <div class="spinner"></div>
-                    <span>جاري تجهيز البحث...</span>
+                    <span>جاري التجهيز...</span>
                 </div>
             </div>
-            
-            <div class="results-header">
-                <h3>
-                    <span>📊</span>
-                    النتائج
-                    <span id="resultsCount" style="display:none">0</span>
-                </h3>
-                <div class="nav-buttons">
-                    <button id="prevBtn" class="nav-btn" disabled>▲</button>
-                    <span id="resultPos">-</span>
-                    <button id="nextBtn" class="nav-btn" disabled>▼</button>
-                </div>
+            <div class="search-tips">
+                <span class="search-tip">💡 يمكنك لصق الكود بدون مسافات</span>
+                <span class="search-tip">🔄 يتم إصلاح النص المعكوس تلقائياً</span>
+                <span class="search-tip">📋 اضغط على زر النسخ لنسخ النتيجة</span>
             </div>
-            
-            <div id="resultsList">
-                <div class="placeholder">
-                    <div class="placeholder-icon">🔍</div>
-                    <p>اكتب في مربع البحث أعلاه<br>للعثور على الأكواد والمنتجات</p>
-                </div>
-            </div>
-        </aside>
+        </div>
 
-        <!-- PDF Viewer -->
-        <main class="pdf-section">
-            <div id="pdf-container"></div>
-        </main>
-    </div>
-
-    <!-- Text Extractor Modal -->
-    <div id="textModal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>
-                    <span>📄</span>
-                    استخراج النص من الصفحة
-                </h2>
-                <button class="modal-close" id="closeModal">✕</button>
-            </div>
-            <div class="modal-toolbar">
-                <div class="page-nav">
-                    <button id="modalPrevPage">◀ السابقة</button>
-                    <span>صفحة</span>
-                    <input type="number" id="modalPageInput" value="1" min="1">
-                    <span>من <span id="modalTotalPages">278</span></span>
-                    <button id="modalNextPage">التالية ▶</button>
-                </div>
-                <button id="modalExtractBtn" class="primary">
-                    <span>🔄</span>
-                    استخراج النص
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="text-content" id="extractedTextContent">
-                    <div class="loading-text">
-                        <p>اختر رقم الصفحة واضغط "استخراج النص"</p>
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Results Panel -->
+            <aside class="results-panel">
+                <div class="results-header">
+                    <h3>
+                        <span>📊</span>
+                        النتائج
+                        <span id="resultsCount" style="display:none">0</span>
+                    </h3>
+                    <div class="results-actions">
+                        <button class="action-btn" onclick="clearAllResults()" title="مسح الكل">🗑️</button>
+                        <button class="action-btn" onclick="exportResults()" title="تصدير الكل">📋</button>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <div class="info">
-                    <span id="charCount">0 حرف</span>
+                
+                <div class="nav-controls">
+                    <button id="prevBtn" class="nav-btn" disabled title="السابق">▲</button>
+                    <span id="resultPos">-</span>
+                    <button id="nextBtn" class="nav-btn" disabled title="التالي">▼</button>
                 </div>
-                <div class="actions">
-                    <button class="secondary" id="selectAllBtn">
-                        <span>☑️</span>
-                        تحديد الكل
-                    </button>
-                    <button id="copyAllBtn">
-                        <span>📋</span>
-                        نسخ النص
-                    </button>
+                
+                <!-- Pinned Results -->
+                <div id="pinnedSection" class="pinned-section">
+                    <div class="pinned-header">
+                        <span>📌 النتائج المثبتة</span>
+                        <button class="clear-pinned" onclick="clearPinned()">مسح الكل</button>
+                    </div>
+                    <div id="pinnedList"></div>
                 </div>
-            </div>
-        </div>
-    </div>
+                
+                <!-- Results List with visible scrollbar -->
+                <div id="resultsList">
+                    <div class="placeholder">
+                        <div class="placeholder-icon">🔍</div>
+                        <p>اكتب في مربع البحث أعلاه<br>للعثور على الأكواد والمنتجات</p>
+                    </div>
+                </div>
+            </aside>
 
-    <!-- Quick Copy Panel -->
-    <div id="quickCopyPanel" class="quick-copy-panel">
-        <h4>📋 نسخ سريع - لصق وتصحيح النص العربي</h4>
-        <textarea id="quickCopyInput" placeholder="الصق النص المنسوخ هنا لتصحيحه..."></textarea>
-        <div class="btn-row">
-            <button id="fixAndCopyBtn">🔄 تصحيح ونسخ</button>
-            <button id="clearQuickCopy" class="close-btn">✕</button>
+            <!-- PDF Viewer -->
+            <main class="pdf-section">
+                <div id="pdf-container"></div>
+            </main>
         </div>
-    </div>
-
-    <!-- Copy Notification -->
-    <div id="copyNotification" class="copy-notification">
-        <span>✅</span>
-        <span>تم نسخ النص بنجاح!</span>
     </div>
 
     <!-- Toast -->
     <div id="toast"></div>
 
     <script>
+        (function() {
+            const script = document.createElement('script');
+            script.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
+            script.async = true;
+            document.head.appendChild(script);
+        })();
+    </script>
+
+    <script>
         // ========== Configuration ==========
         const CONFIG = {
             ADOBE_CLIENT_ID: '5edf16250afa446aa490af6313d351b2',
-            PDF_FILE: 'HS Code 2026.pdf'
+            PDF_FILE: 'HS Code 2026.pdf',
+            SEARCH_DELAY: 300,
+            MIN_SEARCH_LENGTH: 2
         };
         
         pdfjsLib.GlobalWorkerOptions.workerSrc = 
@@ -999,17 +1017,161 @@
 
         // ========== State ==========
         let adobeViewer = null;
-        let pdfDoc = null;
         let pdfText = [];
         let results = [];
+        let pinnedResults = [];
         let resultIdx = -1;
         let totalPages = 0;
         let indexed = false;
-        let currentModalPage = 1;
-        let currentExtractedText = '';
+        let currentSearchTerm = '';
+        let panelVisible = true;
+
+        // ========== Text Processing Utilities ==========
+        function fixReversedText(text) {
+            if (!text) return { text: text, wasFixed: false };
+            
+            let fixed = text;
+            let wasFixed = false;
+            
+            fixed = fixed.replace(/\s+/g, ' ').trim();
+            
+            const codePattern = /(\d{2}\s*){3,6}/g;
+            const matches = fixed.match(codePattern);
+            
+            if (matches) {
+                matches.forEach(match => {
+                    const cleanCode = match.replace(/\s/g, '');
+                    if (isLikelyReversed(cleanCode)) {
+                        const reversedCode = reverseString(cleanCode);
+                        fixed = fixed.replace(match, reversedCode);
+                        wasFixed = true;
+                    } else {
+                        fixed = fixed.replace(match, cleanCode);
+                    }
+                });
+            }
+            
+            if (containsArabic(fixed) && isLikelyReversedArabic(fixed)) {
+                fixed = reverseArabicText(fixed);
+                wasFixed = true;
+            }
+            
+            fixed = normalizeNumbers(fixed);
+            
+            return { text: fixed, wasFixed: wasFixed };
+        }
+        
+        function isLikelyReversed(code) {
+            if (code.length >= 6) {
+                const firstTwo = parseInt(code.substring(0, 2));
+                const lastTwo = parseInt(code.substring(code.length - 2));
+                if (firstTwo < 10 && lastTwo > 50) return true;
+            }
+            return false;
+        }
+        
+        function reverseString(str) {
+            return str.split('').reverse().join('');
+        }
+        
+        function containsArabic(text) {
+            return /[\u0600-\u06FF]/.test(text);
+        }
+        
+        function isLikelyReversedArabic(text) {
+            const endWords = ['ال', 'من', 'في', 'على'];
+            for (let word of endWords) {
+                if (text.endsWith(word) && !text.startsWith(word)) return true;
+            }
+            return false;
+        }
+        
+        function reverseArabicText(text) {
+            return text.split(' ').reverse().join(' ');
+        }
+        
+        function normalizeNumbers(text) {
+            const arabicNums = '٠١٢٣٤٥٦٧٨٩';
+            const englishNums = '0123456789';
+            let result = text;
+            for (let i = 0; i < 10; i++) {
+                result = result.replace(new RegExp(arabicNums[i], 'g'), englishNums[i]);
+            }
+            return result;
+        }
+        
+        function smartSearch(text, query) {
+            const textLower = text.toLowerCase();
+            const textNoSpaces = text.replace(/\s/g, '').toLowerCase();
+            const textNormalized = normalizeNumbers(textNoSpaces);
+            
+            const queryClean = query.trim().toLowerCase();
+            const queryNoSpaces = query.replace(/\s/g, '').toLowerCase();
+            const queryNormalized = normalizeNumbers(queryNoSpaces);
+            
+            const searchVariants = [
+                queryClean,
+                queryNoSpaces,
+                queryNormalized,
+                toArabicNums(queryNoSpaces).toLowerCase()
+            ];
+            
+            let totalMatches = 0;
+            let firstIndex = -1;
+            
+            for (let variant of searchVariants) {
+                if (!variant) continue;
+                
+                let idx = textLower.indexOf(variant);
+                if (idx !== -1 && firstIndex === -1) firstIndex = idx;
+                while (idx !== -1) {
+                    totalMatches++;
+                    idx = textLower.indexOf(variant, idx + 1);
+                }
+                
+                idx = textNoSpaces.indexOf(variant);
+                while (idx !== -1) {
+                    totalMatches++;
+                    idx = textNoSpaces.indexOf(variant, idx + 1);
+                }
+            }
+            
+            return {
+                matches: Math.ceil(totalMatches / 2),
+                firstIndex: firstIndex
+            };
+        }
+
+        // ========== Theme Management ==========
+        function initTheme() {
+            const saved = localStorage.getItem('hs-code-theme');
+            if (saved) document.body.setAttribute('data-theme', saved);
+        }
+        
+        function toggleTheme() {
+            const current = document.body.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('hs-code-theme', newTheme);
+            showToast(newTheme === 'dark' ? '🌙 الوضع الليلي' : '☀️ الوضع النهاري', 'success');
+        }
+        
+        initTheme();
+
+        // ========== Panel Toggle ==========
+        function togglePanel() {
+            panelVisible = !panelVisible;
+            document.getElementById('mainContent').classList.toggle('panel-hidden', !panelVisible);
+            document.getElementById('panelToggleIcon').textContent = panelVisible ? '◀' : '▶';
+            showToast(panelVisible ? '📊 إظهار النتائج' : '📄 عرض PDF كامل', 'info');
+        }
 
         // ========== Initialize ==========
         document.addEventListener('adobe_dc_view_sdk.ready', initApp);
+        
+        setTimeout(() => {
+            if (!window.AdobeDC) indexPDFForSearch();
+        }, 5000);
 
         async function initApp() {
             setupEvents();
@@ -1023,63 +1185,79 @@
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
             
-            // Search events
+            searchInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const fixResult = fixReversedText(pastedText);
+                
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const text = this.value;
+                this.value = text.substring(0, start) + fixResult.text + text.substring(end);
+                this.selectionStart = this.selectionEnd = start + fixResult.text.length;
+                
+                if (fixResult.wasFixed) {
+                    const indicator = document.getElementById('textFixedIndicator');
+                    indicator.classList.add('show');
+                    setTimeout(() => indicator.classList.remove('show'), 2000);
+                    showToast('✨ تم إصلاح النص تلقائياً', 'success');
+                }
+                
+                if (fixResult.text.length >= CONFIG.MIN_SEARCH_LENGTH) {
+                    setTimeout(doSearch, 100);
+                }
+            });
+            
+            let searchTimer;
             searchInput.addEventListener('input', function() {
-                clearTimeout(window.searchTimer);
-                if (this.value.length >= 2) {
-                    window.searchTimer = setTimeout(doSearch, 400);
+                clearTimeout(searchTimer);
+                if (this.value.length >= CONFIG.MIN_SEARCH_LENGTH) {
+                    searchTimer = setTimeout(doSearch, CONFIG.SEARCH_DELAY);
+                } else if (this.value.length === 0) {
+                    clearSearchResults();
                 }
             });
             
             searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') doSearch();
+                if (e.key === 'Enter') {
+                    clearTimeout(searchTimer);
+                    doSearch();
+                }
+                if (e.key === 'ArrowDown' && results.length > 0) {
+                    e.preventDefault();
+                    navResult(1);
+                }
+                if (e.key === 'ArrowUp' && results.length > 0) {
+                    e.preventDefault();
+                    navResult(-1);
+                }
             });
             
             searchBtn.addEventListener('click', doSearch);
             document.getElementById('prevBtn').addEventListener('click', () => navResult(-1));
             document.getElementById('nextBtn').addEventListener('click', () => navResult(1));
             
-            // Text Extractor Modal
-            document.getElementById('extractTextBtn').addEventListener('click', openTextModal);
-            document.getElementById('closeModal').addEventListener('click', closeTextModal);
-            document.getElementById('textModal').addEventListener('click', (e) => {
-                if (e.target.id === 'textModal') closeTextModal();
-            });
-            
-            document.getElementById('modalPrevPage').addEventListener('click', () => changeModalPage(-1));
-            document.getElementById('modalNextPage').addEventListener('click', () => changeModalPage(1));
-            document.getElementById('modalPageInput').addEventListener('change', (e) => {
-                currentModalPage = parseInt(e.target.value) || 1;
-                extractPageText(currentModalPage);
-            });
-            document.getElementById('modalExtractBtn').addEventListener('click', () => extractPageText(currentModalPage));
-            document.getElementById('selectAllBtn').addEventListener('click', selectAllText);
-            document.getElementById('copyAllBtn').addEventListener('click', copyExtractedText);
-            
-            // Quick Copy Panel
-            document.getElementById('quickCopyBtn').addEventListener('click', toggleQuickCopyPanel);
-            document.getElementById('fixAndCopyBtn').addEventListener('click', fixAndCopyText);
-            document.getElementById('clearQuickCopy').addEventListener('click', () => {
-                document.getElementById('quickCopyPanel').classList.remove('show');
-            });
-            
-            // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                if (e.target.tagName === 'INPUT') return;
+                
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select();
+                }
+                
                 if (e.key === 'ArrowUp') { e.preventDefault(); navResult(-1); }
                 if (e.key === 'ArrowDown') { e.preventDefault(); navResult(1); }
-                if (e.key === 'Escape') {
-                    closeTextModal();
-                    document.getElementById('quickCopyPanel').classList.remove('show');
-                }
+                if (e.key === 'Escape') searchInput.blur();
             });
-
-            // Global copy event handler to fix Arabic text
-            document.addEventListener('copy', handleGlobalCopy);
+            
+            loadPinnedResults();
         }
 
         // ========== Adobe Viewer ==========
         async function initAdobeViewer() {
+            if (!window.AdobeDC) return;
+            
             updateLoading('جاري تحميل العارض...', 20);
             
             try {
@@ -1095,15 +1273,15 @@
                     embedMode: 'FULL_WINDOW',
                     defaultViewMode: 'FIT_WIDTH',
                     showAnnotationTools: false,
-                    showLeftHandPanel: true,
+                    showLeftHandPanel: false,
                     showPageControls: true,
                     showDownloadPDF: true,
-                    showPrintPDF: false
+                    showPrintPDF: false,
+                    enableSearchAPIs: true
                 });
                 
                 updateLoading('تم تحميل العارض', 50);
                 
-                // Get PDF APIs for navigation
                 const apis = await adobeViewer.getAPIs();
                 window.pdfAPIs = apis;
                 
@@ -1113,55 +1291,77 @@
             }
         }
 
-        // ========== PDF Indexing for Search ==========
+        // ========== PDF Indexing ==========
         async function indexPDFForSearch() {
             updateLoading('جاري فهرسة الملف للبحث...', 30);
             
             try {
-                pdfDoc = await pdfjsLib.getDocument({
+                const pdf = await pdfjsLib.getDocument({
                     url: CONFIG.PDF_FILE,
                     cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
                     cMapPacked: true
                 }).promise;
                 
-                totalPages = pdfDoc.numPages;
-                document.getElementById('modalTotalPages').textContent = totalPages;
-                document.getElementById('modalPageInput').max = totalPages;
-                pdfText = [];
+                totalPages = pdf.numPages;
+                pdfText = new Array(totalPages);
                 
-                for (let i = 1; i <= totalPages; i++) {
-                    const percent = 50 + Math.round((i / totalPages) * 45);
-                    updateLoading(`فهرسة الصفحة ${i} من ${totalPages}...`, percent);
-                    
-                    try {
-                        const page = await pdfDoc.getPage(i);
-                        const content = await page.getTextContent();
-                        const text = content.items.map(item => item.str).join(' ');
-                        pdfText.push({ page: i, text: text, items: content.items });
-                    } catch (e) {
-                        pdfText.push({ page: i, text: '', items: [] });
+                const batchSize = 10;
+                for (let i = 0; i < totalPages; i += batchSize) {
+                    const batch = [];
+                    for (let j = i; j < Math.min(i + batchSize, totalPages); j++) {
+                        batch.push(indexPage(pdf, j + 1));
                     }
+                    await Promise.all(batch);
+                    
+                    const percent = 50 + Math.round(((i + batchSize) / totalPages) * 45);
+                    updateLoading(`فهرسة الصفحات... ${Math.min(i + batchSize, totalPages)}/${totalPages}`, Math.min(percent, 95));
                 }
                 
                 indexed = true;
                 updateLoading('جاهز!', 100);
                 
-                // Update status
                 const status = document.getElementById('searchStatus');
-                status.className = 'ready';
-                status.innerHTML = `<span>✅</span><span>جاهز للبحث (${totalPages} صفحة)</span>`;
+                status.className = 'search-status ready';
+                status.innerHTML = `<span>✅</span><span>جاهز (${totalPages} صفحة)</span>`;
                 
-                // Hide loading after delay
                 setTimeout(() => {
                     document.getElementById('loadingOverlay').classList.add('hidden');
-                    status.classList.add('hidden');
-                }, 1000);
+                    setTimeout(() => status.classList.add('hidden'), 2000);
+                }, 800);
                 
             } catch (error) {
                 console.error('Indexing Error:', error);
-                document.getElementById('searchStatus').innerHTML = 
-                    `<span>⚠️</span><span>خطأ في الفهرسة</span>`;
+                document.getElementById('searchStatus').innerHTML = `<span>⚠️</span><span>خطأ</span>`;
                 document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+        }
+        
+        async function indexPage(pdf, pageNum) {
+            try {
+                const page = await pdf.getPage(pageNum);
+                const content = await page.getTextContent();
+                
+                // حفظ معلومات موقع النص لاستخدامها لاحقاً
+                const items = content.items;
+                let text = '';
+                let textPositions = [];
+                
+                items.forEach((item, idx) => {
+                    text += item.str + ' ';
+                    textPositions.push({
+                        str: item.str,
+                        transform: item.transform,
+                        y: item.transform[5] // الموقع العمودي
+                    });
+                });
+                
+                pdfText[pageNum - 1] = { 
+                    page: pageNum, 
+                    text: text,
+                    textPositions: textPositions
+                };
+            } catch (e) {
+                pdfText[pageNum - 1] = { page: pageNum, text: '', textPositions: [] };
             }
         }
 
@@ -1171,315 +1371,118 @@
             document.getElementById('loadingFill').style.width = percent + '%';
         }
 
-        // ========== Text Extractor Modal ==========
-        function openTextModal() {
-            document.getElementById('textModal').classList.add('show');
-            document.getElementById('modalPageInput').value = currentModalPage;
-        }
-
-        function closeTextModal() {
-            document.getElementById('textModal').classList.remove('show');
-        }
-
-        function changeModalPage(delta) {
-            currentModalPage = Math.max(1, Math.min(totalPages, currentModalPage + delta));
-            document.getElementById('modalPageInput').value = currentModalPage;
-            extractPageText(currentModalPage);
-        }
-
-        async function extractPageText(pageNum) {
-            const contentEl = document.getElementById('extractedTextContent');
-            
-            contentEl.innerHTML = `
-                <div class="loading-text">
-                    <div class="spinner"></div>
-                    <p>جاري استخراج النص من الصفحة ${pageNum}...</p>
-                </div>
-            `;
-            
-            try {
-                const page = await pdfDoc.getPage(pageNum);
-                const content = await page.getTextContent();
-                
-                // Process text items with proper ordering
-                let textLines = processTextItems(content.items);
-                currentExtractedText = textLines;
-                
-                // Display the text
-                contentEl.innerHTML = `<p>${escapeHtml(textLines)}</p>`;
-                
-                // Update character count
-                document.getElementById('charCount').textContent = `${textLines.length} حرف`;
-                
-                // Navigate Adobe viewer to this page
-                if (window.pdfAPIs) {
-                    try {
-                        await window.pdfAPIs.gotoLocation(pageNum);
-                    } catch (e) {}
-                }
-                
-            } catch (error) {
-                console.error('Extract error:', error);
-                contentEl.innerHTML = `
-                    <div class="loading-text">
-                        <p>❌ حدث خطأ في استخراج النص</p>
-                    </div>
-                `;
-            }
-        }
-
-        function processTextItems(items) {
-            if (!items || items.length === 0) return '';
-            
-            // Group items by their Y position (lines)
-            const lineGroups = {};
-            const tolerance = 5;
-            
-            items.forEach(item => {
-                if (!item.str || item.str.trim() === '') return;
-                
-                const y = Math.round(item.transform[5] / tolerance) * tolerance;
-                if (!lineGroups[y]) {
-                    lineGroups[y] = [];
-                }
-                lineGroups[y].push({
-                    text: item.str,
-                    x: item.transform[4]
-                });
-            });
-            
-            // Sort lines by Y position (top to bottom)
-            const sortedYs = Object.keys(lineGroups).map(Number).sort((a, b) => b - a);
-            
-            // Build text with proper line structure
-            const lines = [];
-            sortedYs.forEach(y => {
-                const lineItems = lineGroups[y];
-                // Sort items in line by X position (right to left for Arabic)
-                lineItems.sort((a, b) => b.x - a.x);
-                const lineText = lineItems.map(item => item.text).join(' ');
-                lines.push(lineText);
-            });
-            
-            return lines.join('\n');
-        }
-
-        function selectAllText() {
-            const contentEl = document.getElementById('extractedTextContent');
-            const range = document.createRange();
-            range.selectNodeContents(contentEl);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            showToast('✅ تم تحديد كل النص', 'success');
-        }
-
-        async function copyExtractedText() {
-            if (!currentExtractedText) {
-                showToast('⚠️ لا يوجد نص لنسخه', 'warning');
-                return;
-            }
-            
-            try {
-                // Fix Arabic text direction before copying
-                const fixedText = fixArabicTextDirection(currentExtractedText);
-                await navigator.clipboard.writeText(fixedText);
-                showCopyNotification();
-            } catch (err) {
-                // Fallback
-                fallbackCopy(fixArabicTextDirection(currentExtractedText));
-            }
-        }
-
-        // ========== Quick Copy Panel ==========
-        function toggleQuickCopyPanel() {
-            const panel = document.getElementById('quickCopyPanel');
-            panel.classList.toggle('show');
-            if (panel.classList.contains('show')) {
-                document.getElementById('quickCopyInput').focus();
-            }
-        }
-
-        async function fixAndCopyText() {
-            const input = document.getElementById('quickCopyInput');
-            const text = input.value;
-            
-            if (!text.trim()) {
-                showToast('⚠️ الرجاء لصق النص أولاً', 'warning');
-                return;
-            }
-            
-            const fixedText = fixArabicTextDirection(text);
-            
-            try {
-                await navigator.clipboard.writeText(fixedText);
-                input.value = fixedText;
-                showCopyNotification();
-            } catch (err) {
-                fallbackCopy(fixedText);
-                input.value = fixedText;
-            }
-        }
-
-        // ========== Arabic Text Fixing ==========
-        function fixArabicTextDirection(text) {
-            if (!text) return '';
-            
-            const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
-            
-            // Process line by line
-            const lines = text.split('\n');
-            const fixedLines = lines.map(line => {
-                // Check if line is primarily Arabic
-                const arabicChars = (line.match(/[\u0600-\u06FF]/g) || []).length;
-                const totalChars = line.replace(/\s/g, '').length;
-                
-                if (arabicChars > totalChars * 0.3) {
-                    // Line is significantly Arabic - add RTL mark
-                    return '\u200F' + line;
-                }
-                return line;
-            });
-            
-            return fixedLines.join('\n');
-        }
-
-        function reverseArabicWords(text) {
-            const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
-            
-            // Split into words
-            const words = text.split(/(\s+)/);
-            let result = [];
-            let arabicBuffer = [];
-            
-            for (let i = 0; i < words.length; i++) {
-                const word = words[i];
-                
-                if (word.match(/^\s+$/)) {
-                    // It's whitespace
-                    if (arabicBuffer.length > 0) {
-                        arabicBuffer.push(word);
-                    } else {
-                        result.push(word);
-                    }
-                } else if (arabicPattern.test(word)) {
-                    // Arabic word
-                    arabicBuffer.push(word);
-                } else {
-                    // Non-Arabic word
-                    if (arabicBuffer.length > 0) {
-                        // Flush Arabic buffer
-                        result.push(...arabicBuffer.reverse());
-                        arabicBuffer = [];
-                    }
-                    result.push(word);
-                }
-            }
-            
-            // Flush remaining Arabic buffer
-            if (arabicBuffer.length > 0) {
-                result.push(...arabicBuffer.reverse());
-            }
-            
-            return result.join('');
-        }
-
-        // ========== Global Copy Handler ==========
-        function handleGlobalCopy(e) {
-            const selection = window.getSelection();
-            const selectedText = selection.toString();
-            
-            // Only process if there's Arabic text
-            const arabicPattern = /[\u0600-\u06FF]/;
-            if (selectedText && arabicPattern.test(selectedText)) {
-                // Check if it's from PDF container or modal
-                const anchorNode = selection.anchorNode;
-                if (anchorNode) {
-                    const container = anchorNode.parentElement;
-                    if (container && (
-                        container.closest('#pdf-container') || 
-                        container.closest('#extractedTextContent')
-                    )) {
-                        e.preventDefault();
-                        const fixedText = fixArabicTextDirection(selectedText);
-                        e.clipboardData.setData('text/plain', fixedText);
-                        showCopyNotification();
-                    }
-                }
-            }
-        }
-
-        // ========== Helpers ==========
-        function fallbackCopy(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            textarea.style.direction = 'rtl';
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            showCopyNotification();
-        }
-
-        function showCopyNotification() {
-            const notification = document.getElementById('copyNotification');
-            notification.classList.add('show');
-            setTimeout(() => notification.classList.remove('show'), 2000);
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML.replace(/\n/g, '<br>');
-        }
-
         // ========== Search ==========
         function doSearch() {
             const query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
+            if (!query || query.length < CONFIG.MIN_SEARCH_LENGTH) {
+                if (query.length > 0) {
+                    showToast(`⚠️ أدخل ${CONFIG.MIN_SEARCH_LENGTH} أحرف على الأقل`, 'warning');
+                }
+                return;
+            }
             
             if (!indexed) {
                 showToast('⏳ انتظر اكتمال الفهرسة', 'warning');
                 return;
             }
             
+            currentSearchTerm = query;
             results = [];
-            const qLower = query.toLowerCase();
-            const qArabic = toArabicNums(query);
-            const qEnglish = toEnglishNums(query);
             
             pdfText.forEach(p => {
                 if (!p || !p.text) return;
-                const textLower = p.text.toLowerCase();
                 
-                let count = 0;
-                [qLower, qArabic.toLowerCase(), qEnglish.toLowerCase()].forEach(q => {
-                    let idx = 0;
-                    while ((idx = textLower.indexOf(q, idx)) !== -1) { count++; idx++; }
-                });
+                const searchResult = smartSearch(p.text, query);
                 
-                if (count > 0) {
-                    let i = textLower.indexOf(qLower);
-                    if (i === -1) i = 0;
-                    const start = Math.max(0, i - 50);
-                    const end = Math.min(p.text.length, i + query.length + 50);
-                    let ctx = p.text.substring(start, end);
+                if (searchResult.matches > 0) {
+                    const i = searchResult.firstIndex !== -1 ? searchResult.firstIndex : 0;
+                    const start = Math.max(0, i - 35);
+                    const end = Math.min(p.text.length, i + query.length + 55);
+                    let ctx = p.text.substring(start, end).trim();
                     if (start > 0) ctx = '...' + ctx;
                     if (end < p.text.length) ctx += '...';
                     
-                    results.push({ page: p.page, count, ctx });
+                    // حساب الموقع التقريبي في الصفحة
+                    let matchPosition = 0.5; // افتراضي في المنتصف
+                    if (p.textPositions && p.textPositions.length > 0) {
+                        const searchLower = query.toLowerCase();
+                        for (let pos of p.textPositions) {
+                            if (pos.str.toLowerCase().includes(searchLower)) {
+                                // تحويل Y position لنسبة (0 = أعلى، 1 = أسفل)
+                                const pageHeight = 842; // A4 height تقريباً
+                                matchPosition = 1 - (pos.y / pageHeight);
+                                matchPosition = Math.max(0, Math.min(1, matchPosition));
+                                break;
+                            }
+                        }
+                    }
+                    
+                    results.push({ 
+                        page: p.page, 
+                        count: searchResult.matches, 
+                        ctx,
+                        matchIndex: searchResult.firstIndex,
+                        matchPosition: matchPosition,
+                        searchTerm: query,
+                        id: `result-${p.page}-${Date.now()}`
+                    });
                 }
             });
             
             results.sort((a, b) => b.count - a.count);
             showResults(query);
+            updateMiniNav();
             
             if (results.length > 0) {
                 resultIdx = 0;
                 gotoResult(0);
+                showToast(`✅ تم العثور على ${results.length} نتيجة`, 'success');
+            } else {
+                showToast(`😕 لا توجد نتائج لـ "${query}"`, 'warning');
             }
+        }
+        
+        function clearSearchResults() {
+            results = [];
+            resultIdx = -1;
+            currentSearchTerm = '';
+            document.getElementById('resultsCount').style.display = 'none';
+            document.getElementById('resultPos').textContent = '-';
+            document.getElementById('prevBtn').disabled = true;
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('resultsList').innerHTML = `
+                <div class="placeholder">
+                    <div class="placeholder-icon">🔍</div>
+                    <p>اكتب في مربع البحث<br>للعثور على الأكواد</p>
+                </div>
+            `;
+            updateMiniNav();
+        }
+        
+        function clearAllResults() {
+            clearSearchResults();
+            document.getElementById('searchInput').value = '';
+            showToast('🗑️ تم مسح جميع النتائج', 'info');
+        }
+        
+        // ========== Mini Navigation ==========
+        function updateMiniNav() {
+            const miniNav = document.getElementById('miniNav');
+            const miniCurrentPos = document.getElementById('miniCurrentPos');
+            const miniTotalResults = document.getElementById('miniTotalResults');
+            const miniPrevBtn = document.getElementById('miniPrevBtn');
+            const miniNextBtn = document.getElementById('miniNextBtn');
+            
+            if (results.length === 0) {
+                miniNav.classList.add('hidden');
+                return;
+            }
+            
+            miniNav.classList.remove('hidden');
+            miniCurrentPos.textContent = resultIdx + 1;
+            miniTotalResults.textContent = results.length;
+            miniPrevBtn.disabled = resultIdx <= 0;
+            miniNextBtn.disabled = resultIdx >= results.length - 1;
         }
 
         function showResults(query) {
@@ -1497,7 +1500,7 @@
                 list.innerHTML = `
                     <div class="placeholder">
                         <div class="placeholder-icon">😕</div>
-                        <p>لا توجد نتائج لـ "${query}"</p>
+                        <p>لا توجد نتائج لـ<br>"${query}"</p>
                     </div>
                 `;
                 return;
@@ -1513,26 +1516,68 @@
             const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const regex = new RegExp(`(${escaped})`, 'gi');
             
-            list.innerHTML = results.map((r, i) => `
-                <div class="result-card ${i === 0 ? 'active' : ''}" onclick="gotoResult(${i})">
+            list.innerHTML = results.map((r, i) => {
+                const isPinned = pinnedResults.some(p => p.page === r.page && p.searchTerm === r.searchTerm);
+                return `
+                <div class="result-card ${i === 0 ? 'active' : ''} ${isPinned ? 'pinned' : ''}" 
+                     data-index="${i}" onclick="gotoResult(${i})">
                     <div class="result-top">
                         <span class="page-badge">📄 صفحة ${r.page}</span>
-                        <span class="match-count">${r.count} تطابق</span>
+                        <div class="result-actions">
+                            <button class="result-action-btn copy-btn" 
+                                    onclick="event.stopPropagation(); copyResult(${i})" title="نسخ">
+                                📋
+                            </button>
+                            <button class="result-action-btn pin-btn ${isPinned ? 'pinned' : ''}" 
+                                    onclick="event.stopPropagation(); togglePin(${i})" title="تثبيت">
+                                📌
+                            </button>
+                            <button class="result-action-btn delete-btn" 
+                                    onclick="event.stopPropagation(); deleteResult(${i})" title="حذف">
+                                ✕
+                            </button>
+                        </div>
                     </div>
-                    <div class="result-text">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
-                    <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
-                        <span>←</span>
-                        <span>انتقال للصفحة</span>
-                    </button>
+                    <div class="result-text" id="resultText${i}">${r.ctx.replace(regex, '<span class="hl">$1</span>')}</div>
+                    <div class="result-buttons">
+                        <button class="go-btn" onclick="event.stopPropagation(); gotoResult(${i})">
+                            ← انتقال للصفحة
+                        </button>
+                        <button class="copy-result-btn" onclick="event.stopPropagation(); copyResult(${i})">
+                            📋 نسخ
+                        </button>
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
+        // ========== Copy Single Result ==========
+        function copyResult(index) {
+            if (index < 0 || index >= results.length) return;
+            
+            const result = results[index];
+            const textToCopy = `صفحة ${result.page}: ${result.ctx.replace(/\.\.\./g, '')}`;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast('📋 تم نسخ النتيجة', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('📋 تم نسخ النتيجة', 'success');
+            });
+        }
+
+        // ========== Result Navigation ==========
         async function gotoResult(i) {
             if (i < 0 || i >= results.length) return;
             resultIdx = i;
             
-            // Update UI
+            // تحديث واجهة النتائج
             document.querySelectorAll('.result-card').forEach((c, j) => {
                 c.classList.toggle('active', j === i);
             });
@@ -1541,51 +1586,287 @@
             document.getElementById('prevBtn').disabled = i === 0;
             document.getElementById('nextBtn').disabled = i === results.length - 1;
             
-            // Navigate to page in Adobe viewer
-            const pageNum = results[i].page;
-            currentModalPage = pageNum;
+            // تحديث Mini Nav
+            updateMiniNav();
+            
+            const result = results[i];
+            const pageNum = result.page;
             
             if (window.pdfAPIs) {
                 try {
+                    // 1. الانتقال للصفحة
                     await window.pdfAPIs.gotoLocation(pageNum);
+                    
+                    // 2. تفعيل البحث للتظليل والتمرير لموقع النص
+                    setTimeout(async () => {
+                        try {
+                            // استخدام Search API للتظليل والتمرير
+                            if (adobeViewer) {
+                                const searchPromise = new Promise((resolve) => {
+                                    // محاولة البحث باستخدام Adobe API
+                                    try {
+                                        adobeViewer.getAPIs().then(apis => {
+                                            if (apis.search) {
+                                                apis.search(currentSearchTerm, {
+                                                    caseSensitive: false,
+                                                    wholeWord: false
+                                                }).then(searchResult => {
+                                                    console.log('Search completed:', searchResult);
+                                                    resolve(true);
+                                                }).catch(e => {
+                                                    console.log('Search API error:', e);
+                                                    resolve(false);
+                                                });
+                                            } else {
+                                                resolve(false);
+                                            }
+                                        });
+                                    } catch (e) {
+                                        resolve(false);
+                                    }
+                                });
+                                
+                                await searchPromise;
+                            }
+                        } catch (e) {
+                            console.log('Search highlighting:', e);
+                        }
+                        
+                        // 3. محاولة التمرير للموقع التقريبي
+                        // بناءً على موقع النص في الصفحة
+                        if (result.matchPosition !== undefined) {
+                            try {
+                                // Adobe API قد يدعم zoom to specific area
+                                const zoomLevel = await window.pdfAPIs.getZoomLevel();
+                                
+                                // يمكن محاولة استخدام gotoLocation مع zoom
+                                // للتقريب على منطقة معينة
+                            } catch (e) {
+                                console.log('Zoom adjustment:', e);
+                            }
+                        }
+                    }, 300);
+                    
                 } catch (e) {
-                    console.log('Navigation via API failed, trying alternative');
+                    console.log('Navigation:', e);
                 }
             }
             
-            showToast(`📄 الصفحة ${pageNum}`, 'success');
+            showToast(`📄 صفحة ${pageNum} - "${currentSearchTerm}"`, 'success');
             
-            // Scroll result into view
+            // تمرير البطاقة للعرض في لوحة النتائج
             const card = document.querySelector('.result-card.active');
-            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         function navResult(dir) {
             const n = resultIdx + dir;
             if (n >= 0 && n < results.length) gotoResult(n);
         }
+        
+        // ========== Pin/Delete Results ==========
+        function togglePin(index) {
+            const result = results[index];
+            if (!result) return;
+            
+            const existingIndex = pinnedResults.findIndex(p => 
+                p.page === result.page && p.searchTerm === result.searchTerm
+            );
+            
+            if (existingIndex >= 0) {
+                pinnedResults.splice(existingIndex, 1);
+                showToast('📌 تم إلغاء التثبيت', 'info');
+            } else {
+                pinnedResults.push({...result, pinnedAt: Date.now()});
+                showToast('📌 تم تثبيت النتيجة', 'success');
+            }
+            
+            savePinnedResults();
+            updatePinnedSection();
+            showResults(currentSearchTerm);
+        }
+        
+        function deleteResult(index) {
+            if (index < 0 || index >= results.length) return;
+            
+            results.splice(index, 1);
+            
+            if (results.length === 0) {
+                clearSearchResults();
+            } else {
+                if (resultIdx >= results.length) resultIdx = results.length - 1;
+                showResults(currentSearchTerm);
+                updateMiniNav();
+                if (results.length > 0) {
+                    gotoResult(Math.min(index, results.length - 1));
+                }
+            }
+            
+            showToast('🗑️ تم حذف النتيجة', 'info');
+        }
+        
+        function clearPinned() {
+            pinnedResults = [];
+            savePinnedResults();
+            updatePinnedSection();
+            showResults(currentSearchTerm);
+            showToast('📌 تم مسح النتائج المثبتة', 'info');
+        }
+        
+        function updatePinnedSection() {
+            const section = document.getElementById('pinnedSection');
+            const list = document.getElementById('pinnedList');
+            
+            if (pinnedResults.length === 0) {
+                section.classList.remove('has-items');
+                return;
+            }
+            
+            section.classList.add('has-items');
+            
+            list.innerHTML = pinnedResults.map((r, i) => `
+                <div class="result-card pinned" onclick="gotoPinnedResult(${i})" style="margin-bottom: 6px; padding: 10px;">
+                    <div class="result-top" style="margin-bottom: 4px;">
+                        <span class="page-badge">📄 ${r.page}</span>
+                        <div class="result-actions">
+                            <button class="result-action-btn copy-btn" 
+                                    onclick="event.stopPropagation(); copyPinnedResult(${i})" title="نسخ">
+                                📋
+                            </button>
+                            <button class="result-action-btn delete-btn" 
+                                    onclick="event.stopPropagation(); removePinned(${i})" title="إزالة">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text3);">"${r.searchTerm}"</div>
+                </div>
+            `).join('');
+        }
+        
+        function copyPinnedResult(index) {
+            if (index < 0 || index >= pinnedResults.length) return;
+            const result = pinnedResults[index];
+            const textToCopy = `صفحة ${result.page}: ${result.ctx.replace(/\.\.\./g, '')}`;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast('📋 تم نسخ النتيجة المثبتة', 'success');
+            });
+        }
+        
+        function removePinned(index) {
+            if (index < 0 || index >= pinnedResults.length) return;
+            pinnedResults.splice(index, 1);
+            savePinnedResults();
+            updatePinnedSection();
+            showResults(currentSearchTerm);
+            showToast('📌 تم إزالة النتيجة المثبتة', 'info');
+        }
+        
+        async function gotoPinnedResult(index) {
+            const result = pinnedResults[index];
+            if (!result) return;
+            
+            if (window.pdfAPIs) {
+                await window.pdfAPIs.gotoLocation(result.page);
+                
+                // محاولة البحث للتظليل
+                setTimeout(async () => {
+                    try {
+                        if (adobeViewer) {
+                            const apis = await adobeViewer.getAPIs();
+                            if (apis.search) {
+                                await apis.search(result.searchTerm);
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Search:', e);
+                    }
+                }, 300);
+            }
+            showToast(`📌 صفحة ${result.page}`, 'success');
+        }
+        
+        function savePinnedResults() {
+            localStorage.setItem('hs-code-pinned', JSON.stringify(pinnedResults));
+        }
+        
+        function loadPinnedResults() {
+            try {
+                const saved = localStorage.getItem('hs-code-pinned');
+                if (saved) {
+                    pinnedResults = JSON.parse(saved);
+                    updatePinnedSection();
+                }
+            } catch (e) {
+                pinnedResults = [];
+            }
+        }
+        
+        function exportResults() {
+            if (results.length === 0 && pinnedResults.length === 0) {
+                showToast('⚠️ لا توجد نتائج للتصدير', 'warning');
+                return;
+            }
+            
+            let text = `نتائج البحث - HS Code 2026\n`;
+            text += `${'='.repeat(40)}\n\n`;
+            
+            if (pinnedResults.length > 0) {
+                text += `📌 النتائج المثبتة (${pinnedResults.length}):\n`;
+                text += `${'-'.repeat(30)}\n`;
+                pinnedResults.forEach((r, i) => {
+                    text += `${i + 1}. صفحة ${r.page} - "${r.searchTerm}"\n`;
+                    text += `   ${r.ctx}\n\n`;
+                });
+            }
+            
+            if (results.length > 0) {
+                text += `🔍 نتائج البحث "${currentSearchTerm}" (${results.length}):\n`;
+                text += `${'-'.repeat(30)}\n`;
+                results.forEach((r, i) => {
+                    text += `${i + 1}. صفحة ${r.page} (${r.count} تطابق)\n`;
+                    text += `   ${r.ctx}\n\n`;
+                });
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 تم نسخ جميع النتائج', 'success');
+            }).catch(() => {
+                showToast('⚠️ فشل النسخ', 'error');
+            });
+        }
 
-        // ========== Number Helpers ==========
+        // ========== Helpers ==========
         function toArabicNums(str) {
             const ar = '٠١٢٣٤٥٦٧٨٩';
             return str.replace(/[0-9]/g, d => ar[d]);
-        }
-
-        function toEnglishNums(str) {
-            const en = '0123456789';
-            const ar = '٠١٢٣٤٥٦٧٨٩';
-            return str.replace(/[٠-٩]/g, d => en[ar.indexOf(d)]);
         }
 
         function showToast(msg, type = 'info') {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
             toast.className = `show ${type}`;
-            setTimeout(() => toast.className = '', 3000);
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => toast.className = '', 3000);
         }
 
         // Global
         window.gotoResult = gotoResult;
+        window.gotoPinnedResult = gotoPinnedResult;
+        window.toggleTheme = toggleTheme;
+        window.togglePanel = togglePanel;
+        window.togglePin = togglePin;
+        window.deleteResult = deleteResult;
+        window.clearPinned = clearPinned;
+        window.clearAllResults = clearAllResults;
+        window.exportResults = exportResults;
+        window.navResult = navResult;
+        window.copyResult = copyResult;
+        window.copyPinnedResult = copyPinnedResult;
+        window.removePinned = removePinned;
     </script>
 </body>
 </html>
